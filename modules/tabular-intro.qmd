@@ -42,10 +42,12 @@ However, it may be simpler to use Python or R to convert FHIR-formatted data to 
 
 If you are able to use public cloud providers like Amazon AWS, Google Cloud, or Microsoft Azure, you may be able to use tools that are part of these platforms to ingest FHIR-formatted data and analyze it. Use of these tools is beyond the scope of this module, but some additional information is linked below.
 
-- Amazon AWS
-  - [Analyze healthcare FHIR data with Amazon Neptune](https://aws.amazon.com/blogs/database/analyze-healthcare-fhir-data-with-amazon-neptune/)
-  - [Analyzing healthcare FHIR data with Amazon Redshift PartiQL](https://aws.amazon.com/blogs/big-data/analyzing-healthcare-fhir-data-with-amazon-redshift-partiql/)
-- Google Cloud
-  - [Analyzing FHIR data in BigQuery](https://cloud.google.com/architecture/analyzing-fhir-data-in-bigquery)
-- Microsoft Azure
-  -  [Analyzing FHIR data with Azure Synapse Analytics](https://techcommunity.microsoft.com/t5/healthcare-and-life-sciences/analyzing-fhir-data-with-azure-synapse-analytics/ba-p/2719006)
+-   Amazon AWS
+    -   [Analyze healthcare FHIR data with Amazon Neptune](https://aws.amazon.com/blogs/database/analyze-healthcare-fhir-data-with-amazon-neptune/)
+    -   [Analyzing healthcare FHIR data with Amazon Redshift PartiQL](https://aws.amazon.com/blogs/big-data/analyzing-healthcare-fhir-data-with-amazon-redshift-partiql/)
+-   Google Cloud
+    -   [Analyzing FHIR data in BigQuery](https://cloud.google.com/architecture/analyzing-fhir-data-in-bigquery)
+-   Microsoft Azure
+    -   [Analyzing FHIR data with Azure Synapse Analytics](https://techcommunity.microsoft.com/t5/healthcare-and-life-sciences/analyzing-fhir-data-with-azure-synapse-analytics/ba-p/2719006)
+
+<!--Right navigation arrow at bottom points to 'Introduction to REDCap' but should be 'Using Python' -->

@@ -19,6 +19,8 @@ learning_objectives:
 ::: callout-caution
 ## Did you read FHIR from 10,000 Feet?
 
+<!-- if it's intended as connect parts, consider changing the page titles to indicate part 1/part 2 and then can reduce the following blurb  -->
+
 This is part two of our introduction to FHIR for research. Read part one, [FHIR from 10,000 Feet](fhir-from-10000-ft.qmd), if you haven't already.
 
 This module looks at how FHIR works from a technical standpoint, and is targeted to those interested in leading or implementing research using FHIR.
@@ -41,6 +43,8 @@ All FHIR resources have a Resource Content table.[^1] The table shows the hierar
 [^1]: Find more information on this table in [Key FHIR Resources](key-fhir-resources.qmd).
 
 Each element has properties that appear in the `Flag`, `Card.` (short for "Cardinality"), and `Type` columns. The details of these properties are beyond the scope of this module; see [Key FHIR Resources](key-fhir-resources.qmd) for more information.
+
+<!-- is it possible when linking to jump directly to the relevant content (like to the flag, card. definitions directly)? If not consider copying or moving that piece here for ease of access -->
 
 Elements also have short descriptions (`Description & Constraints`) as well as longer descriptions. To see the longer description, click on the element's name (e.g., see the [details of `Patient.gender`](https://www.hl7.org/fhir/R4B/patient-definitions.html#Patient.gender)).
 

@@ -62,3 +62,5 @@ Note that it is also possible to extract data from an EHR or other clinical syst
 ## Next steps
 
 Please see the [REDCap on FHIR](redcap-fhir.qmd) module for more information on using REDCap with FHIR to directly integrate with clinical data.
+
+<!--Left navigation arrow at bottom points to 'Introduction to Analyzing FHIR Data in a Tabular Format' but should be 'Using R' -->

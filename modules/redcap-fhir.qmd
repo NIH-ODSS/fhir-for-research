@@ -69,3 +69,5 @@ REDCap and FHIR have global communities of users with active forums for getting 
 -   The [FHIR community](fhir-community.qmd) may also be able to assist with the FHIR-specific aspects of integration with REDCap.
 
 When used together, FHIR can help researchers using REDCap to streamline their data collection and storage processes, find study participants, and develop study cohorts with greater accuracy.
+
+<!--Right navigation arrow at bottom points to 'Synthea Overview' but should be 'Introduction Webinar' -->

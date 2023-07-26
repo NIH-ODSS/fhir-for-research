@@ -44,3 +44,5 @@ Examples of FHIR IGs that may be of interest to researchers are listed below. Th
 -   [**US Core**](https://www.hl7.org/fhir/us/core/)⭐️, which is the FHIR IG that implements USCDI ([more information here](fhir-from-1000-ft.qmd#example-customizing-patient-in-us-core)). This IG is highly relevant for researchers in the US because EHRs typically implement US Core as part of their FHIR implementations. Conversely, data elements that are not covered by US Core may not be consistently implemented in US EHR FHIR implementations.\
     \
     Many US-centric IGs use US Core as a starting point, so you may encounter US Core profiles when viewing other IGs. If you author a FHIR IG for US implementation, it may be beneficial to also follow this approach.
+
+<!--Right navigation arrow at bottom points to 'Introduction to Analyzing FHIR Data in a Tabular Format' but should be 'Writing IGs' -->

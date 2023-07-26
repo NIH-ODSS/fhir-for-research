@@ -343,3 +343,5 @@ There are also a few recommendations for support on [docs.smarthealthit.org](htt
 > -   [SMART on FHIR community mailing list](https://groups.google.com/forum/#!forum/smart-on-fhir)
 
 For developers interested in using SMART on FHIR with Bulk Data Access, there is a [tutorial on using Bulk Data Access to export data to access via SQL](https://colab.research.google.com/drive/1HhEEB3MJ8LbMP2ta946s8OARPc5RflHu).
+
+<!--Right navigation arrow at bottom points to 'Reading IGs' but should be 'Workshop' -->

@@ -109,3 +109,7 @@ Integrating SMART on FHIR backend applications with EHRs is often less complex t
 Also, consider security and privacy early when developing your research approach. Take steps to ensure proper data storage and access as you would with any software that handles sensitive data. In addition to [IRB](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4631034/) approval, you may need approval related to privacy and information security. If your institution has not worked with SMART on FHIR before, it may not have a well-defined process for getting the appropriate approvals. In this case, it may be helpful to identify researchers from other institutions who have used SMART on FHIR in a similar context, and cite their work to demonstrate prior successful use of this technology when discussing with the IRB and decision-makers at your institution.
 
 Please see [SMART on FHIR Technical Details](smart-on-fhir-tech.qmd) for more technical implementation on using SMART on FHIR and related standards.
+
+<!--Left navigation arrow at bottom points to 'FHIR Resources' but should be 'Genomics Data Standardization with FHIR' -->
+
+<!--Right navigation arrow at bottom points to 'Reading IGs' but should be 'Technical Details' -->

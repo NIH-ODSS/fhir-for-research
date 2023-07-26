@@ -538,3 +538,5 @@ Properly implemented FHIR servers must provide an instance of CapabilityStatemen
 [OperationDefinition](https://hl7.org/fhir/operationdefinition.html)
 
 :   A FHIR resource that defines [FHIR operations](http://hl7.org/fhir/operations.html) in addition to traditional REST operations. OperationDefinitions often begin with a dollar sign (`$`). For example, `https://fhir.example.com/Patient/$match` will perform a [patient matching operation](http://hl7.org/fhir/patient-operation-match.html). This resource allows for powerful dynamic programming for FHIR operations.
+
+<!--at the end of the page, the next section points to 'Introduction' instead of 'Using the FHIR API'-->

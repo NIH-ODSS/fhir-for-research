@@ -57,3 +57,5 @@ The approach described in the materials FSH Seminar materials linked above can b
 ## Next steps
 
 Researchers using FHIR may wish to extend an [existing IG](data-modeling-real-world-igs.qmd), or create their own from scratch to define how FHIR should be used for their use case. Please see [Writing IGs](data-modeling-writing-igs.qmd) for more information.
+
+<!--Left navigation arrow at bottom points to 'Introduction' but should be 'Workshop' -->

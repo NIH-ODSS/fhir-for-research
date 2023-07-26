@@ -298,9 +298,7 @@ Further, the number of disease modules is limited. Early efforts focused on the 
 The Synthea community encourages and welcomes users to create new modules representing conditions of interest or to improve the detail and realism of existing modules.
 :::
 
-
 You can view, modify, and create Synthea modules with no programming experience using the [Synthea Module Builder](https://synthetichealth.github.io/module-builder/). For more information, read [Customizing Synthea](synthea-customizing.html) ). There is also a [short video introduction to the Module Builder](https://www.youtube.com/watch?v=cOfI6FOKv0s), and a [tutorial on the Synthea Wiki](https://github.com/synthetichealth/synthea/wiki/Module-Builder-Tutorial).
-
 
 ## FHIR Resources
 
@@ -310,42 +308,44 @@ By default, Synthea exports one file per patient, as a [Bundle](https://www.hl7.
 
 As of April 2023, Synthea can produce the following resource types:
 
--  `AllergyIntolerance`
--  `Bundle`
--  `CarePlan`
--  `CareTeam`
--  `Claim`
--  `Condition`
--  `Coverage`
--  `Device`
--  `DiagnosticReport`
--  `DocumentReference`
--  `Encounter`
--  `ExplanationOfBenefit`
--  `Goal`
--  `ImagingStudy`
--  `Immunization`
--  `Location`
--  `Medication`
--  `MedicationRequest`
--  `MedicationAdministration`
--  `Observation`
--  `Organization`
--  `Patient`
--  `Practitioner`
--  `PractitionerRole`
--  `Procedure`
--  `Provenance`
+-   `AllergyIntolerance`
+-   `Bundle`
+-   `CarePlan`
+-   `CareTeam`
+-   `Claim`
+-   `Condition`
+-   `Coverage`
+-   `Device`
+-   `DiagnosticReport`
+-   `DocumentReference`
+-   `Encounter`
+-   `ExplanationOfBenefit`
+-   `Goal`
+-   `ImagingStudy`
+-   `Immunization`
+-   `Location`
+-   `Medication`
+-   `MedicationRequest`
+-   `MedicationAdministration`
+-   `Observation`
+-   `Organization`
+-   `Patient`
+-   `Practitioner`
+-   `PractitionerRole`
+-   `Procedure`
+-   `Provenance`
 
 Note that not all patient records will contain instances of every resource type, and certain resource types will only be produced if certain settings are enabled. See [Customizing Synthea](synthea-customizing.html) for more information on settings.
 
-
 ## Pre-generated Datasets
+
 Instead of running Synthea yourself, you can use a pre-generated dataset. Pre-generated datasets are available at the following locations:
 
- -  <https://synthea.mitre.org/downloads>
-    -  Centralized location for datasets created by the Synthea core development team
- -  <https://confluence.hl7.org/display/COD/mCODE+Test+Data>
-    -  Sample cancer patients with data conformant to the [mCODE FHIR IG](http://hl7.org/fhir/us/mcode/)
- -  <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QDXLWR>
-    - 10,000 synthetic Medicare patients spanning the entire United States
+-   <https://synthea.mitre.org/downloads>
+    -   Centralized location for datasets created by the Synthea core development team
+-   <https://confluence.hl7.org/display/COD/mCODE+Test+Data>
+    -   Sample cancer patients with data conformant to the [mCODE FHIR IG](http://hl7.org/fhir/us/mcode/)
+-   <https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/QDXLWR>
+    -   10,000 synthetic Medicare patients spanning the entire United States
+
+<!--Left navigation arrow at bottom points to 'REDCap on FHIR' but should be 'Workshop' -->

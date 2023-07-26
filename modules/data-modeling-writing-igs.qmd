@@ -42,4 +42,4 @@ The [CodeX FHIR Accelerator](https://codex.hl7.org) has published a [set of comp
 
 <a class="btn-success" style="margin-left: 1rem" href="https://fshschool.org/courses/fsh-seminar/02-creating-an-ig.html" target="_blank">Open <strong>FSH Seminar \> Creating an IG</strong> materials →</a>
 
-Additionally, these resources include <a href="https://fshschool.org/courses/fsh-seminar/03-exercise.html" target="_blank">a hands-on exercise for creating a FHIR IG</a>, and <a href="https://fshschool.org/courses/fsh-seminar/04-deep-dive-with-fsh.html" target="_blank">a deep dive on the FSH language</a> used for FHIR profiling. Both are **strongly recommended** informaticists who wish to author FHIR IG.
+Additionally, these resources include <a href="https://fshschool.org/courses/fsh-seminar/03-exercise.html" target="_blank">a hands-on exercise for creating a FHIR IG</a>, and <a href="https://fshschool.org/courses/fsh-seminar/04-deep-dive-with-fsh.html" target="_blank">a deep dive on the FSH language</a> used for FHIR profiling. Both are **strongly recommended** to informaticists who wish to author FHIR IG.

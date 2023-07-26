@@ -189,7 +189,9 @@ You can also use Python or another scripting language to make FHIR API requests 
 
 It is possible to get resources related to this patient as well. For example, to get all the Observation resources associated with patient `591702`, make the following request:
 
-    GET https://hapi.fhir.org/baseR4/Patient?_id=591702&_revinclude=Observation:patient
+``` markdown
+GET https://hapi.fhir.org/baseR4/Patient?_id=591702&_revinclude=Observation:patient
+```
 
 Note that rather than including the ID as part of the URL like in `GET https://hapi.fhir.org/baseR4/Patient/591702`, this request uses the [`_id` parameter](https://www.hl7.org/fhir/search.html#_id). This is necessary because we need to use the [`search` interaction](https://www.hl7.org/fhir/http.html#search) rather than the [`read` interaction](https://www.hl7.org/fhir/http.html#read)[^3] to retrieve multiple instances at once.
 
@@ -205,13 +207,17 @@ Depending on your query, the response may be too large for the sever to easily r
 
 The same approach can be used to get multiple types of resources at once. The query below will include both Observation and Condition instances for the specified patient using multiple `_revinclude` parameters:
 
-    GET https://hapi.fhir.org/baseR4/Patient?_id=591702&_revinclude=Observation:patient&_revinclude=Condition:patient
+``` markdown
+GET https://hapi.fhir.org/baseR4/Patient?_id=591702&_revinclude=Observation:patient&_revinclude=Condition:patient
+```
 
 #### Get instances of a resource without including Patient
 
 If you want to get *just* the instances of a resource like Observation for a patient, without including the instance of Patient, the following approach can be used:
 
-    GET https://hapi.fhir.org/baseR4/Observation?patient=591702
+``` markdown
+GET https://hapi.fhir.org/baseR4/Observation?patient=591702
+```
 
 This instructs the server to return instances of Observation where `Observation.patient=591702`.
 
@@ -221,19 +227,25 @@ FHIR's `search` interaction does not allow for the same degree of filtering logi
 
 To get all the patients who have an Observation observation with a specific value of `Observation.code`, make the following request:
 
-    GET https://hapi.fhir.org/baseR4/Patient?_has:Observation:patient:code=http://loinc.org|718-7
+``` markdown
+GET https://hapi.fhir.org/baseR4/Patient?_has:Observation:patient:code=http://loinc.org|718-7
+```
 
 This requests all instances of Patient that are associated with an instance of Observation via `Observation.patient`, and have `Observation.code=http://loinc.org|718-7` via [reverse chaining](https://www.hl7.org/fhir/search.html#has). (`718-7` is the LOINC for "[Hemoglobin \[Mass/volume\] in Blood](https://loinc.org/718-7/)".)
 
 If you want the instances of Observation along with Patient, you can use this request instead:
 
-    GET https://hapi.fhir.org/baseR4/Observation?code=http://loinc.org|718-7&_include=Observation:patient
+``` markdown
+GET https://hapi.fhir.org/baseR4/Observation?code=http://loinc.org|718-7&_include=Observation:patient
+```
 
 The [`_include` parameter](https://www.hl7.org/fhir/search.html#_include) tells the server to return instances of Observation where `code=http://loinc.org|718-7`, and then to follow the reference in `Observation.patient` and include the referenced instances as well.
 
 It is possible to perform more complex selection and filtering operations via the FHIR search API. For example, to get the subset of these observations with hemoglobin values \> 20, make this request:
 
-    GET https://hapi.fhir.org/baseR4/Observation?code=http://loinc.org|718-7&_has:Observation&value-quantity=gt20
+``` markdown
+GET https://hapi.fhir.org/baseR4/Observation?code=http://loinc.org|718-7&_has:Observation&value-quantity=gt20
+```
 
 The parameter `value-quantity=gt20` tells the server to take the subset of the selected Observation instances with `Observation.valueQuantity` greater than (`gt`) 20. Care should be used when analyzing the response to ensure `Observation.valueQuantity.units` is consistent.
 
@@ -243,7 +255,9 @@ A number of other logic and filtering capabilities are described in detail on in
 
 All servers are required to support the [`capabilities` interaction](https://www.hl7.org/fhir/http.html#capabilities) which documents the server's functionality. The capability interaction is of the form:
 
-    GET [base]/metadata
+``` markdown
+GET [base]/metadata
+```
 
 This request will return an instance of a resource called a [CapabilityStatement](https://www.hl7.org/fhir/capabilitystatement.html) that defines the behaviors supported by the server.
 
