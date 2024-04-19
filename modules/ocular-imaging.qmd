@@ -1,0 +1,133 @@
+---
+title: "Ocular Imaging"
+
+roles:
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Understand the purpose of OCT and the landscape of data stands in ocular imaging.
+---
+
+Imaging is an important diagnostic and research tool in ophthalmology. This module provides an overview of common imaging modalities, particularly those used that were used to generate synthetic data for the workshop <!--# Add link to workshop pages once available -->, and interoperability challenges within ocular imaging.
+
+# Common Ocular Imaging Methods
+
+The synthetic retinal images used in this workshop are derived from two noninvasive ocular imaging modalities: fundus photography and optical coherence tomography (OCT). These imaging techniques can be used in isolation for a patient, but it's also effective to combine them for a better diagnostic and monitoring tool. For example, OCT used with fundus photography is effective for glaucoma screening [@mishra2024].
+
+### Fundus photography
+
+Fundus photography shows the retina, optic nerve head, macula, retinal blood vessels, choroid, and vitreous. It is a diagnostic tool for conditions like diabetic retinopathy, age-related macular degeneration, glaucoma, and retinopathy of prematurity [@mishra2024].
+
+![Fundus photography camera [@mishra2024].](images/eye-fundus-camera.png){fig-align="center" fig-alt="A fundus photography camera."}
+
+To capture an image of the retina, the back of the eye must be illuminated. Fundus photography uses a narrow beam of light through the pupil that reflects off the back of the eye to illuminate the retina. 
+
+![Fundus photography uses a "donut" of light to direct light through the pupil, into the eye, and returning the imaging light rays to show the retina [@mishra2024].](images/eye-fundus-photography.png){fig-align="center" fig-alt="Diagram of the illuminating and imaging light rays that allow fundus photography to capture the back of the eye."}
+
+For more on fundus photography:
+
+- [Overview](https://www.opsweb.org/page/fundusphotography) of fundus photography with more technical details about how a fundus camera works.
+- [Brief description](https://ophthalmology.med.ubc.ca/patient-care/ophthalmic-photography/color-fundus-photography/) of fundus photography with similar descriptions for other imaging modalities.
+
+### Optical Coherence Tomography
+OCT is one of the primary imaging modalities used in ocular clinical care and research. OCT is considered to be, "one of the most important imaging modalities in clinical practice for the diagnosis and follow-up of patients with retinal disease, as well as a source for outcome measurements in clinical trials" [@muller2019].
+
+OCT is a noninvasive imaging modality that takes cross-sectional photos of the retina and optic nerve. Since the photos shows each layer of the retina, an ophthalmologist can determine where the swelling or damage to the retina is, informing with the diagnosis [@aao_oct].
+
+::: {#fig-OCT-Lasker-Foundation}
+
+{{< video https://www.youtube.com/watch?v=UyZXJ3WjKwI >}}
+
+The video "Optical Coherence Tomography: A new way of seeing"
+
+:::
+
+The creators of OCT recently received an award from the Albert and Mary Lasker Foundation for their innovative imaging technique. @fig-OCT-Lasker-Foundation explains how OCT works as well as its significance in opthalmic care.
+
+
+OCT can help with the diagnosis and detection of these common ophthalmic conditions [@medicalnewstoday_oct]:
+
+- age-related Macular Degenerations
+- glaucoma
+- macular edema
+- diabetic retinopathy
+- optic nerve disorders
+
+::: {#fig-anatomy-OCT layout-ncol=2}
+
+![OCT captures an image of the retina, located at the back of the eye [@aao_anatomy].](images/eye-profile-view.png){fig-align="center" fig-alt="Anatomical profile of the eye showing the retina."}
+
+![OCT shows the individual layers of the retina, which is an important diagnostic tool [@aao_oct].](images/eye-retinal-layers.png){fig-align="center" fig-alt="Anatomical profile of the eye showing the retina."}
+
+Eye anatomy and OCT image of individual retinal layers.
+
+:::
+
+Muller et al. [@muller2019] offers the following characteristics of OCT that make it a popular tool for research and clinical care include:
+
+- **Noninvasive**—OCT is a scan and does not require surgical intervention, dilation, or injection of dyes.
+- **Quick**—OCT can be completed in a few minutes.
+- **Reproducible**—OCT can be done multiple times for a longitudinal record of changes to the eye. Variations between hardware and software exist so reproducibility is constrained to the same equipment.
+- **Detailed**—OCT can distinguish between layers of the retina, allowing for differentiation between conditions that affect the outer retina, compared to the inner retina. The scan produces a 3-dimensional view of each retinal layer that picks up subtle changes that would not be detected in other imaging formats.
+- **Compatible**—OCT can be used alongside other imaging formats to diagnose and monitor some of the most prevalent ophthalmic conditions including age-related macular degeneration (AMD) and diabetic retinopathy. <!--# Compatible doesn't feel like the right adjective but additive, compoundable, supplemental aren't clicking either?-->
+
+For more on OCT:
+- Video [overview](https://www.youtube.com/watch?v=BxRAAVr7oA8) of OCT with examples of images.
+
+# Other common ocular imaging methods
+
+The following ocular imaging methodologies may be encountered in ocular research, but they are not included in the synthetic data produced for the FHIR for Research ocular workshop. 
+
+### Fluorescein Angiography
+Fluorescein Angiography is an imaging modality for seeing the blood vessels in the back of the eye. It requires dilation of the pupil and injection of a fluorescent dye, making it a more invasive method compared to OCT-A. Although it is still quick (about 30 minutes) and the preferred method for monitoring retinal circulation and imaging the choroid [@eyewiki_fa].
+    
+![Muller et al. has a helpful image that shows the variation between a fundus photo (left), fluorescein angiography (center), and OCT image of the same eye [@muller2019].](images/eye-fundus-fa-OCT-example.png){fig-align="center" fig-alt="A grid of photos containing columns of fundus photos, fluorescein angiography, and OCT images."}
+
+Ophthalmologists use a fluorescein angiography alongside OCT images in the diagnosis of age-related macular degeneration, diabetic retinopathy, and macular edema [@muller2019].
+
+- Additional references:
+    - [Brief description](https://ophthalmology.med.ubc.ca/patient-care/ophthalmic-photography/fluorescein-angiography/) of fluorescein angiography.
+    - More [comprehensive overview](https://www.ncbi.nlm.nih.gov/books/NBK576378/) of fluorescein angiography with clinical significance and preparation for the imaging.
+    - [Description](https://my.clevelandclinic.org/health/diagnostics/24618-fluorescein-angiography) of test details and conditions for which a provider might use fluorescein angiography.
+    - Articel with a [video](https://www.aao.org/eye-health/treatments/what-is-fluorescein-angiography) showing a fluorescein angiography.
+
+
+### Optical Coherence Tomography - Angiography (OCT-A)
+
+OCT-A, sometimes referred to as OCTA, is a newer, noninvasive method to image retinal circulation and the choroid. Fluorescein angiography requires the injection of a dye to show the vessels in the retina, but OCT-A uses repeated imaging to indicate flow rate between vessels. (https://eyewiki.aao.org/Optical_Coherence_Tomography_Angiography)
+
+- Additional references:
+    - [Detailed review](https://journalretinavitreous.biomedcentral.com/articles/10.1186/s40942-015-0005-8) of OCT-A with examples.
+    - [Review](https://www.ncbi.nlm.nih.gov/books/NBK563235/) of the clinical significance of OCT-A and comparison to OCT.
+
+# Ocular Imaging Standards
+
+<!--# Section is adapted from the Task 1 Environmental Scan. Do we have to cite our own currently unpublished work? -->
+
+Ocular terminology and imaging formats are not fully standardized in clinical systems. 
+ 
+Terminology coverage of general eye examination concepts in clinical terminologies is incomplete (Cai et al. (2023)). Additionally, it is unclear if the standard terminologies that do exist are used consistently across institutions in systems of record. If terminology is inconsistent across clinical systems, multi-institutional research may require mapping to a standardized terminology after data are extracted for research.
+ 
+The SNOMED Eye Care Clinical Reference Group is working to improve SNOMED’s support for ocular terminology as of late 2023 (this workgroup involves members of the NEI team that MITRE is supporting with this module). Other potentially relevant terminology systems include ICD-10 for diagnoses, LOINC for identifying tests, and RxNorm for identifying medications. 
+ 
+There are also opportunities to better integrate ocular imaging with other systems using FHIR. Researchers are sometimes impeded by the technical restrictions of imaging devices and their software. The Digital Imaging and Communications in Medicine (DICOM) standard is typically used alongside FHIR to support interoperability in modern systems, but this is not widely adopted by ocular imaging device vendors. 
+
+A second interoperability issue for ocular imaging is the disconnect between the imaging devices and the electronic health record (EHR). The software used in ocular imaging systems often does not communicate with the EHR, leading to fragmented ocular data storage. In conversations with subject matter experts, ophthalmologists and researchers described using side by side monitors to pull up a patient's EHR and their images in disparate software environments.  <!--# Trying to paint the picture of "swivel chair interoperability" because I think it's helpful. But not sure if this fits the tone or if we want to include that info from our Task 1 conversations. --> 
+
+![Without interoperability between imaging systems, data is lost when it moves from the imaging device to the other digital environments used by ophthalmologists [@baxter_nd].](images/eye-interoperability-diagram.png){fig-align="center" fig-alt="Diagram showing the data loss from a device capturing imaging data, to a paper printout, to a digital upload of that paper printout."}
+
+One of the key objectives of the [Eyes on FHIR IG](https://build.fhir.org/ig/HL7/fhir-eyecare-ig/) is to support communication between EHRs and ocular imaging systems. The IG was tested in the September 2021 Connectathon and a [description of their testing plan](https://confluence.hl7.org/display/FHIR/2021-09+Ophthalmology+track%3A+workflow-integrated+AI) is available. In theory, FHIR can be used to allow an imaging system to retrieve data from an EHR, and to send data back to that EHR for storage alongside the rest of the patient’s medical record. The ocular FHIR for Research ocular data workshop <!--# Add link to workshop pages once available --> will demonstrate this theoretical process with a sample SMART&reg; on FHIR application and synthetic patient data generated by Synthea&trade;.
+
+# Helpful Terminology
+
+| Abbreviation | Meaning |
+---------------|---------
+| AMD | Age-related macular degeneration
+| DICOM | Digital Imaging and Communications in Medicine
+| EHR | Electronic health record
+| OCT | Optical coherence tomography 
+| OCT-A | Optical coherence tomography angiography
+
+#
