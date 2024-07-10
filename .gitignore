@@ -16,3 +16,7 @@ bibliography.bib.*
 # Ignore Jupyter Checkpoints
 .ipynb_checkpoints
 .jupyter-cache
+
+# Exclude cache files for Jupyter and tabular-r
+modules/.jupyter_cache/
+modules/tabular-r_cache/
