@@ -2,7 +2,7 @@
 
 **The content in this repository is under active development. Please proceed with caution.**
 
-GitHub Actions automatically builds commits to the `main` branch to <https://mitre.github.io/fhir-for-research>.
+GitHub Actions automatically builds commits to the `main` branch to <https://nih-odss.github.io/fhir-for-research/>.
 
 ----
 
