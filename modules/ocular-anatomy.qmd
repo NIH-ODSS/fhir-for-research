@@ -1,0 +1,65 @@
+---
+title: "Ocular Anatomy"
+roles: 
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+learning_objectives2:
+  - Develop basic understanding of the anatomy and common conditions affecting the eye.
+---
+
+Understanding the anatomy of the eye helps to illustrate the interoperability challenges and imaging modalities used in ophthalmology. The American Academy of Ophthalmology (AAO) has an excellent review of [eye anatomy](https://www.aao.org/eye-health/anatomy/parts-of-eye). This module summarizes the AAO content and ties the anatomy to the [Ocular Imaging module](ocular-imaging.qmd).
+
+# Around the eye
+
+![The eye sits in the orbit and movement is controlled by six muscles [@aao_anatomy].](images/eye-muscles.png "Exterior of the eye"){fig-align="center" fig-alt="An eyeball sitting in the orbital socket, controlled by six muscles attached to the sclera."}
+
+- **Orbit**: bony socket that holds the eyeball in place
+- **Extraocular muscles**: there are six muscles that are attached around the eyeball and control movement of the eye
+- **Sclera**: layer of tissue that covers most of the eye and where the extraocular muscles attach to the eyeball
+
+# Surface of the eye
+
+![Tears on the surface of the eye act as lubricant [@aao_anatomy].](images/eye-surface.png "Surface of the eye"){fig-align="center" fig-alt="The tear layer on the front of the eye consists of three sub layers: oil, watery, and mucous."}
+
+- **Tears**: lubricate the eye and are comprised of three layers called the tear film (from outermost to innermost):
+    - Oil layer, produced by the meibomian gland
+    - Watery layer, produced by the lacrimal gland
+    - Mucous layer, produced by the conjunctiva
+
+# Front of the eye
+
+![The lens and the pupil each play a role in controlling the amount of light that reaches the back of the eye [@trobe_nd].](images/eye-front-view.png "Front of the eye"){fig-align="center" fig-alt="A top-down view of an eyeball showing the layers of the dome-shaped cornea, iris, pupil, and lens."}
+
+- **Cornea**: clear, dome-shaped front of the eye where light is focused into the eye
+- **Iris**: the colorful part of the eye, surrounding the pupil.
+- **Pupil**: dark hole in the iris. Muscles in the iris dilate and constrict the pupil, which changes the amount of light let into the eye
+- **Lens**: focuses light toward the back of the eye. The lens is right behind the pupil.
+
+### Common conditions affecting the front of the eye
+
+- Corneal disorders are common conditions affecting the cornea. They can be congenital (present at birth) or developed later in life [@cleveland_clinic_eyes].  
+
+# Inner Eye
+
+![Light passes through the vitreous cavity to the retina.[@aao_anatomy]](images/eye-profile-view.png "Inner eye"){fig-align="center" fig-alt="Profile view of the eye showing the vitreous cavity, retina, and optic nerve."}
+
+- **Vitreous cavity**: the space between the lens and the back of the eye
+- **Retina**: the light sensitive tissue that lines the back of the eye. 
+    - **Macula**: tiny area of the retina that gives detailed vision
+    - **Peripheral retina**: the other part of the retina that gives peripheral, or side vision
+- **Optic nerve**: millions of nerve fibers that transmit light from the retina to the brain as electrical impulses
+
+### Common conditions affecting the back of the eye
+
+- Retinal disorders are common conditions affecting the retina. Some retinal disorders are secondary effects from another disease [@cleveland_clinic_eyes], like diabetic retinopathy which is a complication of diabetes. It is a progressive disease where the blood vessels in the retina are damaged. Diabetic retinopathy is prevalent as the leading cause of blindness in American adults [@cdc_eye_disorders].
+
+![A view of the retina and blood vessels in a healthy eye compared to an eye with diabetic retinopathy [@mayo_clinic_dr].](images/eye-diabetic-retinopathy.png "Diabetic Retinopathy"){fig-align="center" fig-alt="Two eyes in profile, one showing a healthy retina and blood vessel, and the other showing damage to the blood vessels in the retina as a result of diabetic retinopathy."}
+
+- Age-related macular degeneration (AMD)is a disorder that affects the macula and is more likely to occur in older adults [@cleveland_clinic_eyes]. The macula is the part of the retina that enables people to see fine details. AMD is the leading cause of permanent fine and close-up vision impairment in adults over the age of 65 in the United States [@cdc_eye_disorders].
+
+# Additional resources for ocular anatomy:
+
+- [Compilation](https://kellogg.umich.edu/theeyeshaveit/index.html) of images and diagrams related to different ocular conditions and injuries. *Note that the site's certificate has expired so you may be warned about proceeding to the site.*
+- Another [diagram](https://www.umkelloggeye.org/conditions-treatments/anatomy-eye) of the eye with descriptions of the anatomy. 
+- [Overview](https://my.clevelandclinic.org/health/body/21823-eyes) of common ocular conditions and diseases, anatomy, and testing methods.
