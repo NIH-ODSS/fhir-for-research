@@ -7,7 +7,7 @@ number-sections: false
 
 ## Recording
 
-A video recording is forthcoming.
+{{< video https://www.youtube.com/watch?v=6ooMkqZYTwE >}}
 
 ## Slides
 

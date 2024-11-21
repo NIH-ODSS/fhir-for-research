@@ -7,18 +7,17 @@ number-sections: false
 
 ## Recording
 
-A video recording is forthcoming.
+{{< video https://www.youtube.com/watch?v=337XdHKrlkk>}}
 
 ## Slides
 
 ```{=html}
 <iframe style="border: 3px solid #dee2e6; width: 100%; height: 475px;" src="slides.html" title="SMART on FHIR workshop slides, powered by Revealjs. A link to an accessible PDF of these slides is in the section below."></iframe>
 ```
-
 ### Other slide formats
 
 -   [Printable web page](slides.html?print-pdf)
--   [Accessible PDF](Workshop - SMART on FHIR 508C.pdf)
+-   [Accessible PDF](Workshop%20-%20SMART%20on%20FHIR%20508C.pdf)
 
 ## Running the sample app
 
@@ -38,10 +37,10 @@ Working with the sample app is discussed during the workshop.
 The diagram below appears in the slides, but may be easier to see on this page.
 
 ::: column-body
-<div data-fancybox class='fancybox-figure' data-caption="Diagram showing the workflow for a SMART on FHIR EHR launch" data-src='#mermaidImage' style='margin-bottom: 0.5em' data-type="clone">
-<figure class='figure' style='width: 100%;'>
+::: {.fancybox-figure data-fancybox="" data-caption="Diagram showing the workflow for a SMART on FHIR EHR launch" data-src="#mermaidImage" style="margin-bottom: 0.5em" data-type="clone"}
+<figure class="figure" style="width: 100%;">
 
-<div id='mermaidImage'>
+::: {#mermaidImage}
 ```{mermaid}
 sequenceDiagram
     accTitle: Diagram showing the workflow for a SMART on FHIR EHR launch
@@ -63,16 +62,13 @@ sequenceDiagram
     C ->> D: Request MedicationRequests
     D -->> C: Response with MedicationRequest JSON
 ```
-</div>
-
-<figcaption>
-    Click to enlarge
-</figcaption>
-</figure>
-
-</div>
 :::
 
+<figcaption>Click to enlarge</figcaption>
+
+</figure>
+:::
+:::
 
 ```{=html}
 <style>
