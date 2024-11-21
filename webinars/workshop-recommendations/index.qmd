@@ -8,7 +8,7 @@ If you are interested in running your own workshop, the following recommendation
 
 ## Recording
 
-A video recording is forthcoming.
+{{< video https://www.youtube.com/watch?v=AMK4fP6yw74>}}
 
 ## Slides
 

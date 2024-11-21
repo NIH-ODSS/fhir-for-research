@@ -7,7 +7,7 @@ number-sections: false
 
 ## Recording
 
-A video recording is forthcoming.
+{{< video https://www.youtube.com/watch?v=PgIS1eRbAJw>}}
 
 ## Slides
 
@@ -21,7 +21,7 @@ Please see the [Introduction to FHIR Bulk Data Webinar](../../webinars/bulk-data
 ### Other slide formats
 
 -   [Printable web page](slides.html?print-pdf)
--   [Accessible PDF](Workshop - Bulk Data 508C.pdf)
+-   [Accessible PDF](Workshop%20-%20Bulk%20Data%20508C.pdf)
 
 ## Workshop notebook
 
