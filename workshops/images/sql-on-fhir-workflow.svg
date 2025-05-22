@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="128" viewBox="0 0 1080 128" role="img" aria-labelledby="workflow-title workflow-description">
+  <title id="workflow-title">SQL on FHIR workflow</title>
+  <desc id="workflow-description">Four steps from left to right: get FHIR data, load it into Python memory as JSON, process it with a ViewDefinition, and use or store the tabular data.</desc>
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#333333"/>
+    </marker>
+  </defs>
+  <rect width="1080" height="128" fill="#ffffff"/>
+  <g fill="#ececff" stroke="#9370db" stroke-width="1.5">
+    <rect x="12" y="18" width="220" height="92"/>
+    <rect x="290" y="18" width="220" height="92"/>
+    <rect x="568" y="18" width="220" height="92"/>
+    <rect x="846" y="18" width="220" height="92"/>
+  </g>
+  <g fill="none" stroke="#333333" stroke-width="1.5" marker-end="url(#arrowhead)">
+    <path d="M 232 64 H 286"/>
+    <path d="M 510 64 H 564"/>
+    <path d="M 788 64 H 842"/>
+  </g>
+  <g fill="#333333" font-family="sans-serif" font-size="20" text-anchor="middle">
+    <text x="122" y="71">1) Get FHIR Data</text>
+    <text x="400" y="58"><tspan x="400">2) Load into Python</tspan><tspan x="400" dy="24">memory as JSON</tspan></text>
+    <text x="678" y="58"><tspan x="678">3) Process with</tspan><tspan x="678" dy="24">ViewDefinition</tspan></text>
+    <text x="956" y="58"><tspan x="956">4) Use/store</tspan><tspan x="956" dy="24">tabular data</tspan></text>
+  </g>
+</svg>

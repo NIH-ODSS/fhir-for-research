@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-10-26">
+
+<title>Analyzing FHIR Data in a Tabular Format With R – FHIR® for Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-3419ea62b3ca2d77d3d547f86109e84e.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-eaeb381c6b7494c50009502241a4985c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-3419ea62b3ca2d77d3d547f86109e84e.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8778d93ecd2f4b41074b2510cef4ddd7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-8e1948ad1eaece3a176d6cd04c36e375.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-8778d93ecd2f4b41074b2510cef4ddd7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<!-- head.html -->
+<!-- any content in this file is inserted into <head></head> -->
+
+<script src="../modules/mappings.js"></script>
+
+<script>
+// test if local storage is available and inititilize global variable store, code adapted from:
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+function initLocalStorage() {
+  let storage;
+  try {
+    storage = window["localStorage"];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return storage;
+  } catch (e) {
+    console.log("Error: local storage unavailable.");
+    return (
+      e instanceof DOMException &&
+      // everything except Firefox
+      (e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === "QuotaExceededError" ||
+        // Firefox
+        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage &&
+          storage.length !== 0
+    );
+  }
+}
+
+var store = initLocalStorage();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Yantramanav:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+<link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Analyzing FHIR Data in a Tabular Format With R – FHIR® for Research">
+<meta property="og:description" content="">
+<meta property="og:site_name" content="FHIR® for Research">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="..">
+    <span class="navbar-title">FHIR® for Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/introduction"> 
+<span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/technologies"> 
+<span class="menu-text">Technologies</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hands-on-practice"> 
+<span class="menu-text">Hands-on <span class="collapse-lg-xl">Practice</span></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hosting-your-own-workshop"> 
+<span class="menu-text">Hosting Your Own Workshop</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../contribute"> <i class="bi bi-question-circle-fill" role="img">
+</i> 
+<span class="menu-text"><span class="collapse-lg-xl">Questions &amp; Contributions</span></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/NIH-ODSS/fhir-for-research"> <i class="bi bi-github" role="img" aria-label="View the GitHub repository for this site">
+</i> 
+<span class="menu-text"><span class="collapse-sm">View on GitHub</span></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#fhir-testing-server" id="toc-fhir-testing-server" class="nav-link active" data-scroll-target="#fhir-testing-server"><span class="header-section-number">1</span> FHIR testing server</a></li>
+  <li><a href="#retrieving-fhir-data" id="toc-retrieving-fhir-data" class="nav-link" data-scroll-target="#retrieving-fhir-data"><span class="header-section-number">2</span> Retrieving FHIR data</a></li>
+  <li><a href="#selecting-specific-columns" id="toc-selecting-specific-columns" class="nav-link" data-scroll-target="#selecting-specific-columns"><span class="header-section-number">3</span> Selecting specific columns</a></li>
+  <li><a href="#elements-with-multiple-sub-values" id="toc-elements-with-multiple-sub-values" class="nav-link" data-scroll-target="#elements-with-multiple-sub-values"><span class="header-section-number">4</span> Elements with multiple sub-values</a></li>
+  <li><a href="#retrieving-related-data" id="toc-retrieving-related-data" class="nav-link" data-scroll-target="#retrieving-related-data"><span class="header-section-number">5</span> Retrieving related data</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7">Analyzing FHIR Data in a Tabular Format With R</h1></header>
+
+
+<div id="metadata-container" style="display: flex;">
+<!-- Begin reading time block -->
+  <div id="reading-time-container" style="display: none">
+    <svg aria-hidden="true" role="img" focusable="false" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+    <span id="reading-time"></span> min. reading time&nbsp;
+  </div>
+<!-- end reading time block -->
+
+<!-- last updated -->
+<div class="date">Last updated: October 26, 2026</div>
+</div> <!-- end metadata div -->
+
+<!-- script for reading time -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+    // Step 1: Count words in parent document
+    let totalWords = 0;
+    const mainContent = document.querySelector('#quarto-document-content');
+    if (mainContent) {
+      const parentWords = mainContent.innerText.trim().split(/\s+/).length;
+      totalWords += parentWords;
+    }
+
+    // We'll update the badge once we've processed ALL iframes (or there are none)
+    function updateReadingTimeBadge(wordCount) {
+      const wpm = 200;
+      const readingTime = Math.ceil(wordCount / wpm);
+
+      document.getElementById('reading-time').textContent = readingTime;
+      document.getElementById('reading-time-container').style.display = '';
+    }
+
+    // Step 2: Gather iframes
+    const iframes = document.querySelectorAll('iframe');
+
+    // If there are no iframes, just show the reading time for parent content
+    if (iframes.length === 0) {
+      updateReadingTimeBadge(totalWords);
+      return;
+    }
+
+    // We only update after ALL iframes have loaded or errored
+    let pending = iframes.length;
+
+    // Helper to decrement pending count and update once done
+    function iframeDone() {
+      pending--;
+      if (pending === 0) {
+        // All iframes processed
+        updateReadingTimeBadge(totalWords);
+      }
+    }
+
+    // Step 3: Iterate through each iframe
+    iframes.forEach(iframe => {
+      // Listen for 'load' (fires whether same-origin or cross-origin)
+      iframe.addEventListener('load', function() {
+        try {
+          // Attempt to read the iframe's text (works only if same-origin)
+          const iframeDoc = iframe.contentWindow.document;
+          const iframeText = (iframeDoc.body.innerText || "").trim();
+          const iframeWords = iframeText.split(/\s+/).filter(Boolean).length;
+
+          totalWords += iframeWords;
+        } catch (err) {
+          // Cross-origin or any other error
+          console.warn("Could not read iframe content (possibly cross-origin):", err);
+          // No addition to totalWords
+        }
+        // Mark this iframe as processed
+        iframeDone();
+      }, { once: true });
+
+      // Listen for 'error' in case the iframe fails to load
+      iframe.addEventListener('error', function() {
+        console.warn("Iframe failed to load:", iframe.src);
+        // Just move on (no addition to totalWords)
+        iframeDone();
+      }, { once: true });
+    });
+
+  });
+  </script>
+ <!-- end script for reading time -->
+
+<header>
+<!--
+-->
+
+
+
+
+</header>
+
+<!-- begin roles block -->
+<div class="role-tags" aria-label="Relevant roles">
+  <span class="role-tags-label">Roles:</span>
+  <span class="role-tag">Informaticist</span>
+  <a href="../roles" class="role-info-link" aria-label="Learn more about roles">
+    <svg aria-hidden="true" role="img" focusable="false" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+</a>
+</div>
+<!-- end roles block -->
+
+<!-- Begin learning objectives block -->
+
+<div class="callout-tip callout callout-style-default callout-captioned" id="learning-objectives">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Learning objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>
+    Understand the high-level approaches for converting FHIR-formatted data into a tabular format for analysis in R.
+</li>
+<li>
+    Learn how the fhircrackr library facilitates requesting data from a FHIR server and creating tidy tabular data tables.
+</li>
+</ol>
+</div>
+</div>
+
+<!-- End learning objectives block -->
+
+<!-- Hack to add key points block at end of page-->
+<!-- End hack to add key points block at end of page-->
+
+
+<p>Data analysis approaches in R typically use <a href="https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Data-frames-1">data frames</a> to store tabular data. There are two primary approaches to loading FHIR-formatted data into data frames:</p>
+<ol type="1">
+<li><p>Writing R code to manually convert FHIR instances in JSON format into data frames.</p></li>
+<li><p>Using a purpose-built library like <a href="https://polar-fhir.github.io/fhircrackr/">fhircrackr</a> to automatically convert FHIR instances into DataFrames.</p>
+<p>It is recommended to try this approach first. If it is not possible to use fhircrackr for your use case, it may be easier to convert the data from FHIR to tabular format <a href="../modules/tabular-python">using Python</a> and then export it to R format compared to doing this completely in R. The <a href="https://rstudio.github.io/reticulate/">Reticulate package</a> may facilitate this by allowing Python and R code to share data objects within <a href="https://docs.posit.co/ide/user/ide/guide/environments/py/python.html">RStudio</a>.</p></li>
+</ol>
+<p>To use fhircrackr, you will need an <a href="https://www.r-project.org">R</a> runtime with fhircrackr installed. Typically R users work in the <a href="https://posit.co/products/open-source/rstudio/">RStudio IDE</a> but this is not strictly necessary.</p>
+<section id="fhir-testing-server" class="level2 callout-info" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="fhir-testing-server"><span class="header-section-number">1</span> FHIR testing server</h2>
+<p>The examples in this module use a FHIR testing server populated with <a href="https://synthea.mitre.org/downloads">Synthea data in FHIR R4 format</a> via the <a href="https://hapi.fhir.org/">public HAPI Test Server</a> operated by <a href="https://hapifhir.io/">HAPI FHIR</a>.</p>
+<p>The endpoint for this testing server is:</p>
+<pre><code>https://hapi.fhir.org/baseR4</code></pre>
+<p>However, any FHIR server loaded with testing data can be used. See <a href="../modules/synthea-test-server">Standing up a FHIR Testing Server</a> for instructions to set up your own test server.</p>
+<p>The code blocks in the following section show sample output immediately after. This is similar to the code blocks and results in a rendered <a href="https://rmarkdown.rstudio.com/">RMarkdown file</a>.</p>
+</section>
+<section id="retrieving-fhir-data" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="retrieving-fhir-data"><span class="header-section-number">2</span> Retrieving FHIR data</h2>
+<p>Once your environment is set up, you can run the following R code to retrieve instances of the Patient resource from a test server:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load dependencies</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fhircrackr)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Not strictly necessary, but helpful for working with data in R</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the URL of the FHIR server and the request that will be made</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a search parameter for Synthea-specific identifier system</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>request <span class="ot">&lt;-</span> <span class="fu">fhir_url</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">url =</span> <span class="st">"https://hapi.fhir.org/baseR4"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Patient"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">parameters =</span> <span class="fu">c</span>(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">identifier =</span> <span class="st">"https://github.com/synthetichealth/synthea|"</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform the request</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>patient_bundle <span class="ot">&lt;-</span> <span class="fu">fhir_search</span>(<span class="at">request =</span> request, <span class="at">max_bundles =</span> <span class="dv">1</span>, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># This method defines the mapping from FHIR to data frame columns.</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># If the `cols` argument is omitted, all data elements will be included in the data frame.</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>table_desc_patient <span class="ot">&lt;-</span> <span class="fu">fhir_table_description</span>(</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Patient"</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to R data frame</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>df_patient <span class="ot">&lt;-</span> <span class="fu">fhir_crack</span>(<span class="at">bundles =</span> patient_bundle, <span class="at">design =</span> table_desc_patient, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Exclude `photo.data`, which is a base64-encoded photo and doesn't display well in dataframes</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>df_patient <span class="ot">&lt;-</span> df_patient <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">any_of</span>(<span class="st">"photo.data"</span>))</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>df_patient <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["address.city"],"name":[1],"type":["chr"],"align":["left"]},{"label":["address.country"],"name":[2],"type":["chr"],"align":["left"]},{"label":["address.extension"],"name":[3],"type":["chr"],"align":["left"]},{"label":["address.extension.extension"],"name":[4],"type":["chr"],"align":["left"]},{"label":["address.extension.extension.valueDecimal"],"name":[5],"type":["chr"],"align":["left"]},{"label":["address.line"],"name":[6],"type":["chr"],"align":["left"]},{"label":["address.postalCode"],"name":[7],"type":["chr"],"align":["left"]},{"label":["address.state"],"name":[8],"type":["chr"],"align":["left"]},{"label":["birthDate"],"name":[9],"type":["chr"],"align":["left"]},{"label":["communication.language.coding.code"],"name":[10],"type":["chr"],"align":["left"]},{"label":["communication.language.coding.display"],"name":[11],"type":["chr"],"align":["left"]},{"label":["communication.language.coding.system"],"name":[12],"type":["chr"],"align":["left"]},{"label":["communication.language.text"],"name":[13],"type":["chr"],"align":["left"]},{"label":["deceasedDateTime"],"name":[14],"type":["chr"],"align":["left"]},{"label":["extension"],"name":[15],"type":["chr"],"align":["left"]},{"label":["extension.extension"],"name":[16],"type":["chr"],"align":["left"]},{"label":["extension.extension.valueCoding.code"],"name":[17],"type":["chr"],"align":["left"]},{"label":["extension.extension.valueCoding.display"],"name":[18],"type":["chr"],"align":["left"]},{"label":["extension.extension.valueCoding.system"],"name":[19],"type":["chr"],"align":["left"]},{"label":["extension.extension.valueString"],"name":[20],"type":["chr"],"align":["left"]},{"label":["extension.valueAddress.city"],"name":[21],"type":["chr"],"align":["left"]},{"label":["extension.valueAddress.country"],"name":[22],"type":["chr"],"align":["left"]},{"label":["extension.valueAddress.state"],"name":[23],"type":["chr"],"align":["left"]},{"label":["extension.valueCode"],"name":[24],"type":["chr"],"align":["left"]},{"label":["extension.valueDecimal"],"name":[25],"type":["chr"],"align":["left"]},{"label":["extension.valueString"],"name":[26],"type":["chr"],"align":["left"]},{"label":["gender"],"name":[27],"type":["chr"],"align":["left"]},{"label":["id"],"name":[28],"type":["chr"],"align":["left"]},{"label":["identifier.system"],"name":[29],"type":["chr"],"align":["left"]},{"label":["identifier.type.coding.code"],"name":[30],"type":["chr"],"align":["left"]},{"label":["identifier.type.coding.display"],"name":[31],"type":["chr"],"align":["left"]},{"label":["identifier.type.coding.system"],"name":[32],"type":["chr"],"align":["left"]},{"label":["identifier.type.text"],"name":[33],"type":["chr"],"align":["left"]},{"label":["identifier.value"],"name":[34],"type":["chr"],"align":["left"]},{"label":["maritalStatus.coding.code"],"name":[35],"type":["chr"],"align":["left"]},{"label":["maritalStatus.coding.display"],"name":[36],"type":["chr"],"align":["left"]},{"label":["maritalStatus.coding.system"],"name":[37],"type":["chr"],"align":["left"]},{"label":["maritalStatus.text"],"name":[38],"type":["chr"],"align":["left"]},{"label":["meta.lastUpdated"],"name":[39],"type":["chr"],"align":["left"]},{"label":["meta.source"],"name":[40],"type":["chr"],"align":["left"]},{"label":["meta.tag.code"],"name":[41],"type":["chr"],"align":["left"]},{"label":["meta.tag.display"],"name":[42],"type":["chr"],"align":["left"]},{"label":["meta.tag.system"],"name":[43],"type":["chr"],"align":["left"]},{"label":["meta.versionId"],"name":[44],"type":["chr"],"align":["left"]},{"label":["multipleBirthBoolean"],"name":[45],"type":["chr"],"align":["left"]},{"label":["name.family"],"name":[46],"type":["chr"],"align":["left"]},{"label":["name.given"],"name":[47],"type":["chr"],"align":["left"]},{"label":["name.prefix"],"name":[48],"type":["chr"],"align":["left"]},{"label":["name.use"],"name":[49],"type":["chr"],"align":["left"]},{"label":["telecom.system"],"name":[50],"type":["chr"],"align":["left"]},{"label":["telecom.use"],"name":[51],"type":["chr"],"align":["left"]},{"label":["telecom.value"],"name":[52],"type":["chr"],"align":["left"]},{"label":["text.status"],"name":[53],"type":["chr"],"align":["left"]}],"data":[{"1":"Boston","2":"US","3":"http://hl7.org/fhir/StructureDefinition/geolocation","4":"latitude:::longitude","5":"42.33196:::-71.020173","6":"742 Howe Spur Apt 91","7":"02108","8":"Massachusetts","9":"1924-12-30","10":"en-US","11":"English","12":"urn:ietf:bcp:47","13":"English","14":"1962-02-22T02:28:09+00:00","15":"http://hl7.org/fhir/us/core/StructureDefinition/us-core-race:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity:::http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex:::http://hl7.org/fhir/StructureDefinition/patient-birthPlace:::http://synthetichealth.github.io/synthea/disability-adjusted-life-years:::http://synthetichealth.github.io/synthea/quality-adjusted-life-years","16":"ombCategory:::text:::ombCategory:::text","17":"2054-5:::2186-5","18":"Black or African American:::Not Hispanic or Latino","19":"urn:oid:2.16.840.1.113883.6.238:::urn:oid:2.16.840.1.113883.6.238","20":"Black or African American:::Not Hispanic or Latino","21":"Bourne","22":"US","23":"Massachusetts","24":"F","25":"0.1459321800696635:::35.85406781993034","26":"Alana Blick","27":"female","28":"ed6a17f3-deb2-4e7a-9548-5d15d2d47c05","29":"https://github.com/synthetichealth/synthea:::http://hospital.smarthealthit.org:::http://hl7.org/fhir/sid/us-ssn:::urn:oid:2.16.840.1.113883.4.3.25:::http://standardhealthrecord.org/fhir/StructureDefinition/passportNumber","30":"MR:::SS:::DL:::PPN","31":"Medical Record Number:::Social Security Number:::Driver's License:::Passport Number","32":"http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203","33":"Medical Record Number:::Social Security Number:::Driver's License:::Passport Number","34":"f06c0800-7e56-45e7-85eb-0047c2c5b4b1:::f06c0800-7e56-45e7-85eb-0047c2c5b4b1:::999-17-9471:::S99913919:::X55105329X","35":"M","36":"M","37":"http://terminology.hl7.org/CodeSystem/v3-MaritalStatus","38":"Custom InteropX mapping rule — not present in source","39":"2026-09-29T01:27:02.704-04:00","40":"#nOZOegRefKiCm14q","41":"synthea-5-2019","42":"NA","43":"https://smarthealthit.org/tags","44":"1","45":"false","46":"Johnston:::Schinner","47":"Paola:::Paola","48":"Mrs.:::Mrs.","49":"official:::maiden","50":"phone","51":"home","52":"555-573-4647","53":"generated","_rn_":"1"},{"1":"Rowley","2":"US","3":"http://hl7.org/fhir/StructureDefinition/geolocation","4":"latitude:::longitude","5":"42.721495:::-70.886637","6":"900 Swaniawski Fort Apt 90","7":"01969","8":"Massachusetts","9":"2015-04-04","10":"en-US","11":"English","12":"urn:ietf:bcp:47","13":"English","14":"NA","15":"http://hl7.org/fhir/us/core/StructureDefinition/us-core-race:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity:::http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex:::http://hl7.org/fhir/StructureDefinition/patient-birthPlace:::http://synthetichealth.github.io/synthea/disability-adjusted-life-years:::http://synthetichealth.github.io/synthea/quality-adjusted-life-years","16":"ombCategory:::text:::ombCategory:::text","17":"2106-3:::2186-5","18":"White:::Not Hispanic or Latino","19":"urn:oid:2.16.840.1.113883.6.238:::urn:oid:2.16.840.1.113883.6.238","20":"White:::Not Hispanic or Latino","21":"Beverly","22":"US","23":"Massachusetts","24":"F","25":"0.02191897785735981:::4.97808102214264","26":"Katherine Schaefer","27":"female","28":"6daf3d7c-1620-4d79-9396-990469306470","29":"https://github.com/synthetichealth/synthea:::http://hospital.smarthealthit.org:::http://hl7.org/fhir/sid/us-ssn","30":"MR:::SS","31":"Medical Record Number:::Social Security Number","32":"http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203","33":"Medical Record Number:::Social Security Number","34":"e916a083-8ee6-4df8-acbe-b711fa791253:::e916a083-8ee6-4df8-acbe-b711fa791253:::999-55-7132","35":"S","36":"Never Married","37":"http://terminology.hl7.org/CodeSystem/v3-MaritalStatus","38":"Custom InteropX mapping rule — not present in source","39":"2026-09-29T01:27:02.927-04:00","40":"#alUkhx0AzSpHeCMc","41":"synthea-5-2019","42":"NA","43":"https://smarthealthit.org/tags","44":"1","45":"false","46":"Johns","47":"Daisey","48":"NA","49":"official","50":"phone","51":"home","52":"555-369-6249","53":"generated","_rn_":"2"},{"1":"Boston","2":"US","3":"http://hl7.org/fhir/StructureDefinition/geolocation","4":"latitude:::longitude","5":"42.338551:::-71.018253","6":"135 Kunze Landing Unit 76","7":"02108","8":"Massachusetts","9":"1975-10-12","10":"en-US","11":"English","12":"urn:ietf:bcp:47","13":"English","14":"NA","15":"http://hl7.org/fhir/us/core/StructureDefinition/us-core-race:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity:::http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex:::http://hl7.org/fhir/StructureDefinition/patient-birthPlace:::http://synthetichealth.github.io/synthea/disability-adjusted-life-years:::http://synthetichealth.github.io/synthea/quality-adjusted-life-years","16":"ombCategory:::text:::ombCategory:::text","17":"2028-9:::2186-5","18":"Asian:::Not Hispanic or Latino","19":"urn:oid:2.16.840.1.113883.6.238:::urn:oid:2.16.840.1.113883.6.238","20":"Asian:::Not Hispanic or Latino","21":"Boston","22":"US","23":"Massachusetts","24":"M","25":"1.032132558396036:::43.96786744160396","26":"Jutta Stark","27":"male","28":"2a3d4d46-512f-480f-8eb9-5a11ef3b2176","29":"https://github.com/synthetichealth/synthea:::http://hospital.smarthealthit.org:::http://hl7.org/fhir/sid/us-ssn:::urn:oid:2.16.840.1.113883.4.3.25:::http://standardhealthrecord.org/fhir/StructureDefinition/passportNumber","30":"MR:::SS:::DL:::PPN","31":"Medical Record Number:::Social Security Number:::Driver's License:::Passport Number","32":"http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203","33":"Medical Record Number:::Social Security Number:::Driver's License:::Passport Number","34":"f4673866-81fb-411a-8486-0c27f2a5b480:::f4673866-81fb-411a-8486-0c27f2a5b480:::999-38-5099:::S99949959:::X8357956X","35":"S","36":"S","37":"http://terminology.hl7.org/CodeSystem/v3-MaritalStatus","38":"Custom InteropX mapping rule — not present in source","39":"2026-09-29T01:27:03.167-04:00","40":"#q9xI01NGRQykH8dr","41":"synthea-5-2019","42":"NA","43":"https://smarthealthit.org/tags","44":"1","45":"false","46":"Johnston","47":"Chauncey","48":"Mr.","49":"official","50":"phone","51":"home","52":"555-486-6635","53":"generated","_rn_":"3"},{"1":"Sterling","2":"US","3":"http://hl7.org/fhir/StructureDefinition/geolocation","4":"latitude:::longitude","5":"42.447924:::-71.776045","6":"846 Spencer Park Unit 6","7":"01564","8":"Massachusetts","9":"1926-06-06","10":"en-US","11":"English","12":"urn:ietf:bcp:47","13":"English","14":"2006-12-18T18:38:58+00:00","15":"http://hl7.org/fhir/us/core/StructureDefinition/us-core-race:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity:::http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex:::http://hl7.org/fhir/StructureDefinition/patient-birthPlace:::http://synthetichealth.github.io/synthea/disability-adjusted-life-years:::http://synthetichealth.github.io/synthea/quality-adjusted-life-years","16":"ombCategory:::text:::ombCategory:::text","17":"2106-3:::2186-5","18":"White:::Not Hispanic or Latino","19":"urn:oid:2.16.840.1.113883.6.238:::urn:oid:2.16.840.1.113883.6.238","20":"White:::Not Hispanic or Latino","21":"Chelsea","22":"US","23":"Massachusetts","24":"F","25":"1.625088858752937:::78.37491114124707","26":"Fidela Carter","27":"female","28":"0c15e136-827d-4d70-a5b1-a63bf159b31c","29":"https://github.com/synthetichealth/synthea:::http://hospital.smarthealthit.org:::http://hl7.org/fhir/sid/us-ssn:::urn:oid:2.16.840.1.113883.4.3.25:::http://standardhealthrecord.org/fhir/StructureDefinition/passportNumber","30":"MR:::SS:::DL:::PPN","31":"Medical Record Number:::Social Security Number:::Driver's License:::Passport Number","32":"http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203","33":"Medical Record Number:::Social Security Number:::Driver's License:::Passport Number","34":"0f30cacb-3348-4baf-8946-cd2175a750b3:::0f30cacb-3348-4baf-8946-cd2175a750b3:::999-90-5099:::S99948652:::X74228791X","35":"M","36":"M","37":"http://terminology.hl7.org/CodeSystem/v3-MaritalStatus","38":"Custom InteropX mapping rule — not present in source","39":"2026-09-29T01:27:03.424-04:00","40":"#h8J83cNaK66DggoT","41":"synthea-5-2019","42":"NA","43":"https://smarthealthit.org/tags","44":"1","45":"false","46":"Johns:::Harber","47":"Loma:::Loma","48":"Mrs.:::Mrs.","49":"official:::maiden","50":"phone","51":"home","52":"555-630-7287","53":"generated","_rn_":"4"},{"1":"Lowell","2":"US","3":"http://hl7.org/fhir/StructureDefinition/geolocation","4":"latitude:::longitude","5":"42.63898:::-71.321141","6":"212 Dare Ville Unit 81","7":"01850","8":"Massachusetts","9":"1981-03-26","10":"pt","11":"Portuguese","12":"urn:ietf:bcp:47","13":"English","14":"NA","15":"http://hl7.org/fhir/us/core/StructureDefinition/us-core-race:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity:::http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex:::http://hl7.org/fhir/StructureDefinition/patient-birthPlace:::http://synthetichealth.github.io/synthea/disability-adjusted-life-years:::http://synthetichealth.github.io/synthea/quality-adjusted-life-years","16":"ombCategory:::text:::ombCategory:::text","17":"2106-3:::2186-5","18":"White:::Not Hispanic or Latino","19":"urn:oid:2.16.840.1.113883.6.238:::urn:oid:2.16.840.1.113883.6.238","20":"White:::Not Hispanic or Latino","21":"Braga","22":"PT","23":"Minho","24":"F","25":"0.07640514051261596:::38.92359485948739","26":"Cristal Rice","27":"female","28":"f8cb2d52-c53d-4585-8417-7a1cc1a74377","29":"https://github.com/synthetichealth/synthea:::http://hospital.smarthealthit.org:::http://hl7.org/fhir/sid/us-ssn:::urn:oid:2.16.840.1.113883.4.3.25:::http://standardhealthrecord.org/fhir/StructureDefinition/passportNumber","30":"MR:::SS:::DL:::PPN","31":"Medical Record Number:::Social Security Number:::Driver's License:::Passport Number","32":"http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203","33":"Medical Record Number:::Social Security Number:::Driver's License:::Passport Number","34":"7b5bea3e-de83-4c43-a89c-5078e923c3db:::7b5bea3e-de83-4c43-a89c-5078e923c3db:::999-42-8046:::S99996382:::X6379437X","35":"M","36":"M","37":"http://terminology.hl7.org/CodeSystem/v3-MaritalStatus","38":"Custom InteropX mapping rule — not present in source","39":"2026-09-29T01:27:03.661-04:00","40":"#RmIHf19qjiFvXJ3S","41":"synthea-5-2019","42":"NA","43":"https://smarthealthit.org/tags","44":"1","45":"false","46":"Schinner:::Johnston","47":"Courtney:::Courtney","48":"Mrs.:::Mrs.","49":"official:::maiden","50":"phone","51":"home","52":"555-290-3744","53":"generated","_rn_":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>It is easier to see the contents of this DataFrame by printing out its first row vertically:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df_patient[<span class="dv">1</span>, ] <span class="sc">%&gt;%</span> <span class="fu">t</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                         1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+address.city                             "Boston"                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+address.country                          "US"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+address.extension                        "http://hl7.org/fhir/StructureDefinition/geolocation"                                                                                                                                                                                                                                                                                                                                                                                                                                  
+address.extension.extension              "latitude:::longitude"                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+address.extension.extension.valueDecimal "42.33196:::-71.020173"                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+address.line                             "742 Howe Spur Apt 91"                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+address.postalCode                       "02108"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+address.state                            "Massachusetts"                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+birthDate                                "1924-12-30"                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+communication.language.coding.code       "en-US"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+communication.language.coding.display    "English"                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+communication.language.coding.system     "urn:ietf:bcp:47"                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+communication.language.text              "English"                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+deceasedDateTime                         "1962-02-22T02:28:09+00:00"                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+extension                                "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity:::http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName:::http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex:::http://hl7.org/fhir/StructureDefinition/patient-birthPlace:::http://synthetichealth.github.io/synthea/disability-adjusted-life-years:::http://synthetichealth.github.io/synthea/quality-adjusted-life-years"
+extension.extension                      "ombCategory:::text:::ombCategory:::text"                                                                                                                                                                                                                                                                                                                                                                                                                                              
+extension.extension.valueCoding.code     "2054-5:::2186-5"                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+extension.extension.valueCoding.display  "Black or African American:::Not Hispanic or Latino"                                                                                                                                                                                                                                                                                                                                                                                                                                   
+extension.extension.valueCoding.system   "urn:oid:2.16.840.1.113883.6.238:::urn:oid:2.16.840.1.113883.6.238"                                                                                                                                                                                                                                                                                                                                                                                                                    
+extension.extension.valueString          "Black or African American:::Not Hispanic or Latino"                                                                                                                                                                                                                                                                                                                                                                                                                                   
+extension.valueAddress.city              "Bourne"                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+extension.valueAddress.country           "US"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+extension.valueAddress.state             "Massachusetts"                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+extension.valueCode                      "F"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+extension.valueDecimal                   "0.1459321800696635:::35.85406781993034"                                                                                                                                                                                                                                                                                                                                                                                                                                               
+extension.valueString                    "Alana Blick"                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+gender                                   "female"                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+id                                       "ed6a17f3-deb2-4e7a-9548-5d15d2d47c05"                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+identifier.system                        "https://github.com/synthetichealth/synthea:::http://hospital.smarthealthit.org:::http://hl7.org/fhir/sid/us-ssn:::urn:oid:2.16.840.1.113883.4.3.25:::http://standardhealthrecord.org/fhir/StructureDefinition/passportNumber"                                                                                                                                                                                                                                                         
+identifier.type.coding.code              "MR:::SS:::DL:::PPN"                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+identifier.type.coding.display           "Medical Record Number:::Social Security Number:::Driver's License:::Passport Number"                                                                                                                                                                                                                                                                                                                                                                                                  
+identifier.type.coding.system            "http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203:::http://terminology.hl7.org/CodeSystem/v2-0203"                                                                                                                                                                                                                                                                                        
+identifier.type.text                     "Medical Record Number:::Social Security Number:::Driver's License:::Passport Number"                                                                                                                                                                                                                                                                                                                                                                                                  
+identifier.value                         "f06c0800-7e56-45e7-85eb-0047c2c5b4b1:::f06c0800-7e56-45e7-85eb-0047c2c5b4b1:::999-17-9471:::S99913919:::X55105329X"                                                                                                                                                                                                                                                                                                                                                                   
+maritalStatus.coding.code                "M"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+maritalStatus.coding.display             "M"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+maritalStatus.coding.system              "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus"                                                                                                                                                                                                                                                                                                                                                                                                                               
+maritalStatus.text                       "Custom InteropX mapping rule — not present in source"                                                                                                                                                                                                                                                                                                                                                                                                                                 
+meta.lastUpdated                         "2026-09-29T01:27:02.704-04:00"                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+meta.source                              "#nOZOegRefKiCm14q"                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+meta.tag.code                            "synthea-5-2019"                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+meta.tag.display                         NA                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+meta.tag.system                          "https://smarthealthit.org/tags"                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+meta.versionId                           "1"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+multipleBirthBoolean                     "false"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+name.family                              "Johnston:::Schinner"                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+name.given                               "Paola:::Paola"                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+name.prefix                              "Mrs.:::Mrs."                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+name.use                                 "official:::maiden"                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+telecom.system                           "phone"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+telecom.use                              "home"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+telecom.value                            "555-573-4647"                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+text.status                              "generated"                                                                                                                                                                                                                                                                                                                                                                                                                                                                            </code></pre>
+</div>
+</div>
+<p>If you look at the output above, you can see fhircrackr collapsed the hierarchical FHIR data structure into data frame columns, with multiple values delimited by <code>:::</code> by default. For example, <code>Patient.identifier</code> has multiple values that appear in the data frame as:</p>
+<table class="table">
+<colgroup>
+<col style="width: 36%">
+<col style="width: 63%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Column name</th>
+<th>Example Values</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>identifier.type.text</code></td>
+<td><code>Medical Record Number:::Social Security Number:::Driver's License:::Passport Number</code></td>
+</tr>
+<tr class="even">
+<td><code>identifier.value</code></td>
+<td><code>bf23e283-4791-46e1-9d79-9e0ad9edd436:::bf23e283-4791-46e1-9d79-9e0ad9edd436:::999-21-6325:::S99948444:::X30821805X</code></td>
+</tr>
+</tbody>
+</table>
+<p>Splitting up these values is <a href="#elements-with-multiple-sub-values">discussed below</a>.</p>
+</section>
+<section id="selecting-specific-columns" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="selecting-specific-columns"><span class="header-section-number">3</span> Selecting specific columns</h2>
+<p>Usually not every single value from a FHIR instance is needed for analysis. There are two ways to get a more concise data frame:</p>
+<ol type="1">
+<li>Use the approach above to load all elements into a data frame, remove the unneeded columns, and rename the remaining columns as needed.</li>
+<li>Use <a href="https://en.wikipedia.org/wiki/XPath">XPath</a> to select specific elements and map them onto column names.</li>
+</ol>
+<p>The second approach is typically more concise. For example, to generate a DataFrame like this…</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>id</th>
+<th>gender</th>
+<th>date_of_birth</th>
+<th>marital_status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>…you could use the following code:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>table_desc_patient <span class="ot">&lt;-</span> <span class="fu">fhir_table_description</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Patient"</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">id =</span> <span class="st">"id"</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">gender =</span> <span class="st">"gender"</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">date_of_birth =</span> <span class="st">"birthDate"</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Rather than having fhircrackr concatenate all `Patient.maritalStatus` values</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="co"># into one cell, you can select a specific value with XPath:</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">marital_status =</span> <span class="st">"maritalStatus/coding/code"</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>df_patient <span class="ot">&lt;-</span> <span class="fu">fhir_crack</span>(<span class="at">bundles =</span> patient_bundle, <span class="at">design =</span> table_desc_patient, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>df_patient <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["gender"],"name":[2],"type":["chr"],"align":["left"]},{"label":["date_of_birth"],"name":[3],"type":["chr"],"align":["left"]},{"label":["marital_status"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"ed6a17f3-deb2-4e7a-9548-5d15d2d47c05","2":"female","3":"1924-12-30","4":"M","_rn_":"1"},{"1":"6daf3d7c-1620-4d79-9396-990469306470","2":"female","3":"2015-04-04","4":"S","_rn_":"2"},{"1":"2a3d4d46-512f-480f-8eb9-5a11ef3b2176","2":"male","3":"1975-10-12","4":"S","_rn_":"3"},{"1":"0c15e136-827d-4d70-a5b1-a63bf159b31c","2":"female","3":"1926-06-06","4":"M","_rn_":"4"},{"1":"f8cb2d52-c53d-4585-8417-7a1cc1a74377","2":"female","3":"1981-03-26","4":"M","_rn_":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>While XPath expressions can be quite complex, their use in fhircrackr is often straightforward. Nested elements are separated with <code>/</code>, and elements with multiple sub-values are identified by <code>[N]</code> where <code>N</code> is an integer starting at 1.</p>
+<p>There are two approaches to identifying element paths to construct XPath expressions:</p>
+<ol type="1">
+<li><p>Look at the FHIR specification or the relevant <a href="../modules/data-modeling-reading-igs">FHIR Implementation Guide</a> to determine the paths of available data elements. For example, the <a href="https://www.hl7.org/fhir/patient.html">Patient page in the FHIR specification</a> describes the elements and their hierarchy for instances of Patient.</p></li>
+<li><p>Print out the raw data returned by the FHIR server. Fhircrackr uses XML-formatted data, and the following code will print out one of the instances of Patient requested above:</p></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>resource <span class="ot">&lt;-</span> xml2<span class="sc">::</span><span class="fu">xml_find_first</span>(<span class="at">x =</span> patient_bundle[[<span class="dv">1</span>]], <span class="at">xpath =</span> <span class="st">"./entry[1]/resource"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>xml2<span class="sc">::</span><span class="fu">xml_find_all</span>(resource, <span class="st">".//photo"</span>) <span class="sc">%&gt;%</span> xml2<span class="sc">::</span><span class="fu">xml_remove</span>() <span class="co"># Suppress the photo element - prints out a bunch of base64-encoded data that makes it hard to read the rest of the XML</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>resource <span class="sc">%&gt;%</span> <span class="fu">paste0</span>() <span class="sc">%&gt;%</span> <span class="fu">cat</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;resource&gt;
+  &lt;Patient&gt;
+    &lt;id value="ed6a17f3-deb2-4e7a-9548-5d15d2d47c05"/&gt;
+    &lt;meta&gt;
+      &lt;versionId value="1"/&gt;
+      &lt;lastUpdated value="2026-09-29T01:27:02.704-04:00"/&gt;
+      &lt;source value="#nOZOegRefKiCm14q"/&gt;
+      &lt;tag&gt;
+        &lt;system value="https://smarthealthit.org/tags"/&gt;
+        &lt;code value="synthea-5-2019"/&gt;
+      &lt;/tag&gt;
+    &lt;/meta&gt;
+    &lt;text&gt;
+      &lt;status value="generated"/&gt;
+    &lt;/text&gt;
+    &lt;extension url="http://hl7.org/fhir/us/core/StructureDefinition/us-core-race"&gt;
+      &lt;extension url="ombCategory"&gt;
+        &lt;valueCoding&gt;
+          &lt;system value="urn:oid:2.16.840.1.113883.6.238"/&gt;
+          &lt;code value="2054-5"/&gt;
+          &lt;display value="Black or African American"/&gt;
+        &lt;/valueCoding&gt;
+      &lt;/extension&gt;
+      &lt;extension url="text"&gt;
+        &lt;valueString value="Black or African American"/&gt;
+      &lt;/extension&gt;
+    &lt;/extension&gt;
+    &lt;extension url="http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity"&gt;
+      &lt;extension url="ombCategory"&gt;
+        &lt;valueCoding&gt;
+          &lt;system value="urn:oid:2.16.840.1.113883.6.238"/&gt;
+          &lt;code value="2186-5"/&gt;
+          &lt;display value="Not Hispanic or Latino"/&gt;
+        &lt;/valueCoding&gt;
+      &lt;/extension&gt;
+      &lt;extension url="text"&gt;
+        &lt;valueString value="Not Hispanic or Latino"/&gt;
+      &lt;/extension&gt;
+    &lt;/extension&gt;
+    &lt;extension url="http://hl7.org/fhir/StructureDefinition/patient-mothersMaidenName"&gt;
+      &lt;valueString value="Alana Blick"/&gt;
+    &lt;/extension&gt;
+    &lt;extension url="http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex"&gt;
+      &lt;valueCode value="F"/&gt;
+    &lt;/extension&gt;
+    &lt;extension url="http://hl7.org/fhir/StructureDefinition/patient-birthPlace"&gt;
+      &lt;valueAddress&gt;
+        &lt;city value="Bourne"/&gt;
+        &lt;state value="Massachusetts"/&gt;
+        &lt;country value="US"/&gt;
+      &lt;/valueAddress&gt;
+    &lt;/extension&gt;
+    &lt;extension url="http://synthetichealth.github.io/synthea/disability-adjusted-life-years"&gt;
+      &lt;valueDecimal value="0.1459321800696635"/&gt;
+    &lt;/extension&gt;
+    &lt;extension url="http://synthetichealth.github.io/synthea/quality-adjusted-life-years"&gt;
+      &lt;valueDecimal value="35.85406781993034"/&gt;
+    &lt;/extension&gt;
+    &lt;identifier&gt;
+      &lt;system value="https://github.com/synthetichealth/synthea"/&gt;
+      &lt;value value="f06c0800-7e56-45e7-85eb-0047c2c5b4b1"/&gt;
+    &lt;/identifier&gt;
+    &lt;identifier&gt;
+      &lt;type&gt;
+        &lt;coding&gt;
+          &lt;system value="http://terminology.hl7.org/CodeSystem/v2-0203"/&gt;
+          &lt;code value="MR"/&gt;
+          &lt;display value="Medical Record Number"/&gt;
+        &lt;/coding&gt;
+        &lt;text value="Medical Record Number"/&gt;
+      &lt;/type&gt;
+      &lt;system value="http://hospital.smarthealthit.org"/&gt;
+      &lt;value value="f06c0800-7e56-45e7-85eb-0047c2c5b4b1"/&gt;
+    &lt;/identifier&gt;
+    &lt;identifier&gt;
+      &lt;type&gt;
+        &lt;coding&gt;
+          &lt;system value="http://terminology.hl7.org/CodeSystem/v2-0203"/&gt;
+          &lt;code value="SS"/&gt;
+          &lt;display value="Social Security Number"/&gt;
+        &lt;/coding&gt;
+        &lt;text value="Social Security Number"/&gt;
+      &lt;/type&gt;
+      &lt;system value="http://hl7.org/fhir/sid/us-ssn"/&gt;
+      &lt;value value="999-17-9471"/&gt;
+    &lt;/identifier&gt;
+    &lt;identifier&gt;
+      &lt;type&gt;
+        &lt;coding&gt;
+          &lt;system value="http://terminology.hl7.org/CodeSystem/v2-0203"/&gt;
+          &lt;code value="DL"/&gt;
+          &lt;display value="Driver's License"/&gt;
+        &lt;/coding&gt;
+        &lt;text value="Driver's License"/&gt;
+      &lt;/type&gt;
+      &lt;system value="urn:oid:2.16.840.1.113883.4.3.25"/&gt;
+      &lt;value value="S99913919"/&gt;
+    &lt;/identifier&gt;
+    &lt;identifier&gt;
+      &lt;type&gt;
+        &lt;coding&gt;
+          &lt;system value="http://terminology.hl7.org/CodeSystem/v2-0203"/&gt;
+          &lt;code value="PPN"/&gt;
+          &lt;display value="Passport Number"/&gt;
+        &lt;/coding&gt;
+        &lt;text value="Passport Number"/&gt;
+      &lt;/type&gt;
+      &lt;system value="http://standardhealthrecord.org/fhir/StructureDefinition/passportNumber"/&gt;
+      &lt;value value="X55105329X"/&gt;
+    &lt;/identifier&gt;
+    &lt;name&gt;
+      &lt;use value="official"/&gt;
+      &lt;family value="Johnston"/&gt;
+      &lt;given value="Paola"/&gt;
+      &lt;prefix value="Mrs."/&gt;
+    &lt;/name&gt;
+    &lt;name&gt;
+      &lt;use value="maiden"/&gt;
+      &lt;family value="Schinner"/&gt;
+      &lt;given value="Paola"/&gt;
+      &lt;prefix value="Mrs."/&gt;
+    &lt;/name&gt;
+    &lt;telecom&gt;
+      &lt;system value="phone"/&gt;
+      &lt;value value="555-573-4647"/&gt;
+      &lt;use value="home"/&gt;
+    &lt;/telecom&gt;
+    &lt;gender value="female"/&gt;
+    &lt;birthDate value="1924-12-30"/&gt;
+    &lt;deceasedDateTime value="1962-02-22T02:28:09+00:00"/&gt;
+    &lt;address&gt;
+      &lt;extension url="http://hl7.org/fhir/StructureDefinition/geolocation"&gt;
+        &lt;extension url="latitude"&gt;
+          &lt;valueDecimal value="42.33196"/&gt;
+        &lt;/extension&gt;
+        &lt;extension url="longitude"&gt;
+          &lt;valueDecimal value="-71.020173"/&gt;
+        &lt;/extension&gt;
+      &lt;/extension&gt;
+      &lt;line value="742 Howe Spur Apt 91"/&gt;
+      &lt;city value="Boston"/&gt;
+      &lt;state value="Massachusetts"/&gt;
+      &lt;postalCode value="02108"/&gt;
+      &lt;country value="US"/&gt;
+    &lt;/address&gt;
+    &lt;maritalStatus&gt;
+      &lt;coding&gt;
+        &lt;system value="http://terminology.hl7.org/CodeSystem/v3-MaritalStatus"/&gt;
+        &lt;code value="M"/&gt;
+        &lt;display value="M"/&gt;
+      &lt;/coding&gt;
+      &lt;text value="Custom InteropX mapping rule — not present in source"/&gt;
+    &lt;/maritalStatus&gt;
+    &lt;multipleBirthBoolean value="false"/&gt;
+    &lt;communication&gt;
+      &lt;language&gt;
+        &lt;coding&gt;
+          &lt;system value="urn:ietf:bcp:47"/&gt;
+          &lt;code value="en-US"/&gt;
+          &lt;display value="English"/&gt;
+        &lt;/coding&gt;
+        &lt;text value="English"/&gt;
+      &lt;/language&gt;
+    &lt;/communication&gt;
+  &lt;/Patient&gt;
+&lt;/resource&gt;</code></pre>
+</div>
+</div>
+<p>In some cases, you may need to construct more complex expressions like the one to extract <code>marital_status</code> from <code>Patient.maritalStatus.coding.code</code>. You can use a tool like <a href="https://extendsclass.com/xpath-tester.html">this XPath tester</a> to help generate XPath expressions, though online tools such as these should not be used with real patient data. For more information on XPath, see <a href="https://www.w3schools.com/xml/xpath_intro.asp">this guide</a>.</p>
+</section>
+<section id="elements-with-multiple-sub-values" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="elements-with-multiple-sub-values"><span class="header-section-number">4</span> Elements with multiple sub-values</h2>
+<p>There are multiple <code>identifier[N].value</code> values for each instance of Patient in this dataset. By default, fhircrackr will concatenate these into a single cell per row, delimited with <code>:::</code> (this is configurable; use <code>fhir_table_description(..., sep = ' | ', ...)</code> to delimit with <code>|</code> instead).</p>
+<p>Fhircrackr provides some tools to split up multiple values stored in the same cell into separate rows in a “long” data frame:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>table_desc_patient <span class="ot">&lt;-</span> <span class="fu">fhir_table_description</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Patient"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Prefix values in cells with indices to facilitate handling cells that contain</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># multiple values</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">brackets =</span> <span class="fu">c</span>(<span class="st">"["</span>, <span class="st">"]"</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>df_patient_indexed <span class="ot">&lt;-</span> <span class="fu">fhir_crack</span>(<span class="at">bundles =</span> patient_bundle, <span class="at">design =</span> table_desc_patient, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>df_patient_identifiers <span class="ot">&lt;-</span> <span class="fu">fhir_melt</span>(</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">indexed_data_frame =</span> df_patient_indexed,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"identifier.type.text"</span>, <span class="st">"identifier.value"</span>),</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">brackets =</span> <span class="fu">c</span>(<span class="st">"["</span>, <span class="st">"]"</span>),</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">":::"</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">all_columns =</span> <span class="cn">FALSE</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>df_patient_identifiers <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["resource_identifier"],"name":[1],"type":["int"],"align":["right"]},{"label":["identifier.type.text"],"name":[2],"type":["chr"],"align":["left"]},{"label":["identifier.value"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"NA","3":"[1]f06c0800-7e56-45e7-85eb-0047c2c5b4b1","_rn_":"1"},{"1":"1","2":"[1.1]Medical Record Number","3":"[1]f06c0800-7e56-45e7-85eb-0047c2c5b4b1","_rn_":"2"},{"1":"1","2":"[1.1]Social Security Number","3":"[1]999-17-9471","_rn_":"3"},{"1":"1","2":"[1.1]Driver's License","3":"[1]S99913919","_rn_":"4"},{"1":"1","2":"[1.1]Passport Number","3":"[1]X55105329X","_rn_":"5"},{"1":"2","2":"NA","3":"[1]e916a083-8ee6-4df8-acbe-b711fa791253","_rn_":"6"},{"1":"2","2":"[1.1]Medical Record Number","3":"[1]e916a083-8ee6-4df8-acbe-b711fa791253","_rn_":"7"},{"1":"2","2":"[1.1]Social Security Number","3":"[1]999-55-7132","_rn_":"8"},{"1":"3","2":"NA","3":"[1]f4673866-81fb-411a-8486-0c27f2a5b480","_rn_":"9"},{"1":"3","2":"[1.1]Medical Record Number","3":"[1]f4673866-81fb-411a-8486-0c27f2a5b480","_rn_":"10"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>The <code>df_patient_identifiers</code> data frame printed above has one row for each value of <code>Patient.identifier</code> for each instance of Patient. The in-cell indices (surrounded by <code>[ ]</code>) can be removed:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df_patient_identifiers <span class="ot">&lt;-</span> <span class="fu">fhir_rm_indices</span>(<span class="at">indexed_data_frame =</span> df_patient_identifiers, <span class="at">brackets =</span> <span class="fu">c</span>(<span class="st">"["</span>, <span class="st">"]"</span>))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df_patient_identifiers <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["resource_identifier"],"name":[1],"type":["chr"],"align":["left"]},{"label":["identifier.type.text"],"name":[2],"type":["chr"],"align":["left"]},{"label":["identifier.value"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"NA","3":"f06c0800-7e56-45e7-85eb-0047c2c5b4b1","_rn_":"1"},{"1":"1","2":"Medical Record Number","3":"f06c0800-7e56-45e7-85eb-0047c2c5b4b1","_rn_":"2"},{"1":"1","2":"Social Security Number","3":"999-17-9471","_rn_":"3"},{"1":"1","2":"Driver's License","3":"S99913919","_rn_":"4"},{"1":"1","2":"Passport Number","3":"X55105329X","_rn_":"5"},{"1":"2","2":"NA","3":"e916a083-8ee6-4df8-acbe-b711fa791253","_rn_":"6"},{"1":"2","2":"Medical Record Number","3":"e916a083-8ee6-4df8-acbe-b711fa791253","_rn_":"7"},{"1":"2","2":"Social Security Number","3":"999-55-7132","_rn_":"8"},{"1":"3","2":"NA","3":"f4673866-81fb-411a-8486-0c27f2a5b480","_rn_":"9"},{"1":"3","2":"Medical Record Number","3":"f4673866-81fb-411a-8486-0c27f2a5b480","_rn_":"10"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>These can then be merged back into the original data frame as needed. For example, if you want to include the synthetic “Social Security Number” in the original data:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df_patient <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add in row numbers for joining</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">row_number =</span> <span class="fu">row_number</span>()</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        df_patient_identifiers <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Note: this assumes there is just one social security number for each patient in the data.</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If this was not true, it would be necessary to remove extra data before joining so there</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>            <span class="co"># was one row per patient.</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(<span class="st">`</span><span class="at">identifier.type.text</span><span class="st">`</span> <span class="sc">==</span> <span class="st">"Social Security Number"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rename</span>(</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>                <span class="st">"ssn"</span> <span class="ot">=</span> <span class="st">"identifier.value"</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>            ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Exclude the `identifier.type.text` column so it doesn't appear in the joined data frame</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>            <span class="fu">select</span>(resource_identifier, ssn) <span class="sc">%&gt;%</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Fhircrackr generates the `resource_identifier` column as a string, but it needs to be</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>            <span class="co"># an integer for joining.</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>            <span class="fu">mutate</span>(<span class="at">resource_identifier =</span> <span class="fu">as.integer</span>(resource_identifier)),</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"row_number"</span> <span class="ot">=</span> <span class="st">"resource_identifier"</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["id"],"name":[1],"type":["chr"],"align":["left"]},{"label":["gender"],"name":[2],"type":["chr"],"align":["left"]},{"label":["date_of_birth"],"name":[3],"type":["chr"],"align":["left"]},{"label":["marital_status"],"name":[4],"type":["chr"],"align":["left"]},{"label":["row_number"],"name":[5],"type":["int"],"align":["right"]},{"label":["ssn"],"name":[6],"type":["chr"],"align":["left"]}],"data":[{"1":"ed6a17f3-deb2-4e7a-9548-5d15d2d47c05","2":"female","3":"1924-12-30","4":"M","5":"1","6":"999-17-9471","_rn_":"1"},{"1":"6daf3d7c-1620-4d79-9396-990469306470","2":"female","3":"2015-04-04","4":"S","5":"2","6":"999-55-7132","_rn_":"2"},{"1":"2a3d4d46-512f-480f-8eb9-5a11ef3b2176","2":"male","3":"1975-10-12","4":"S","5":"3","6":"999-38-5099","_rn_":"3"},{"1":"0c15e136-827d-4d70-a5b1-a63bf159b31c","2":"female","3":"1926-06-06","4":"M","5":"4","6":"999-90-5099","_rn_":"4"},{"1":"f8cb2d52-c53d-4585-8417-7a1cc1a74377","2":"female","3":"1981-03-26","4":"M","5":"5","6":"999-42-8046","_rn_":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p>You can see that the synthetic SSNs are now split out into a separate column.</p>
+</section>
+<section id="retrieving-related-data" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="retrieving-related-data"><span class="header-section-number">5</span> Retrieving related data</h2>
+<p>To retrieve instances of related resources, additional <code>request_params</code> can be added. See <a href="../modules/fhir-accessing-data.html#multiple-types-of-resources">Using the FHIR API to Access Data</a> for more information on constructing the parameters for FHIR search interactions.</p>
+<p>In the example below, instances of Patient and instances of related Observation resources are requested:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>request <span class="ot">&lt;-</span> <span class="fu">fhir_url</span>(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">url =</span> <span class="st">"https://hapi.fhir.org/baseR4"</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Patient"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">parameters =</span> <span class="fu">c</span>(</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"identifier"</span> <span class="ot">=</span> <span class="st">"https://github.com/synthetichealth/synthea|"</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"_revinclude"</span> <span class="ot">=</span> <span class="st">"Observation:patient"</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"_count"</span> <span class="ot">=</span> <span class="st">"10"</span> <span class="co"># Limit the number of patients returned to 10</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>response <span class="ot">&lt;-</span> <span class="fu">fhir_search</span>(<span class="at">request =</span> request, <span class="at">max_bundles =</span> <span class="dv">1</span>, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>table_desc_patient <span class="ot">&lt;-</span> <span class="fu">fhir_table_description</span>(</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Patient"</span>,</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">id =</span> <span class="st">"id"</span>,</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">gender =</span> <span class="st">"gender"</span>,</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">date_of_birth =</span> <span class="st">"birthDate"</span>,</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">marital_status =</span> <span class="st">"maritalStatus/coding/code"</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>df_patient <span class="ot">&lt;-</span> <span class="fu">fhir_crack</span>(<span class="at">bundles =</span> patient_bundle, <span class="at">design =</span> table_desc_patient, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>table_desc_observation <span class="ot">&lt;-</span> <span class="fu">fhir_table_description</span>(</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Observation"</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>df_observation <span class="ot">&lt;-</span> <span class="fu">fhir_crack</span>(<span class="at">bundles =</span> response, <span class="at">design =</span> table_desc_observation, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>df_observation <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 628
+Columns: 33
+$ category.coding.code                &lt;chr&gt; "laboratory", "vital-signs", "labo…
+$ category.coding.display             &lt;chr&gt; "laboratory", "vital-signs", "labo…
+$ category.coding.system              &lt;chr&gt; "http://terminology.hl7.org/CodeSy…
+$ code.coding.code                    &lt;chr&gt; "1742-6", "55284-4", "6299-2", "10…
+$ code.coding.display                 &lt;chr&gt; "Alanine aminotransferase [Enzymat…
+$ code.coding.system                  &lt;chr&gt; "http://loinc.org", "http://loinc.…
+$ code.text                           &lt;chr&gt; "Alanine aminotransferase [Enzymat…
+$ component.code.coding.code          &lt;chr&gt; NA, "8462-4:::8480-6", NA, NA, NA,…
+$ component.code.coding.display       &lt;chr&gt; NA, "Diastolic Blood Pressure:::Sy…
+$ component.code.coding.system        &lt;chr&gt; NA, "http://loinc.org:::http://loi…
+$ component.code.text                 &lt;chr&gt; NA, "Diastolic Blood Pressure:::Sy…
+$ component.valueQuantity.code        &lt;chr&gt; NA, "mm[Hg]:::mm[Hg]", NA, NA, NA,…
+$ component.valueQuantity.system      &lt;chr&gt; NA, "http://unitsofmeasure.org:::h…
+$ component.valueQuantity.unit        &lt;chr&gt; NA, "mm[Hg]:::mm[Hg]", NA, NA, NA,…
+$ component.valueQuantity.value       &lt;chr&gt; NA, "87.51685535476311:::128.66143…
+$ effectiveDateTime                   &lt;chr&gt; "2004-12-03T16:41:21+00:00", "2001…
+$ id                                  &lt;chr&gt; "295d5eed-7ca8-42bc-a252-f851eb177…
+$ issued                              &lt;chr&gt; "2004-12-03T16:41:21.338+00:00", "…
+$ meta.lastUpdated                    &lt;chr&gt; "2026-09-29T01:55:59.564-04:00", "…
+$ meta.source                         &lt;chr&gt; "#I6y80EG3zyZi0P1A", "#VxcDsCHmngi…
+$ meta.tag.code                       &lt;chr&gt; "synthea-5-2019", "synthea-5-2019"…
+$ meta.tag.system                     &lt;chr&gt; "https://smarthealthit.org/tags", …
+$ meta.versionId                      &lt;chr&gt; "1", "1", "1", "1", "1", "1", "1",…
+$ status                              &lt;chr&gt; "final", "final", "final", "final"…
+$ subject.reference                   &lt;chr&gt; "Patient/91febabe-8992-49e1-8288-e…
+$ valueCodeableConcept.coding.code    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ valueCodeableConcept.coding.display &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ valueCodeableConcept.coding.system  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ valueCodeableConcept.text           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ valueQuantity.code                  &lt;chr&gt; "U/L", NA, "mg/dL", "g/L", "U/L", …
+$ valueQuantity.system                &lt;chr&gt; "http://unitsofmeasure.org", NA, "…
+$ valueQuantity.unit                  &lt;chr&gt; "U/L", NA, "mg/dL", "g/L", "U/L", …
+$ valueQuantity.value                 &lt;chr&gt; "47.03233563012341", NA, "19.40361…</code></pre>
+</div>
+</div>
+<p>This includes many different kinds of observations. The <code>Observation.code</code> element identifies the type of Observation. In this case, <code>http://loinc.org|72166-2</code> is the LOINC for smoking status. To get smoking status records identified by this LOINC:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>request <span class="ot">&lt;-</span> <span class="fu">fhir_url</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">url =</span> <span class="st">"https://hapi.fhir.org/baseR4"</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Observation"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">parameters =</span> <span class="fu">c</span>(</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"identifier"</span> <span class="ot">=</span> <span class="st">"https://github.com/synthetichealth/synthea|"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"_include"</span> <span class="ot">=</span> <span class="st">"Observation:patient"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"code"</span> <span class="ot">=</span> <span class="st">"http://loinc.org|72166-2"</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co"># `max_bundles = 1` limits the responses to a subset of Observations for the purposes of</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># this example -- this argument can be removed to get all relevant Observations/Patients (but</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co"># the query takes longer to run)</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>response <span class="ot">&lt;-</span> <span class="fu">fhir_search</span>(<span class="at">request =</span> request, <span class="at">max_bundles =</span> <span class="dv">1</span>, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>table_desc_patient <span class="ot">&lt;-</span> <span class="fu">fhir_table_description</span>(</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Patient"</span>,</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">c</span>(</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">id =</span> <span class="st">"id"</span>,</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">gender =</span> <span class="st">"gender"</span>,</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">date_of_birth =</span> <span class="st">"birthDate"</span>,</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">marital_status =</span> <span class="st">"maritalStatus/coding/code"</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>df_patient <span class="ot">&lt;-</span> <span class="fu">fhir_crack</span>(<span class="at">bundles =</span> patient_bundle, <span class="at">design =</span> table_desc_patient, <span class="at">verbose =</span> <span class="dv">0</span>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>table_desc_observation <span class="ot">&lt;-</span> <span class="fu">fhir_table_description</span>(</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">resource =</span> <span class="st">"Observation"</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>df_observation <span class="ot">&lt;-</span> <span class="fu">fhir_crack</span>(<span class="at">bundles =</span> response, <span class="at">design =</span> table_desc_observation, <span class="at">verbose =</span> <span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in crack_bundles_to_one_table(bundles = bundles, table_description = design, : The resource type you are looking for (Observation) doesn't seem to be present in the bundles.
+ Returning an empty table.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df_observation <span class="sc">%&gt;%</span> <span class="fu">glimpse</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 0
+Columns: 0</code></pre>
+</div>
+</div>
+<p>The <code>df_observation</code> data frame contains just smoking status Observations. The <code>df_patient</code> data frame contains the Patients referenced by the Observations in <code>df_observation</code>.</p>
+<p>More information about the <a href="../modules/fhir-accessing-data.html#getting-all-patients-that-meet-specified-criteria"><code>search</code> interaction used above to filter Observations is here</a>.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<!-- scripts.html -->
+<!-- any content in this file is inserted right before </body> -->
+
+<!-- Append index.html to any links ending with '/'
+
+Example:
+
+<a href="https://example.org/workshops/bulk-data/">
+
+will turn into:
+
+<a href="https://example.org/workshops/bulk-data/index.html">
+
+This ensures consistent behavior across different deployment platforms
+and enables other scripts like role-based module highlighting.
+-->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("a[href]").forEach(link => {
+      if( link.getAttribute("href").endsWith("/") ) {
+        link.setAttribute("href", link.getAttribute("href") + "index.html");
+      }
+    })
+  });
+</script>
+
+<!-- Fix a11y issues with side menu -->
+<script>
+const elements = document.querySelectorAll('.sidebar-menu-container a.sidebar-item-text[data-bs-toggle="collapse"], .sidebar-menu-container a.sidebar-item-toggle[data-bs-toggle="collapse"]')
+
+elements.forEach(element => {
+    element.setAttribute('role', 'group');
+});
+</script>
+
+<!-- Role-based Module Highlighting
+
+For any *.qmd file with roles defined in frontmatter,
+running script/update-module-role-map will generate
+modules/mappings.js. Then any markup with class .highlight-by-role, i.e:
+
+:::{.highlight-by-role}
+ - [mod1](/mod1)
+ - [mod2](/mod2)
+ - [mod3](/mod3)
+:::
+
+will highlight the links in the list assigned to the users roles.
+
+The user can select a role by pressing a button with data-role=*
+attribute. The possible roles are:
+
+Possible Roles:
+  investigator
+  research-leader
+  informaticist
+  software-engineer
+  clinician-scientist
+-->
+<script>
+const all_modules = document.querySelectorAll(".highlight-by-role ul li");
+
+function slugify(str) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/* highlights modules corresponding to role via role_module_map
+ * @param: role_name - role name in lower kebab case
+ */
+function select_modules(role_name) {
+    // Remove existing highlights
+    document.querySelectorAll('mark[data-role]').forEach(mark => {
+      mark.replaceWith(...mark.childNodes);
+    });
+
+    // What modules should be highlighted based on the selected role?
+    var highlighted_module_slugs = role_module_map.filter(x => x.role === role_name).map(x => x.modules)[0].map(x => x.slug);
+
+    // Add in highlights of the currently selected role, just in the containers where
+    // there should be highlights.
+    [
+        '.sidebar-menu-container', // On module pages (left sidebar)
+        '.highlight-by-role' // On section pages (list of modules)
+    ].forEach((container_css_path) => {
+        document.querySelectorAll(container_css_path).forEach(container => {
+            highlighted_module_slugs.forEach((slug) => {
+                container.querySelectorAll(`li a[href*="${slug}"]`).forEach((ahref) => {
+                    var li = ahref.parentNode;
+                    var mark = document.createElement("mark");
+                    mark.dataset.role = role_name;
+                    li.appendChild(mark);
+                    mark.appendChild(ahref);
+                });
+            });
+        });
+    });
+
+    // For module pages, highlight the currently active role
+    document.querySelectorAll(".role-tags .role-tag").forEach((el) => {
+        if (slugify(el.textContent.trim()) === role_name) {
+          el.style.fontWeight = "bold";
+        }
+      });
+}
+
+
+// clears previously selected roles, highlights the selected role, and sets "role" in local storage
+function select_role(role) {
+    store.setItem("role", role);
+    document.querySelector(`.roles-select-list input[data-role="${role}"]`).checked = true;
+}
+
+// trigger role selection on clicking <input data-role=...>
+document.querySelectorAll(".roles-select-list input[data-role]").forEach((role_link) => {
+    role_link.addEventListener("click", (e) => {
+        const role = e.target.dataset.role;
+        select_role(role);
+        select_modules(role);
+    });
+});
+
+// set default role and execute select_role and select_modules once to make sure feature is working
+window.addEventListener("load", () => {
+  const role = store.getItem("role") || "research-leader";
+  select_role(role);
+  select_modules(role);
+});
+</script>
+
+<!-- Navigation Override
+
+Overwrite Quarto's Next/Previous buttons to point to modules
+for the user's role
+-->
+<script>
+// Below function is usable by CC BY-SA 3.0 from https://stackoverflow.com/a/6475125
+String.prototype.toTitleCase = function() {
+  let i, j, str, lowers, uppers;
+  str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+
+  // Certain minor words should be left lowercase unless 
+  // they are the first or last words in the string
+  lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At', 
+  'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'Onto', 'To', 'With'];
+  for (i = 0, j = lowers.length; i < j; i++)
+    str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'), 
+      function(txt) {
+        return txt.toLowerCase();
+      });
+
+  // Certain words such as initialisms or acronyms should be left uppercase
+  uppers = ['ID', 'TV', 'FHIR'];
+  for (i = 0, j = uppers.length; i < j; i++)
+    str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'), 
+      uppers[i].toUpperCase());
+
+  return str;
+}
+
+// Custom Hack to overwrite Quarto's built in navigators
+document.addEventListener("DOMContentLoaded", function() {
+    // Get current module and role
+    const current_module_slug = window.location.pathname.split('.')[0].trim(1).split('/').slice(1).join('/');
+    const role = store.getItem("role");
+
+    function slug_to_url(slug) {
+       return `${window.location.origin}/${slug}.html`
+    }
+
+    // Get next and prev modules data
+    let prev_href, prev_text;
+    let next_href, next_text;
+
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == role ) {
+            for(let i=0; i<mapping.modules.length; i++) {
+                if( mapping.modules[i].slug == current_module_slug ) {
+
+                    prev_href = (i > 0) ? slug_to_url(mapping.modules[i-1].slug) : null;
+                    prev_text = (i > 0) ? mapping.modules[i-1].text : null;
+
+                    next_href = (i+1 < mapping.modules.length) ? slug_to_url(mapping.modules[i+1].slug) : null;
+                    next_text = (i+1 < mapping.modules.length) ? mapping.modules[i+1].text : null;
+                }
+            }
+        }
+    });
+
+
+    // Overwrite prev link
+    if( prev_href ) {
+        const prev_link_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link");
+        const prev_text_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link .nav-page-text");
+        if( prev_link_elmt ) {
+
+            prev_link_elmt.href = prev_href
+            prev_text_elmt.innerText = prev_text;
+        }
+    }
+
+    // Overwrite next link
+    if( next_href ) {
+        const next_link_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link");
+        const next_text_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link .nav-page-text");
+
+        if( next_link_elmt ) {
+            next_link_elmt.href = next_href;
+            next_text_elmt.innerText = next_text;
+        }
+    }
+
+    // if document has #key-points then move pagination to next after it
+    key_points = document.querySelector("#key-points");
+    if( key_points ) {
+        let page_nav = document.querySelector("nav.page-navigation");
+        key_points.insertAdjacentElement("afterend", page_nav);
+    }
+
+});
+
+
+// Override style of Quarto page navigation (prev/next buttons)
+document.addEventListener("DOMContentLoaded", function() {
+
+    const page_navigators = document.querySelectorAll(".pagination-link");
+    page_navigators.forEach((node) => {
+
+        node.classList.add("btn", "btn-outline-custom", "rounded");
+        node.parentNode.classList.remove("nav-page");
+        node.parentNode.parentNode.style.gridRow = "initial";
+    });
+});
+
+// Set external links to open in a new tab
+document.addEventListener("DOMContentLoaded", function() {
+    var all_links = document.querySelectorAll('a');
+    for (var i = 0; i < all_links.length; i++){
+        var a = all_links[i];
+        if(a.hostname != location.hostname) {
+                a.target = '_blank';
+        }
+    }
+})
+
+</script>
+
+<!-- Lightbox 
+
+Intercept all instances of:
+
+:::{#id .mermaid-lightbox data-caption='my caption'}
+```{mermaid}
+mermaid markdown content...
+```
+:::
+
+and overwrite it with a popup lightbox for easy viewing of diagram.
+Powered by GLightbox: https://github.com/biati-digital/glightbox
+-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.1/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox@3.3.1/dist/js/glightbox.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const mermaidElements = document.querySelectorAll('.mermaid-lightbox');
+
+    mermaidElements.forEach(element => {
+      const id = element.id;
+      const caption = element.getAttribute('data-caption');
+
+      const lightboxFigure = document.createElement('a');
+      lightboxFigure.setAttribute('href', '#' + id);
+      lightboxFigure.className = 'glightbox';
+      lightboxFigure.setAttribute('data-description', caption);
+      lightboxFigure.setAttribute('data-width', "90%");
+      lightboxFigure.setAttribute('data-height', "90%");
+
+      const clonedElement = element.cloneNode(true);
+      lightboxFigure.appendChild(clonedElement);
+
+      const figcaption = document.createElement('figcaption');
+      figcaption.textContent = 'Click diagram to enlarge';
+      lightboxFigure.appendChild(figcaption);
+
+      element.parentNode.replaceChild(lightboxFigure, element);
+    });
+
+    // Initialize GLightbox
+    const lightbox = GLightbox({
+        selector: '.glightbox'
+    });
+  })
+</script>
+
+<!-- This script dynamically updates the copyright year in the footer -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get the current year
+    var currentYear = new Date().getFullYear();
+    
+    // Find the span element where we'll put the year
+    var span = document.getElementById('current-year');
+    
+    if (span) {
+        // If the span exists, update its content with the current year
+        span.textContent = currentYear;
+    }
+    });
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/NIH-ODSS\.github\.io\/fhir-for-research");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/?tab=readme-ov-file#license">License information</a><br>Approved for Public Release / Case #25-3098<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-05-18">
+
+<title>Clinical Quality Language Technical Example – FHIR® for Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../modules/redcap-intro.html" rel="next">
+<link href="../modules/clinical-quality-language-intro.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-3419ea62b3ca2d77d3d547f86109e84e.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-eaeb381c6b7494c50009502241a4985c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-3419ea62b3ca2d77d3d547f86109e84e.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-d2eff2971ac11dd4c5513f83aa01cfbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-afbc55a518647465356dacfcb2acb7a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-d2eff2971ac11dd4c5513f83aa01cfbc.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<!-- head.html -->
+<!-- any content in this file is inserted into <head></head> -->
+
+<script src="../modules/mappings.js"></script>
+
+<script>
+// test if local storage is available and inititilize global variable store, code adapted from:
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+function initLocalStorage() {
+  let storage;
+  try {
+    storage = window["localStorage"];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return storage;
+  } catch (e) {
+    console.log("Error: local storage unavailable.");
+    return (
+      e instanceof DOMException &&
+      // everything except Firefox
+      (e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === "QuotaExceededError" ||
+        // Firefox
+        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage &&
+          storage.length !== 0
+    );
+  }
+}
+
+var store = initLocalStorage();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Yantramanav:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Clinical Quality Language Technical Example – FHIR® for Research">
+<meta property="og:description" content="">
+<meta property="og:site_name" content="FHIR® for Research">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="..">
+    <span class="navbar-title">FHIR® for Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/introduction"> 
+<span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../sections/technologies" aria-current="page"> 
+<span class="menu-text">Technologies</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hands-on-practice"> 
+<span class="menu-text">Hands-on <span class="collapse-lg-xl">Practice</span></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hosting-your-own-workshop"> 
+<span class="menu-text">Hosting Your Own Workshop</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../contribute"> <i class="bi bi-question-circle-fill" role="img">
+</i> 
+<span class="menu-text"><span class="collapse-lg-xl">Questions &amp; Contributions</span></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/NIH-ODSS/fhir-for-research"> <i class="bi bi-github" role="img" aria-label="View the GitHub repository for this site">
+</i> 
+<span class="menu-text"><span class="collapse-sm">View on GitHub</span></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../modules/clinical-quality-language-intro">Clinical Quality Language</a></li><li class="breadcrumb-item"><a href="../modules/clinical-quality-language-example">Technical Example</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sections/technologies" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technologies</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">FHIR Implementation Guides</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/data-modeling-what-is-fhir-ig" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">What is a FHIR IG?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/data-modeling-reading-igs" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reading IGs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/data-modeling-real-world-igs" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Real World IGs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/data-modeling-writing-igs" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Writing IGs</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">SMART on FHIR</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/smart-on-fhir-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/smart-on-fhir-tech" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Details</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">CDS Hooks</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cds-hooks-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cds-hooks-types" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Types of CDS Hooks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cds-hooks-tech" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Clinical Quality Language</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/clinical-quality-language-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/clinical-quality-language-example" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Technical Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">REDCap</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/redcap-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/redcap-fhir" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">REDCap on FHIR</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Synthea</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-overview" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Synthea Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-running" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Synthea</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-customizing" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Customizing Synthea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Bulk Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/bulk-fhir-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bulk Data Access</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/bulk-fhir-tech" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Example</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../webinars/bulk-data" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Webinar</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Emerging Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/fhir-emerging-innovations" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Emerging Use Cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/fhir-research" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Real World Research</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/genomics" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Genomics Data Standardization</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Common Data Elements (CDEs)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-introduction" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-harmonization" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Harmonization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-fhir" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CDEs &amp; FHIR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-implementation-examples" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Implementation Examples</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-vulcan-accelerator" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">HL7 Vulcan Accelerator</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#example-overview-elevated-a1c" id="toc-example-overview-elevated-a1c" class="nav-link active" data-scroll-target="#example-overview-elevated-a1c"><span class="header-section-number">1</span> Example Overview: Elevated A1C</a></li>
+  <li><a href="#knowledge-level-1-narrative" id="toc-knowledge-level-1-narrative" class="nav-link" data-scroll-target="#knowledge-level-1-narrative"><span class="header-section-number">2</span> Knowledge Level 1: Narrative</a></li>
+  <li><a href="#knowledge-level-2-semi-structured" id="toc-knowledge-level-2-semi-structured" class="nav-link" data-scroll-target="#knowledge-level-2-semi-structured"><span class="header-section-number">3</span> Knowledge Level 2: Semi-Structured</a></li>
+  <li><a href="#knowledge-level-3-structured" id="toc-knowledge-level-3-structured" class="nav-link" data-scroll-target="#knowledge-level-3-structured"><span class="header-section-number">4</span> Knowledge Level 3: Structured</a>
+  <ul class="collapse">
+  <li><a href="#library-and-data-model-declarations" id="toc-library-and-data-model-declarations" class="nav-link" data-scroll-target="#library-and-data-model-declarations"><span class="header-section-number">4.1</span> Library and Data Model Declarations</a></li>
+  <li><a href="#terminology-outpatient-encounters-and-hba1c-lab-tests" id="toc-terminology-outpatient-encounters-and-hba1c-lab-tests" class="nav-link" data-scroll-target="#terminology-outpatient-encounters-and-hba1c-lab-tests"><span class="header-section-number">4.2</span> Terminology: Outpatient Encounters and HbA1c Lab Tests</a></li>
+  <li><a href="#parameters-study-period" id="toc-parameters-study-period" class="nav-link" data-scroll-target="#parameters-study-period"><span class="header-section-number">4.3</span> Parameters: Study Period</a></li>
+  <li><a href="#context-patient" id="toc-context-patient" class="nav-link" data-scroll-target="#context-patient"><span class="header-section-number">4.4</span> Context: Patient</a></li>
+  <li><a href="#expression-age-18-years" id="toc-expression-age-18-years" class="nav-link" data-scroll-target="#expression-age-18-years"><span class="header-section-number">4.5</span> Expression: Age &gt;= 18 years</a></li>
+  <li><a href="#expression-outpatient-encounter-during-study-period" id="toc-expression-outpatient-encounter-during-study-period" class="nav-link" data-scroll-target="#expression-outpatient-encounter-during-study-period"><span class="header-section-number">4.6</span> Expression: Outpatient Encounter DURING study period</a></li>
+  <li><a href="#expression-most-recent-hba1c-result-6.5" id="toc-expression-most-recent-hba1c-result-6.5" class="nav-link" data-scroll-target="#expression-most-recent-hba1c-result-6.5"><span class="header-section-number">4.7</span> Expression: MOST RECENT HbA1c result &gt;= 6.5%</a></li>
+  <li><a href="#combining-the-expressions" id="toc-combining-the-expressions" class="nav-link" data-scroll-target="#combining-the-expressions"><span class="header-section-number">4.8</span> Combining the Expressions</a></li>
+  <li><a href="#the-complete-exampleelevatedhba1c-cql-library" id="toc-the-complete-exampleelevatedhba1c-cql-library" class="nav-link" data-scroll-target="#the-complete-exampleelevatedhba1c-cql-library"><span class="header-section-number">4.9</span> The Complete ExampleElevatedHbA1c CQL Library</a></li>
+  <li><a href="#the-expression-logical-model-elm-representation" id="toc-the-expression-logical-model-elm-representation" class="nav-link" data-scroll-target="#the-expression-logical-model-elm-representation"><span class="header-section-number">4.10</span> The Expression Logical Model (ELM) Representation</a></li>
+  <li><a href="#converting-the-full-cql-library-to-elm" id="toc-converting-the-full-cql-library-to-elm" class="nav-link" data-scroll-target="#converting-the-full-cql-library-to-elm"><span class="header-section-number">4.11</span> Converting the Full CQL Library to ELM</a></li>
+  </ul></li>
+  <li><a href="#knowledge-level-4-executable" id="toc-knowledge-level-4-executable" class="nav-link" data-scroll-target="#knowledge-level-4-executable"><span class="header-section-number">5</span> Knowledge Level 4: Executable</a></li>
+  <li><a href="#cql-resources" id="toc-cql-resources" class="nav-link" data-scroll-target="#cql-resources"><span class="header-section-number">6</span> CQL Resources</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../modules/clinical-quality-language-intro">Clinical Quality Language</a></li><li class="breadcrumb-item"><a href="../modules/clinical-quality-language-example">Technical Example</a></li></ol></nav><h1 class="title display-7">Clinical Quality Language Technical Example</h1></header>
+
+
+<div id="metadata-container" style="display: flex;">
+<!-- Begin reading time block -->
+<!-- end reading time block -->
+
+<!-- last updated -->
+<div class="date">Last updated: May 18, 2026</div>
+</div> <!-- end metadata div -->
+
+<!-- script for reading time -->
+ <!-- end script for reading time -->
+
+<header>
+<!--
+-->
+
+
+
+
+</header>
+
+<!-- begin roles block -->
+<div class="role-tags" aria-label="Relevant roles">
+  <span class="role-tags-label">Roles:</span>
+  <span class="role-tag">Informaticist</span>
+  <span class="role-tag">Software Engineer</span>
+  <a href="../roles" class="role-info-link" aria-label="Learn more about roles">
+    <svg aria-hidden="true" role="img" focusable="false" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+</a>
+</div>
+<!-- end roles block -->
+
+<!-- Begin learning objectives block -->
+
+
+<!-- End learning objectives block -->
+
+<!-- Hack to add key points block at end of page-->
+<!-- End hack to add key points block at end of page-->
+
+
+<p>This module is meant for technical users who are interested in understanding the details of authoring clinical logic using <a href="https://cql.hl7.org/">HL7 Clinical Quality Language</a> (CQL). Please read or review the <a href="../modules/clinical-quality-language-intro">Clinical Quality Language introduction</a> before continuing.</p>
+<section id="example-overview-elevated-a1c" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="example-overview-elevated-a1c"><span class="header-section-number">1</span> Example Overview: Elevated A1C</h2>
+<p>In this module, we will walk through the steps to create a CQL library that contains expressions representing the following criteria:</p>
+<blockquote class="blockquote">
+<p>Adult patients who had an outpatient encounter during the study period and who have elevated A1C.</p>
+</blockquote>
+<p>We will use the four CDS knowledge levels as a framework for working through this example <span class="citation" data-cites="boxwala2011cds"><a href="#ref-boxwala2011cds" role="doc-biblioref">[1]</a></span>. Although our example is not necessarily a complete clinical decision support artifact, we can use the same process to move from a narrative representation to an executable representation.</p>
+</section>
+<section id="knowledge-level-1-narrative" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="knowledge-level-1-narrative"><span class="header-section-number">2</span> Knowledge Level 1: Narrative</h2>
+<p>Knowledge level 1 is the narrative representation. The narrative representation may come from a clinical guideline, a research paper, a best practice, or any other human-readable clinical statement. In our example, the level 1 narrative representation is:</p>
+<blockquote class="blockquote">
+<p>Adult patients who had an outpatient encounter during the study period and who have elevated A1C.</p>
+</blockquote>
+</section>
+<section id="knowledge-level-2-semi-structured" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="knowledge-level-2-semi-structured"><span class="header-section-number">3</span> Knowledge Level 2: Semi-Structured</h2>
+<p>Knowledge level 2 is the semi-structured representation. This may often be represented using a decision tree, flowchart, or high-level pseudocode. One benefit of specifying a level 2 representation <em>before</em> moving on to the level 3 representation is that it often surfaces hidden assumptions and/or ambiguous phrasing in the narrative. Although our narrative is relatively straightforward, there are still some phrases that would benefit from greater specificity:</p>
+<ul>
+<li>Who qualifies as an adult? Is it anyone 18 years old and above, or is it intended to target a different age range? Is there an age cut-off – for example, 75 years of age?</li>
+<li>What qualifies as an outpatient encounter? Do telehealth encounters count? What about outpatient surgeries?</li>
+<li>How do we determine if a patient has elevated A1C? What is considered “elevated”? Should we consider all A1C results or only the most recent?</li>
+</ul>
+<p>When we restate the narrative in a semi-structured format, we often have to resolve these ambiguities. In our example, we will resolve them in the following way:</p>
+<ul>
+<li>We will indicate that anyone 18 years or older qualifies as an adult.</li>
+<li>We will use a value set to provide a list of encounter codes that represent all qualifying outpatient encounter types.</li>
+<li>We will use the most recent HbA1c lab result to measure A1C and consider it “elevated” if it is &gt;= 6.5%.</li>
+</ul>
+<p>Using the original narrative and the decisions above, we might come up with the following level 2 semi-structured representation that uses a bullet list and boolean logic:</p>
+<ul>
+<li>Age &gt;= 18 years</li>
+<li>AND outpatient encounter (<a href="https://vsac.nlm.nih.gov/valueset/2.16.840.1.113762.1.4.1160.24/expansion/Latest">2.16.840.1.113762.1.4.1160.24</a>) DURING study period</li>
+<li>AND MOST RECENT HbA1c result (<a href="https://vsac.nlm.nih.gov/valueset/2.16.840.1.113883.3.464.1003.198.12.1013/expansion/Latest">2.16.840.1.113883.3.464.1003.198.12.1013</a>) &gt;= 6.5%</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The object identifiers (OIDs) for outpatient encounter (<code>2.16.840.1.113762.1.4.1160.24</code>) and HbA1c result (<code>2.16.840.1.113883.3.464.1003.198.12.1013</code>) above link to value sets in the <a href="https://vsac.nlm.nih.gov/">Value Set Authority Center</a> (VSAC). <strong>Viewing the contents of these value sets requires a free account.</strong></p>
+</div>
+</div>
+</section>
+<section id="knowledge-level-3-structured" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="knowledge-level-3-structured"><span class="header-section-number">4</span> Knowledge Level 3: Structured</h2>
+<p>Knowledge level 3 is the structured representation. Level 3 representations are computable and shareable but may still require local adaptation before they can be used in any specific environment. In our case, we will use CQL and ELM for the level 3 representation, but other structured languages and formats are also valid (e.g., <a href="https://www.hl7.org/bpm/index.cfm">BPM+</a>).</p>
+<p>We will work from the level 2 representation above to develop the level 3 structured representation using CQL.</p>
+<section id="library-and-data-model-declarations" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="library-and-data-model-declarations"><span class="header-section-number">4.1</span> Library and Data Model Declarations</h3>
+<p>Every CQL <a href="https://cql.hl7.org/02-authorsguide.html#library">library</a> should have a name and version. These are typically declared at the top of the file using <code>library</code> and <code>version</code> keywords. We will call our library <code>ExampleElevatedHbA1c</code> and give it version <code>0.0.1</code> to indicate it is in the early stages of development.</p>
+<pre class="cql-code"><code><span class="cql-keyword">library</span> ExampleElevatedHbA1c <span class="cql-keyword">version</span> <span class="cql-string">'0.0.1'</span></code></pre>
+<p>Next, we must indicate what <a href="https://cql.hl7.org/02-authorsguide.html#data-models">data model</a> we’re using and include any <a href="https://cql.hl7.org/02-authorsguide.html#libraries">helper libraries</a> for that data model. CQL uses the <code>using</code> keyword to declare models and the <code>include</code> keyword to include additional libraries in the logic. In our example, we are using the <code>FHIR</code> data model, which uses the <code>FHIRHelpers</code> library for common FHIR-related CQL functions and conversions.</p>
+<pre class="cql-code"><code><span class="cql-keyword">using</span> FHIR <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span>
+<span class="cql-keyword">include</span> FHIRHelpers <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span></code></pre>
+</section>
+<section id="terminology-outpatient-encounters-and-hba1c-lab-tests" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="terminology-outpatient-encounters-and-hba1c-lab-tests"><span class="header-section-number">4.2</span> Terminology: Outpatient Encounters and HbA1c Lab Tests</h3>
+<p>CQL requires authors to declare <a href="https://cql.hl7.org/02-authorsguide.html#terminology">terminology</a> requirements up front and provides <code>valueset</code>, <code>codesystem</code>, <code>concept</code>, and <code>code</code> keywords for doing so. In our case, the level 2 representation indicates specific value sets from VSAC that should be used when querying for outpatient encounters and HbA1c labs.</p>
+<pre class="cql-code"><code><span class="cql-keyword">valueset</span> <span class="cql-identifier">"Outpatient Clinical Encounters"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1160.24'</span>
+<span class="cql-keyword">valueset</span> <span class="cql-identifier">"HbA1c Laboratory Test"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1013'</span></code></pre>
+<p>You may have noticed that the above value set definitions use URLs to identify the value sets rather than using the OIDs directly. This is because the <a href="https://hl7.org/fhir/uv/cql/using-cql.html#value-sets">Using CQL with FHIR</a> implementation guide indicates that value set identifiers must use <em>canonical URLs</em> as value set identifiers. The <a href="https://www.nlm.nih.gov/vsac/support/usingvsac/vsacfhirapi.html">FHIR terminology service for VSAC resources</a> indicates the following form for canonical value set URLs: <code>http://cts.nlm.nih.gov/fhir/ValueSet/{OID}</code>.</p>
+</section>
+<section id="parameters-study-period" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="parameters-study-period"><span class="header-section-number">4.3</span> Parameters: Study Period</h3>
+<p>CQL <a href="https://cql.hl7.org/02-authorsguide.html#parameters">parameters</a> allow authors to define data elements that can be specified at evaluation time. In our example, we don’t want to tie the study period to a specific set of dates, so we will use the <code>parameter</code> keyword to define the study period as a DateTime interval that is passed in during execution. This means that the CQL can be executed with any arbitrary study period rather than encoding a specific study period into the CQL logic.</p>
+<pre class="cql-code"><code><span class="cql-keyword">parameter</span> <span class="cql-identifier">"Study Period"</span> <span class="cql-type">Interval</span>&lt;<span class="cql-type">DateTime</span>&gt;</code></pre>
+</section>
+<section id="context-patient" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="context-patient"><span class="header-section-number">4.4</span> Context: Patient</h3>
+<p>Next, we will use the <code>context</code> keyword to declare that the following CQL expressions are intended to be processed in the <a href="https://cql.hl7.org/02-authorsguide.html#context">context</a> of a patient.</p>
+<pre class="cql-code"><code><span class="cql-keyword">context</span> Patient</code></pre>
+<p>CQL only requires that data models support the <code>Unfiltered</code> context, but most data models support additional contexts as well (especially the <code>Patient</code> context). The FHIR R4 data model currently supports the <code>Device</code>, <code>Patient</code>, <code>Practitioner</code>, and <code>Unfiltered</code> contexts.</p>
+</section>
+<section id="expression-age-18-years" class="level3" data-number="4.5">
+<h3 data-number="4.5" class="anchored" data-anchor-id="expression-age-18-years"><span class="header-section-number">4.5</span> Expression: Age &gt;= 18 years</h3>
+<p>We’re finally at the point where we can define the first patient-based criterion: <code>Is Adult</code>. As indicated by the level 2 representation, we will define “adult” as patients aged 18 years and above. To represent this in CQL, we’ll use CQL’s built-in <code>AgeInYears()</code> function.</p>
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult"</span>: AgeInYears() <span class="cql-operator">&gt;=</span> <span class="cql-number">18</span></code></pre>
+<p>Note that we use a <code>define</code> keyword to give the CQL expression a name that we can reference later. Statement names should reflect what they represent, so we’ve called it <code>Is Adult</code> since it returns a true or false value depending on whether the patient is an adult.</p>
+<p>You may have also noticed that we use the familiar <code>&gt;=</code> syntax to express the concept of “greater than or equal to.” CQL supports a variety of <a href="https://cql.hl7.org/09-b-cqlreference.html#comparison-operators-4">comparison operators</a> like this as well as other <a href="https://cql.hl7.org/09-b-cqlreference.html#arithmetic-operators-4">mathematical operators</a> like <code>+</code>, <code>-</code>, <code>/</code>, and more.</p>
+</section>
+<section id="expression-outpatient-encounter-during-study-period" class="level3" data-number="4.6">
+<h3 data-number="4.6" class="anchored" data-anchor-id="expression-outpatient-encounter-during-study-period"><span class="header-section-number">4.6</span> Expression: Outpatient Encounter DURING study period</h3>
+<p>To determine if the patient had an outpatient encounter in the study period, we must query for <code>Encounter</code>s that have a code in the <code>Outpatient Clinical Encounters</code> value set and whose encounter <code>period</code> occurred during the <code>Study Period</code>.</p>
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span>:
+  <span class="cql-keyword">exists</span> [Encounter: <span class="cql-identifier">"Outpatient Clinical Encounters"</span>] E
+    <span class="cql-keyword">where</span> E.period <span class="cql-keyword">during</span> <span class="cql-identifier">"Study Period"</span></code></pre>
+<p>In the CQL <a href="https://cql.hl7.org/02-authorsguide.html#queries">query</a> above, <code>[Encounter: "Outpatient Clinical Encounters"]</code> retrieves <code>Encounter</code> resources from the FHIR server and filters them by the <code>Outpatient Clinical Encounters</code> value set. The letter <code>E</code> is used as an alias so we can easily refer to each returned <code>Encounter</code> in the <code>where</code> clause. The <code>during</code> keyword is one of many <a href="https://cql.hl7.org/09-b-cqlreference.html#interval-operators-3">interval operators</a> that allow us to compare specific dates with date ranges and/or compare date ranges with other date ranges. CQL also defines an additional set of <a href="https://cql.hl7.org/09-b-cqlreference.html#datetime-operators-2">date and time operators</a> for performing other comparisons and calculations using dates and times.</p>
+<p>Note that we also prefixed the entire query with the <code>exists</code> keyword. This provides a simple way to check if the query returns at least one result. In our case, it will return <code>true</code> if at least one matching encounter <em>exists</em> and return <code>false</code> otherwise.</p>
+</section>
+<section id="expression-most-recent-hba1c-result-6.5" class="level3" data-number="4.7">
+<h3 data-number="4.7" class="anchored" data-anchor-id="expression-most-recent-hba1c-result-6.5"><span class="header-section-number">4.7</span> Expression: MOST RECENT HbA1c result &gt;= 6.5%</h3>
+<p>Next, we want to check the most recent HbA1c result value. First, we’ll find the most recent HbA1c laboratory test by querying for <code>Observation</code>s with a code in the <code>HbA1c Laboratory Test</code> value set. Since we want the most recent one, we will <code>sort</code> the results by their <code>issued</code> dates and return the last one using CQL’s built-in <code>Last</code> function. The <code>Last</code> function comes from CQL’s set of <a href="https://cql.hl7.org/09-b-cqlreference.html#list-operators-2">list operators</a>.</p>
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Most Recent HbA1c"</span>: <span class="cql-keyword">
+  Last</span>([Observation: <span class="cql-identifier">"HbA1c Laboratory Test"</span>] HbA1c <span class="cql-keyword">sort by</span> issued)</code></pre>
+<p>To see if the result is 6.5% or above, we can reference the <code>Most Recent HbA1c</code> expression we just defined and check its <code>value</code>. When working with quantity units in clinical logic, it is a best practice to use the <a href="https://unitsofmeasure.org/ucum">Unified Code for Units of Measure</a> (UCUM). CQL indicates that UCUM units must be wrapped in single quotes, so when we do the comparison, we wrap the UCUM unit for percent (<code>%</code>) in single quotes: <code>'%'</code>.</p>
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Has Elevated HbA1c"</span>: <span class="cql-identifier">"Most Recent HbA1c"</span>.value <span class="cql-operator">&gt;=</span> <span class="cql-number">6.5</span> <span class="cql-string">'%'</span></code></pre>
+</section>
+<section id="combining-the-expressions" class="level3" data-number="4.8">
+<h3 data-number="4.8" class="anchored" data-anchor-id="combining-the-expressions"><span class="header-section-number">4.8</span> Combining the Expressions</h3>
+<p>Finally, we can combine our statements using the <code>and</code> keyword to provide one expression that checks all of the criteria.</p>
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult with Outpatient Encounter and Elevated HbA1c"</span>:
+  <span class="cql-identifier">"Is Adult"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Elevated HbA1c"</span></code></pre>
+<p>CQL can also support more complex combinations via additional <a href="https://cql.hl7.org/09-b-cqlreference.html#logical-operators-3">logical operators</a> such as <code>or</code>, <code>xor</code>, and <code>not</code>.</p>
+</section>
+<section id="the-complete-exampleelevatedhba1c-cql-library" class="level3" data-number="4.9">
+<h3 data-number="4.9" class="anchored" data-anchor-id="the-complete-exampleelevatedhba1c-cql-library"><span class="header-section-number">4.9</span> The Complete ExampleElevatedHbA1c CQL Library</h3>
+<p>Putting all of the steps above together, we end up with the following library. <em>Note that this library is for example purposes only. It has not been fully tested and should not be used in production environments.</em></p>
+<pre class="cql-code"><code><span class="cql-keyword">library</span> ExampleElevatedHbA1c <span class="cql-keyword">version</span> <span class="cql-string">'0.0.1'</span>
+<span class="cql-keyword">using</span> FHIR <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span>
+<span class="cql-keyword">include</span> FHIRHelpers <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span>
+
+<span class="cql-keyword">valueset</span> <span class="cql-identifier">"Outpatient Clinical Encounters"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1160.24'</span>
+<span class="cql-keyword">valueset</span> <span class="cql-identifier">"HbA1c Laboratory Test"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1013'</span>
+
+<span class="cql-keyword">parameter</span> <span class="cql-identifier">"Study Period"</span> <span class="cql-type">Interval</span>&lt;<span class="cql-type">DateTime</span>&gt;
+
+<span class="cql-keyword">context</span> Patient
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult"</span>: AgeInYears() <span class="cql-operator">&gt;=</span> <span class="cql-number">18</span>
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span>:
+  <span class="cql-keyword">exists</span> [Encounter: <span class="cql-identifier">"Outpatient Clinical Encounters"</span>] E
+    <span class="cql-keyword">where</span> E.period <span class="cql-keyword">during</span> <span class="cql-identifier">"Study Period"</span>
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Most Recent HbA1c"</span>: <span class="cql-keyword">
+  Last</span>([Observation: <span class="cql-identifier">"HbA1c Laboratory Test"</span>] HbA1c <span class="cql-keyword">sort by</span> issued)
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Has Elevated HbA1c"</span>: <span class="cql-identifier">"Most Recent HbA1c"</span>.value <span class="cql-operator">&gt;=</span> <span class="cql-number">6.5</span> <span class="cql-string">'%'</span>
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult with Outpatient Encounter and Elevated HbA1c"</span>:
+  <span class="cql-identifier">"Is Adult"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Elevated HbA1c"</span></code></pre>
+</section>
+<section id="the-expression-logical-model-elm-representation" class="level3" data-number="4.10">
+<h3 data-number="4.10" class="anchored" data-anchor-id="the-expression-logical-model-elm-representation"><span class="header-section-number">4.10</span> The Expression Logical Model (ELM) Representation</h3>
+<p>The library syntax above is optimized for human authoring and reviewing. Although computers <em>can</em> parse it as-is, most CQL engines prefer to parse the logic in a more machine-friendly format called <a href="https://cql.hl7.org/elm.html">Expression Logical Model</a> (ELM). ELM is typically exchanged in a JSON or XML format.</p>
+<p>As an example of how CQL relates to ELM, consider the following statement from our CQL library:</p>
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span>:
+  <span class="cql-keyword">exists</span> [Encounter: <span class="cql-identifier">"Outpatient Clinical Encounters"</span>] E
+    <span class="cql-keyword">where</span> E.period <span class="cql-keyword">during</span> <span class="cql-identifier">"Study Period"</span></code></pre>
+<p>The following ELM XML representation is equivalent to the CQL above.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode xml code-with-copy"><code class="sourceCode xml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">def</span> <span class="ot">name=</span><span class="st">"Has Outpatient Encounter During Study Period"</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>     <span class="ot">context=</span><span class="st">"Patient"</span> <span class="ot">accessLevel=</span><span class="st">"Public"</span>&gt;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">expression</span> <span class="ot">xsi:type=</span><span class="st">"Exists"</span>&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">operand</span> <span class="ot">xsi:type=</span><span class="st">"Query"</span>&gt;</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">source</span> <span class="ot">alias=</span><span class="st">"E"</span>&gt;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">expression</span> <span class="ot">xsi:type=</span><span class="st">"Retrieve"</span> <span class="ot">dataType=</span><span class="st">"fhir:Encounter"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                    <span class="ot">templateId=</span><span class="st">"http://hl7.org/fhir/StructureDefinition/Encounter"</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                    <span class="ot">codeProperty=</span><span class="st">"type"</span> <span class="ot">codeComparator=</span><span class="st">"in"</span>&gt;</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">codes</span> <span class="ot">xsi:type=</span><span class="st">"ValueSetRef"</span> <span class="ot">name=</span><span class="st">"Outpatient Clinical Encounters"</span> <span class="ot">preserve=</span><span class="st">"true"</span>/&gt;</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">expression</span>&gt;</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">source</span>&gt;</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">where</span> <span class="ot">xsi:type=</span><span class="st">"IncludedIn"</span>&gt;</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">operand</span> <span class="ot">xsi:type=</span><span class="st">"FunctionRef"</span> <span class="ot">name=</span><span class="st">"ToInterval"</span> <span class="ot">libraryName=</span><span class="st">"FHIRHelpers"</span>&gt;</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">signature</span> <span class="ot">xsi:type=</span><span class="st">"NamedTypeSpecifier"</span> <span class="ot">name=</span><span class="st">"fhir:Period"</span>/&gt;</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">operand</span> <span class="ot">xsi:type=</span><span class="st">"Property"</span> <span class="ot">path=</span><span class="st">"period"</span> <span class="ot">scope=</span><span class="st">"E"</span>/&gt;&lt;/<span class="kw">operand</span>&gt;</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">operand</span> <span class="ot">xsi:type=</span><span class="st">"ParameterRef"</span> <span class="ot">name=</span><span class="st">"Study Period"</span>/&gt;</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">where</span>&gt;</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">operand</span>&gt;</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">expression</span>&gt;</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">def</span>&gt;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="converting-the-full-cql-library-to-elm" class="level3" data-number="4.11">
+<h3 data-number="4.11" class="anchored" data-anchor-id="converting-the-full-cql-library-to-elm"><span class="header-section-number">4.11</span> Converting the Full CQL Library to ELM</h3>
+<p>The <a href="https://github.com/cqframework/clinical_quality_language/tree/main/Src/java/cql-to-elm">CQL-to-ELM translator reference implementation</a> is capable of converting CQL to ELM JSON or ELM XML. This translator is typically invoked programmatically, but you can also invoke it using the online <a href="https://www.cqframework.org/clinical_quality_language/playground/">CQL Playground</a>. Try out the following to see how CQL-to-ELM translation works and to get a feel for the ELM representation:</p>
+<ol type="1">
+<li>Use your browser to open the <a href="https://www.cqframework.org/clinical_quality_language/playground/">CQL Playground</a> site.</li>
+<li>Make sure that <em>ELM</em> is selected in the top-level banner.</li>
+<li>Copy the <code>ExampleElevatedHbA1c</code> CQL library above and paste it into the text box on the left of the CQL Playground (overwriting the default text).</li>
+<li>In the rightmost column, find the <em>Output content type</em> section and check the box next to <em>Pretty print JSON output</em>.</li>
+<li>In the rightmost column, find the <em>Compiler options</em> section and uncheck the box next to <em>Enable locators</em> to get a cleaner view.</li>
+<li>Investigate the ELM JSON representation in the middle column of the page. Notice the library <code>identifier</code>, <code>usings</code> (data model), <code>includes</code> (helper libraries), <code>parameters</code>, <code>valueSets</code>, <code>contexts</code>, and <code>statements</code>.</li>
+<li>In the rightmost column, find the <em>Output content type</em> section and select XML to see the ELM XML representation. There is no option to pretty-print XML directly, but you can copy the XML into an <a href="https://jsonformatter.org/xml-formatter">online XML formatter</a> to view it more easily.</li>
+</ol>
+<p>Feel free to experiment with the CQL Playground further by editing the CQL to see how it affects the ELM and/or changing the compiler options.</p>
+</section>
+</section>
+<section id="knowledge-level-4-executable" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="knowledge-level-4-executable"><span class="header-section-number">5</span> Knowledge Level 4: Executable</h2>
+<p>Knowledge level 4 is the executable representation, suitable for use at a specific site or within a specific system. It builds on level 3 structured artifacts by adding site-specific configuration, local data mappings, and integration into local clinical workflows. In our example, this might include configuring the CQL engine to interface with a local FHIR server, mapping local codes to the standardized codes in our value sets, and exposing the functionality to end users in an appropriate way. Level 4 integrations may leverage other health standards like <a href="../modules/smart-on-fhir-intro">SMART on FHIR</a> or <a href="../modules/cds-hooks-intro">CDS Hooks</a>, or they may integrate directly using custom APIs and interfaces. This knowledge level represents the final step: the point at which the intent of the narrative has been realized in a specific environment.</p>
+</section>
+<section id="cql-resources" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="cql-resources"><span class="header-section-number">6</span> CQL Resources</h2>
+<p>The following resources may be useful for researchers who want to dig deeper into some of the topics discussed in this example walkthrough:</p>
+<ul>
+<li><strong><a href="https://cql.hl7.org/">Clinical Quality Language Specification</a></strong>: The official specification describing CQL and its capabilities. The <a href="https://cql.hl7.org/02-authorsguide.html">Author’s Guide</a> provides a friendly walk-through of the most important CQL concepts and the <a href="https://cql.hl7.org/09-b-cqlreference.html">Appendix B - CQL Reference</a> provides an exhaustive list of all standard CQL operations and system functions.</li>
+<li><strong><a href="https://hl7.org/fhir/uv/cql/">Using CQL with FHIR Implementation Guide</a></strong>: A FHIR implementation guide describing how to use CQL with FHIR, including <a href="https://hl7.org/fhir/uv/cql/using-cql.html">authoring guidance</a> and <a href="https://hl7.org/fhir/uv/cql/patterns.html">patterns</a>, <a href="https://hl7.org/fhir/uv/cql/conformance.html">implementation guidance</a>, <a href="https://hl7.org/fhir/uv/cql/Library-FHIRCommon.html">common CQL functions for FHIR</a>, and more.</li>
+<li><strong><a href="https://github.com/cqframework/clinical_quality_language/wiki/Community-Projects">CQL Community Projects</a></strong>: A listing of open-source projects including CQL compilers, CQL engines, CQL authoring tools, and CQL content.</li>
+<li><strong><a href="https://chat.fhir.org/#narrow/channel/179220-cql">#cql on chat.fhir.org</a></strong>: A public user forum where CQL novices and experts can discuss CQL, ask questions, and get help.</li>
+<li><strong><a href="https://www.cqframework.org/clinical_quality_language/playground/">CQL Playground</a></strong>: An online web application that allows users to enter CQL and compile it on the fly to ELM. Although it does not yet support execution, it’s useful for quickly checking CQL logic for syntactic correctness.</li>
+<li><strong><a href="https://cqlstudio.com/">CQL Studio</a></strong>: A brand-new web application for CQL authoring and testing. As of May 2026 it is still under active development. Users may encounter bugs, but it shows great promise for the future, including SI-enabled CQL authoring.</li>
+</ul>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-boxwala2011cds" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">A. A. Boxwala <em>et al.</em>, <span>“A multi-layered framework for disseminating knowledge for computer-based decision support,”</span> <em>Journal of the American Medical Informatics Association</em>, vol. 18, no. Supplement_1, pp. i132–i139, Dec. 2011, doi: <a href="https://doi.org/10.1136/amiajnl-2011-000334">10.1136/amiajnl-2011-000334</a>.</div>
+</div>
+</div></section></div></main> <!-- /main -->
+<!-- scripts.html -->
+<!-- any content in this file is inserted right before </body> -->
+
+<!-- Append index.html to any links ending with '/'
+
+Example:
+
+<a href="https://example.org/workshops/bulk-data/">
+
+will turn into:
+
+<a href="https://example.org/workshops/bulk-data/index.html">
+
+This ensures consistent behavior across different deployment platforms
+and enables other scripts like role-based module highlighting.
+-->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("a[href]").forEach(link => {
+      if( link.getAttribute("href").endsWith("/") ) {
+        link.setAttribute("href", link.getAttribute("href") + "index.html");
+      }
+    })
+  });
+</script>
+
+<!-- Fix a11y issues with side menu -->
+<script>
+const elements = document.querySelectorAll('.sidebar-menu-container a.sidebar-item-text[data-bs-toggle="collapse"], .sidebar-menu-container a.sidebar-item-toggle[data-bs-toggle="collapse"]')
+
+elements.forEach(element => {
+    element.setAttribute('role', 'group');
+});
+</script>
+
+<!-- Role-based Module Highlighting
+
+For any *.qmd file with roles defined in frontmatter,
+running script/update-module-role-map will generate
+modules/mappings.js. Then any markup with class .highlight-by-role, i.e:
+
+:::{.highlight-by-role}
+ - [mod1](/mod1)
+ - [mod2](/mod2)
+ - [mod3](/mod3)
+:::
+
+will highlight the links in the list assigned to the users roles.
+
+The user can select a role by pressing a button with data-role=*
+attribute. The possible roles are:
+
+Possible Roles:
+  investigator
+  research-leader
+  informaticist
+  software-engineer
+  clinician-scientist
+-->
+<script>
+const all_modules = document.querySelectorAll(".highlight-by-role ul li");
+
+function slugify(str) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/* highlights modules corresponding to role via role_module_map
+ * @param: role_name - role name in lower kebab case
+ */
+function select_modules(role_name) {
+    // Remove existing highlights
+    document.querySelectorAll('mark[data-role]').forEach(mark => {
+      mark.replaceWith(...mark.childNodes);
+    });
+
+    // What modules should be highlighted based on the selected role?
+    var highlighted_module_slugs = role_module_map.filter(x => x.role === role_name).map(x => x.modules)[0].map(x => x.slug);
+
+    // Add in highlights of the currently selected role, just in the containers where
+    // there should be highlights.
+    [
+        '.sidebar-menu-container', // On module pages (left sidebar)
+        '.highlight-by-role' // On section pages (list of modules)
+    ].forEach((container_css_path) => {
+        document.querySelectorAll(container_css_path).forEach(container => {
+            highlighted_module_slugs.forEach((slug) => {
+                container.querySelectorAll(`li a[href*="${slug}"]`).forEach((ahref) => {
+                    var li = ahref.parentNode;
+                    var mark = document.createElement("mark");
+                    mark.dataset.role = role_name;
+                    li.appendChild(mark);
+                    mark.appendChild(ahref);
+                });
+            });
+        });
+    });
+
+    // For module pages, highlight the currently active role
+    document.querySelectorAll(".role-tags .role-tag").forEach((el) => {
+        if (slugify(el.textContent.trim()) === role_name) {
+          el.style.fontWeight = "bold";
+        }
+      });
+}
+
+
+// clears previously selected roles, highlights the selected role, and sets "role" in local storage
+function select_role(role) {
+    store.setItem("role", role);
+    document.querySelector(`.roles-select-list input[data-role="${role}"]`).checked = true;
+}
+
+// trigger role selection on clicking <input data-role=...>
+document.querySelectorAll(".roles-select-list input[data-role]").forEach((role_link) => {
+    role_link.addEventListener("click", (e) => {
+        const role = e.target.dataset.role;
+        select_role(role);
+        select_modules(role);
+    });
+});
+
+// set default role and execute select_role and select_modules once to make sure feature is working
+window.addEventListener("load", () => {
+  const role = store.getItem("role") || "research-leader";
+  select_role(role);
+  select_modules(role);
+});
+</script>
+
+<!-- Navigation Override
+
+Overwrite Quarto's Next/Previous buttons to point to modules
+for the user's role
+-->
+<script>
+// Below function is usable by CC BY-SA 3.0 from https://stackoverflow.com/a/6475125
+String.prototype.toTitleCase = function() {
+  let i, j, str, lowers, uppers;
+  str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+
+  // Certain minor words should be left lowercase unless 
+  // they are the first or last words in the string
+  lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At', 
+  'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'Onto', 'To', 'With'];
+  for (i = 0, j = lowers.length; i < j; i++)
+    str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'), 
+      function(txt) {
+        return txt.toLowerCase();
+      });
+
+  // Certain words such as initialisms or acronyms should be left uppercase
+  uppers = ['ID', 'TV', 'FHIR'];
+  for (i = 0, j = uppers.length; i < j; i++)
+    str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'), 
+      uppers[i].toUpperCase());
+
+  return str;
+}
+
+// Custom Hack to overwrite Quarto's built in navigators
+document.addEventListener("DOMContentLoaded", function() {
+    // Get current module and role
+    const current_module_slug = window.location.pathname.split('.')[0].trim(1).split('/').slice(1).join('/');
+    const role = store.getItem("role");
+
+    function slug_to_url(slug) {
+       return `${window.location.origin}/${slug}.html`
+    }
+
+    // Get next and prev modules data
+    let prev_href, prev_text;
+    let next_href, next_text;
+
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == role ) {
+            for(let i=0; i<mapping.modules.length; i++) {
+                if( mapping.modules[i].slug == current_module_slug ) {
+
+                    prev_href = (i > 0) ? slug_to_url(mapping.modules[i-1].slug) : null;
+                    prev_text = (i > 0) ? mapping.modules[i-1].text : null;
+
+                    next_href = (i+1 < mapping.modules.length) ? slug_to_url(mapping.modules[i+1].slug) : null;
+                    next_text = (i+1 < mapping.modules.length) ? mapping.modules[i+1].text : null;
+                }
+            }
+        }
+    });
+
+
+    // Overwrite prev link
+    if( prev_href ) {
+        const prev_link_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link");
+        const prev_text_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link .nav-page-text");
+        if( prev_link_elmt ) {
+
+            prev_link_elmt.href = prev_href
+            prev_text_elmt.innerText = prev_text;
+        }
+    }
+
+    // Overwrite next link
+    if( next_href ) {
+        const next_link_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link");
+        const next_text_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link .nav-page-text");
+
+        if( next_link_elmt ) {
+            next_link_elmt.href = next_href;
+            next_text_elmt.innerText = next_text;
+        }
+    }
+
+    // if document has #key-points then move pagination to next after it
+    key_points = document.querySelector("#key-points");
+    if( key_points ) {
+        let page_nav = document.querySelector("nav.page-navigation");
+        key_points.insertAdjacentElement("afterend", page_nav);
+    }
+
+});
+
+
+// Override style of Quarto page navigation (prev/next buttons)
+document.addEventListener("DOMContentLoaded", function() {
+
+    const page_navigators = document.querySelectorAll(".pagination-link");
+    page_navigators.forEach((node) => {
+
+        node.classList.add("btn", "btn-outline-custom", "rounded");
+        node.parentNode.classList.remove("nav-page");
+        node.parentNode.parentNode.style.gridRow = "initial";
+    });
+});
+
+// Set external links to open in a new tab
+document.addEventListener("DOMContentLoaded", function() {
+    var all_links = document.querySelectorAll('a');
+    for (var i = 0; i < all_links.length; i++){
+        var a = all_links[i];
+        if(a.hostname != location.hostname) {
+                a.target = '_blank';
+        }
+    }
+})
+
+</script>
+
+<!-- Lightbox 
+
+Intercept all instances of:
+
+:::{#id .mermaid-lightbox data-caption='my caption'}
+```{mermaid}
+mermaid markdown content...
+```
+:::
+
+and overwrite it with a popup lightbox for easy viewing of diagram.
+Powered by GLightbox: https://github.com/biati-digital/glightbox
+-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.1/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox@3.3.1/dist/js/glightbox.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const mermaidElements = document.querySelectorAll('.mermaid-lightbox');
+
+    mermaidElements.forEach(element => {
+      const id = element.id;
+      const caption = element.getAttribute('data-caption');
+
+      const lightboxFigure = document.createElement('a');
+      lightboxFigure.setAttribute('href', '#' + id);
+      lightboxFigure.className = 'glightbox';
+      lightboxFigure.setAttribute('data-description', caption);
+      lightboxFigure.setAttribute('data-width', "90%");
+      lightboxFigure.setAttribute('data-height', "90%");
+
+      const clonedElement = element.cloneNode(true);
+      lightboxFigure.appendChild(clonedElement);
+
+      const figcaption = document.createElement('figcaption');
+      figcaption.textContent = 'Click diagram to enlarge';
+      lightboxFigure.appendChild(figcaption);
+
+      element.parentNode.replaceChild(lightboxFigure, element);
+    });
+
+    // Initialize GLightbox
+    const lightbox = GLightbox({
+        selector: '.glightbox'
+    });
+  })
+</script>
+
+<!-- This script dynamically updates the copyright year in the footer -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get the current year
+    var currentYear = new Date().getFullYear();
+    
+    // Find the span element where we'll put the year
+    var span = document.getElementById('current-year');
+    
+    if (span) {
+        // If the span exists, update its content with the current year
+        span.textContent = currentYear;
+    }
+    });
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/NIH-ODSS\.github\.io\/fhir-for-research");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../modules/clinical-quality-language-intro" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Introduction</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../modules/redcap-intro" class="pagination-link" aria-label="Introduction">
+        <span class="nav-page-text">Introduction</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/?tab=readme-ov-file#license">License information</a><br>Approved for Public Release / Case #25-3098<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Style Guide – FHIR® for Research</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dece3bd051e391dd7205a6b15f93dc59.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-ed04999718f06b735b1f8009dce43b94.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-84d8fd605c28f5564ab54bac3b8b1648.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-9822177fbb414652ed72bbec35662ceb.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<!-- head.html -->
+<!-- any content in this file is inserted into <head></head> -->
+
+<script src="./modules/mappings.js"></script>
+
+<script>
+// test if local storage is available and inititilize global variable store, code adapted from:
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+function initLocalStorage() {
+  let storage;
+  try {
+    storage = window["localStorage"];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return storage;
+  } catch (e) {
+    console.log("Error: local storage unavailable.");
+    return (
+      e instanceof DOMException &&
+      // everything except Firefox
+      (e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === "QuotaExceededError" ||
+        // Firefox
+        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage &&
+          storage.length !== 0
+    );
+  }
+}
+
+var store = initLocalStorage();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Yantramanav:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Style Guide – FHIR® for Research">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://nih-odss.github.io/fhir-for-research/images/kitten-unsplash.jpg">
+<meta property="og:site_name" content="FHIR® for Research">
+<meta property="og:image:alt" content="A kitten walking in a field of green grass.">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href=".">
+    <span class="navbar-title">FHIR® for Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./sections/introduction"> 
+<span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./sections/advanced-topics"> 
+<span class="menu-text">Advanced Topics</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./sections/hands-on-practice"> 
+<span class="menu-text">Hands-on Practice</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./sections/hosting-your-own-workshop"> 
+<span class="menu-text">Hosting Your Own Workshop</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./contribute"> 
+<span class="menu-text">Questions &amp; Contributions</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/NIH-ODSS/fhir-for-research"> <i class="bi bi-github" role="img" aria-label="View the GitHub repository for this site">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#headings" id="toc-headings" class="nav-link active" data-scroll-target="#headings">Headings</a></li>
+  <li><a href="#frontmatter" id="toc-frontmatter" class="nav-link" data-scroll-target="#frontmatter">Frontmatter</a>
+  <ul class="collapse">
+  <li><a href="#title" id="toc-title" class="nav-link" data-scroll-target="#title">Title</a></li>
+  <li><a href="#targeted-roles" id="toc-targeted-roles" class="nav-link" data-scroll-target="#targeted-roles">Targeted roles</a></li>
+  <li><a href="#learning-objectives-optional" id="toc-learning-objectives-optional" class="nav-link" data-scroll-target="#learning-objectives-optional">Learning objectives (optional)</a></li>
+  </ul></li>
+  <li><a href="#voice" id="toc-voice" class="nav-link" data-scroll-target="#voice">Voice</a>
+  <ul class="collapse">
+  <li><a href="#first-person" id="toc-first-person" class="nav-link" data-scroll-target="#first-person">First person</a></li>
+  <li><a href="#second-person" id="toc-second-person" class="nav-link" data-scroll-target="#second-person">Second person</a></li>
+  <li><a href="#imperative" id="toc-imperative" class="nav-link" data-scroll-target="#imperative">Imperative</a></li>
+  </ul></li>
+  <li><a href="#editing-for-clarity-and-brevity" id="toc-editing-for-clarity-and-brevity" class="nav-link" data-scroll-target="#editing-for-clarity-and-brevity">Editing for clarity and brevity</a>
+  <ul class="collapse">
+  <li><a href="#check-each-paragraph-for-the-following" id="toc-check-each-paragraph-for-the-following" class="nav-link" data-scroll-target="#check-each-paragraph-for-the-following">Check each paragraph for the following:</a></li>
+  <li><a href="#check-each-sentence-for-the-following" id="toc-check-each-sentence-for-the-following" class="nav-link" data-scroll-target="#check-each-sentence-for-the-following">Check each sentence for the following:</a></li>
+  </ul></li>
+  <li><a href="#quotes" id="toc-quotes" class="nav-link" data-scroll-target="#quotes">Quotes</a></li>
+  <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code">Code</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  <li><a href="#citing" id="toc-citing" class="nav-link" data-scroll-target="#citing">Citing</a></li>
+  <li><a href="#images" id="toc-images" class="nav-link" data-scroll-target="#images">Images</a></li>
+  <li><a href="#referencing-fhir-artifacts" id="toc-referencing-fhir-artifacts" class="nav-link" data-scroll-target="#referencing-fhir-artifacts">Referencing FHIR artifacts</a></li>
+  <li><a href="#referencing-the-fhir-specification" id="toc-referencing-the-fhir-specification" class="nav-link" data-scroll-target="#referencing-the-fhir-specification">Referencing the FHIR specification</a></li>
+  <li><a href="#accessibility" id="toc-accessibility" class="nav-link" data-scroll-target="#accessibility">Accessibility</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7">Style Guide</h1></header>
+
+<header id="title-block-header">
+<!--
+-->
+
+
+
+</header>
+
+<!-- Begin learning objectives block -->
+
+
+<!-- End learning objectives block -->
+
+<!-- Hack to add key points block at end of page-->
+<!-- End hack to add key points block at end of page-->
+
+<!-- Reading time logic -->
+
+
+
+<p>We use the <a href="https://rstudio.github.io/visual-markdown-editing/">RStudio Visual R Markdown</a> interchangeably with writing raw Markdown in another editor like VSCode. Visual R Markdown will automatically reformat <code>.md</code> or <code>.qmd</code> files when opening them, so we do not get hung up on specific Markdown styling as we accept the default output of Visual R Markdown.</p>
+<p>The following are style rules that are not impacted by Visual R Markdown automatic reformatting.</p>
+<p>Visual R Markdown uses <a href="https://pandoc.org/MANUAL.html#pandocs-markdown">Pandoc’s flavor of Markdown</a> so that’s what we use when manually writing Markdown. <a href="https://quarto.org/docs/authoring/markdown-basics.html">Quarto’s Markdown guide</a> is also helpful.</p>
+<p>If you write Markdown by hand, you should run it through the Pandoc Markdown formatter by toggling the RStudio Visual R Markdown mode on and off. This will avoid trivial changes showing up in git commits if subsequent authors edit your file with Visual R Markdown.</p>
+<section id="headings" class="level2">
+<h2 class="anchored" data-anchor-id="headings">Headings</h2>
+<ul>
+<li>Headings in <code>.qmd</code> files should start at <code>&lt;h2&gt;</code> (i.e., <code>##</code> in Markdown). The <code>title</code> element of the front matter at the top of each <code>.qmd</code> file is automatically inserted as the <code>&lt;h1&gt;</code> for the page.</li>
+<li>The contents of heading tags, excluding the page titles, should be <code>Sentence case</code> (the first letter is capitalized), <strong>not</strong> Title Case. Page titles should be Title Case.</li>
+<li>Headings should not be numbered manually – this happens automatically.</li>
+</ul>
+</section>
+<section id="frontmatter" class="level2">
+<h2 class="anchored" data-anchor-id="frontmatter">Frontmatter</h2>
+<p>Each <code>.qmd</code> file in the <code>modules/</code> folder needs frontmatter like the following:</p>
+<pre><code>---
+title: FHIR From 1,000 Feet
+
+roles:
+  - Informaticist
+  - Software Engineer
+---</code></pre>
+<section id="title" class="level3">
+<h3 class="anchored" data-anchor-id="title">Title</h3>
+<p>Use <a href="https://individed.com/code/to-title-case/">this website</a> to properly capitalize titles.</p>
+</section>
+<section id="targeted-roles" class="level3">
+<h3 class="anchored" data-anchor-id="targeted-roles">Targeted roles</h3>
+<p>Roles should be listed as a YAML array in the frontmatter. The following roles are valid, and should appear verbatim as below:</p>
+<pre><code>- Investigator
+- Research Leaders
+- Informaticist
+- Software Engineer
+- Clinician Scientist/Trainee</code></pre>
+<p>These are defined on the <a href="./roles">Roles page</a>.</p>
+</section>
+<section id="learning-objectives-optional" class="level3">
+<h3 class="anchored" data-anchor-id="learning-objectives-optional">Learning objectives (optional)</h3>
+<p>Learning objectives can be included in the frontmatter to display as part of the module content. Use the following syntax:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">learning_objectives</span><span class="kw">:</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Learning objective 1 goes here.</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> Learning objective 2 goes here.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="voice" class="level2">
+<h2 class="anchored" data-anchor-id="voice">Voice</h2>
+<p>See <a href="https://learn.microsoft.com/en-us/style-guide/grammar/person">Microsoft’s</a> and <a href="https://developers.google.com/style/person">Google’s</a> style guides for examples of using first person, second person, and imperative voice in writing.</p>
+<section id="first-person" class="level3">
+<h3 class="anchored" data-anchor-id="first-person">First person</h3>
+<p>Avoid singular first person pronouns (“I”/“me”).</p>
+<p>Use plural first person sparingly (“we”/“us”) to refer to the authors.</p>
+<p>Never use the global “we”: “We need to solve world-hunger.”</p>
+</section>
+<section id="second-person" class="level3">
+<h3 class="anchored" data-anchor-id="second-person">Second person</h3>
+<p>Write as though you are speaking to the reader and use second person “you.” Avoid using phrases like, “the reader.”</p>
+</section>
+<section id="imperative" class="level3">
+<h3 class="anchored" data-anchor-id="imperative">Imperative</h3>
+<p>When providing instructions, use imperative voice where possible.</p>
+<p>From <a href="https://learn.microsoft.com/en-us/style-guide/grammar/person">Microsoft’s style guide</a>:</p>
+<blockquote class="blockquote">
+<p>Change your password (Instead of <em>We recommend that you change your password.</em>)</p>
+<p>That didn’t work. Try again. (Instead of <em>We weren’t able to run the Solution Checker. Try running it again.</em>)</p>
+</blockquote>
+</section>
+</section>
+<section id="editing-for-clarity-and-brevity" class="level2">
+<h2 class="anchored" data-anchor-id="editing-for-clarity-and-brevity">Editing for clarity and brevity</h2>
+<section id="check-each-paragraph-for-the-following" class="level3">
+<h3 class="anchored" data-anchor-id="check-each-paragraph-for-the-following">Check each paragraph for the following:</h3>
+<ul>
+<li>Each paragraph has a purpose.
+<ul>
+<li><strong>What is this paragraph telling you?</strong> If you can’t easily answer that question or the answer is the same as a nearby paragraph, remove or rewrite the paragraph.</li>
+</ul></li>
+<li>Each sentence supports this purpose.
+<ul>
+<li><strong>How does this sentence tie into the purpose of the paragraph?</strong> If you can’t easily answer the question, then remove the sentence or move it to a new paragraph.</li>
+</ul></li>
+<li>Each sentence has a unique purpose.
+<ul>
+<li><strong>What is this sentence telling you?</strong> If it’s the same thing as a previous sentence, consider removing.</li>
+<li>Exceptions are when the repetition:
+<ul>
+<li>is intentional to solidify understanding</li>
+<li>provides a new perspective</li>
+</ul></li>
+</ul></li>
+<li>Each sentence or phrase is meaningful.
+<ul>
+<li><strong>Does the meaning of the paragraph change if you remove the sentence or phrase?</strong> If not, remove.</li>
+<li><strong>Example</strong> “At its most basic definition, terminology in IT refers to a code mapping to a concept.”
+<ul>
+<li>You can remove <em>“At its most basic definition”</em> without losing meaning.</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="check-each-sentence-for-the-following" class="level3">
+<h3 class="anchored" data-anchor-id="check-each-sentence-for-the-following">Check each sentence for the following:</h3>
+<ul>
+<li>Each word has a unique purpose.
+<ul>
+<li><strong>If you remove the word, does the meaning of the sentence change?</strong> If not, remove the word.</li>
+<li><strong>Example</strong> “These meet virtually on a weekly basis for a conference call.”
+<ul>
+<li><em>virtually</em> and <em>conference call</em> are redundant: only one is necessary.</li>
+</ul></li>
+</ul></li>
+<li>“Very” and “really” are absent.
+<ul>
+<li><strong>Ctrl-f for “very” and “really”.</strong> Remove these words.</li>
+<li>If necessary, replace the verb or adjective with a more description verb or adjective.
+<ul>
+<li><strong>Examples</strong> “It’s really good.”
+<ul>
+<li>“It’s excellent.”</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="https://www.writingforward.com/writing-tips/avoid-adverbs">Adverbs are rare.</a> Use them only when you can’t replace them with a more descriptive verb.
+<ul>
+<li><strong>Ctrl-f for “ly”.</strong> For each adverb you find:
+<ul>
+<li><strong>Does the meaning of the sentence change if you remove the adverb?</strong> If not, remove.</li>
+<li><strong>Can you replace the modified verb with a more descriptive verb and remove the adverb?</strong> Use a thesaurus for this. If so, replace the verb and remove the adverb.</li>
+<li>If you can’t remove or replace the adverb, keep it.</li>
+</ul></li>
+<li><strong>Example</strong> “developing multiple resources specifically for that purpose.”
+<ul>
+<li><em>specifically</em> is unnecessary.</li>
+</ul></li>
+<li><strong>Example</strong> “There is only one hierarchical relationship attribute.”
+<ul>
+<li><em>only</em> is redundant to <em>one</em>.</li>
+</ul></li>
+<li><strong>Example</strong> “She ran quickly”
+<ul>
+<li>“She sprinted”</li>
+</ul></li>
+<li><strong>Example</strong> “Adverbs and adjectives appear infrequently.”
+<ul>
+<li>“Adverbs and adjectives are rare.”</li>
+</ul></li>
+</ul></li>
+<li><a href="https://blog.wordvice.com/improve-writing-edit-nominalizations/">Nominalizations are rare.</a> (Nominalizations are verbs that have become nouns. They often end in “ion” or “ing”)
+<ul>
+<li><strong>Ctrl-f for “ion” or “ing”.</strong> Does this word have a verb as a root? If so, can you replace the verb/“ion”-word combination with the root verb?</li>
+<li><strong>Example</strong> “The sentence provides an explanation.”
+<ul>
+<li><em>explanation</em> is a nominalization of <em>to explain</em>. You can rewrite this sentence as “The sentence explains.”</li>
+</ul></li>
+<li><strong>Example</strong> “Her understanding of the situation meant that they could proceed.”
+<ul>
+<li><em>understanding</em> is a nominalization of <em>to understand</em>. You can rewrite this sentence as “Because she understood the situation, they could proceed.”</li>
+</ul></li>
+</ul></li>
+<li>Sentences are simple, as long as simplicity doesn’t reduce readability.
+<ul>
+<li><strong>Look for sentences with 2 or more commas (where the commas aren’t part of a list).</strong></li>
+<li><strong>Does the sentence have multiple purposes?</strong> If so, try dividing it into two separate sentences.
+<ul>
+<li><strong>Example</strong> “After they went to the park, they drove to a restaurant, and at the restaurant, they had dinner.”
+<ul>
+<li>The sentence says what they did after the park, <em>and</em> what they did at the restaurant.</li>
+<li>“After they went to the park, they drove to a restaurant. At the restaurant, they had dinner.”</li>
+</ul></li>
+</ul></li>
+<li><strong>Can you reorganize or rewrite the sentence to use fewer commas?</strong>
+<ul>
+<li><strong>Example</strong> “In many cases, the reverse mappings are valid, but this cannot be assumed to be the case.”
+<ul>
+<li>“Reverse mappings are sometimes valid, but not always.”</li>
+<li>or just “Reverse mappings may not be valid.”</li>
+</ul></li>
+<li><strong>Example</strong> “Using standard terminology should be a simple and logical step in health IT. However, with the complexities of many diagnoses systems, clinical narrative transferred via PDF format, various coding systems, and the cost of digitizing volumes of reference material/dictionaries, it isn’t as easy as you would think.”
+<ul>
+<li>“Using standard terminology is more difficult than expected given:
+<ul>
+<li>the complexities of many diagnoses systems,</li>
+<li>clinical narrative transferred via PDF format,</li>
+<li>various coding systems, and</li>
+<li>the cost of digitizing volumes of reference material/dictionaries”</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>Is the concept split into two parts with something in the middle?</strong> If so, move whatever is in the middle at the beginning or end.
+<ul>
+<li><strong>Example</strong> “Her dog, who was so cute, chased the ball.”
+<ul>
+<li>“who was so cute” divides “Her dog chased the ball” in half.</li>
+<li>“Her adorable dog chased the ball.” is better.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>You avoid jargon</strong>
+<ul>
+<li><strong>Example</strong> “Note in the first row that Patient also has a type, which gives inheritance of additional attributes we’ll discuss below.”
+<ul>
+<li><em>inheritance</em> is a software development concept that likely won’t be easily understood by people who aren’t already familiar with HL7 data types or software development.</li>
+<li>Instead, define <em>inheritance</em> inline or use a different word.</li>
+</ul></li>
+</ul></li>
+<li><strong>You use <a href="https://www.plainlanguage.gov/">plain language</a>.</strong> <a href="https://www.plainlanguage.gov/guidelines/words/use-simple-words-phrases/">You use simpler words where the simple word has the same meaning.</a>
+<ul>
+<li><strong>Example</strong> <a href="https://zapier.com/blog/plain-language/">Try words like “use” instead of “utilize,” “about” instead of “approximately” and “try” instead of “attempt.”</a></li>
+<li><strong>Example</strong>
+<ul>
+<li><a href="https://zapier.com/blog/plain-language/">Original: “It is suggested that the wire should be connected to the terminal by the engineer when the switch-box assembly is completed.”</a></li>
+<li><a href="https://zapier.com/blog/plain-language/">Simplified: “We suggest that you connect the wire to the terminal when you finish assembling the switch-box.”</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="quotes" class="level2">
+<h2 class="anchored" data-anchor-id="quotes">Quotes</h2>
+<p>Quotes or excerpts longer than a sentence should be in <code>&lt;blockquote&gt;</code> tags (in Markdown, each line is prefixed with <code>&gt;</code>) like this:</p>
+<blockquote class="blockquote">
+<p>This is a blockquote. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+</blockquote>
+</section>
+<section id="code" class="level2">
+<h2 class="anchored" data-anchor-id="code">Code</h2>
+<p>Use fences like this:</p>
+<pre><code>```json
+{
+    "some json": "goes here"
+}
+```</code></pre>
+<p>This will provide syntax highlighting for the indicated language, like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"some json"</span><span class="fu">:</span> <span class="st">"goes here"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<p>From the <a href="https://google.github.io/styleguide/docguide/style.html">Google documentation guide</a>:</p>
+<blockquote class="blockquote">
+<p>Markdown link syntax allows you to set a link title, just as HTML does. Use it wisely.</p>
+<p>Titling your links as “link” or “here” tells the reader precisely nothing when quickly scanning your doc and is a waste of space:</p>
+<pre><code>See the syntax guide for more info: [link](syntax_guide.md).
+Or, check out the style guide [here](style_guide.md).
+DO NOT DO THIS.</code></pre>
+<p>Instead, write the sentence naturally, then go back and wrap the most appropriate phrase with the link:</p>
+<pre><code>See the [syntax guide](syntax_guide.md) for more info.
+Or, check out the [style guide](style_guide.md).</code></pre>
+</blockquote>
+</section>
+<section id="citing" class="level2">
+<h2 class="anchored" data-anchor-id="citing">Citing</h2>
+<p>When citing web-based content, simply add a hyperlink as described above.</p>
+<p>When citing printed content or any content where an academic reader would expect a formal citation, use Quarto’s built-in <a href="https://quarto.org/docs/authoring/footnotes-and-citations.html">citation capabilities</a>. References should be added to <code>references.bib</code> in the root of the repository.</p>
+</section>
+<section id="images" class="level2">
+<h2 class="anchored" data-anchor-id="images">Images</h2>
+<p>Images should link the source (or include a proper citation if it’s from an “academic” source) and alt text, like this:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/kitten-unsplash.jpg" class="img-fluid figure-img" alt="A kitten walking in a field of green grass."></p>
+<figcaption>An example caption for an image. Photo by <a href="https://unsplash.com/@andriyko">Andriyko Podilnyk</a> on <a href="https://unsplash.com/photos/RCfi7vgJjUY">Unsplash</a>.</figcaption>
+</figure>
+</div>
+<p>In the source code, this looks like:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>!<span class="co">[</span><span class="ot">An example caption for an image. Photo by [Andriyko Podilnyk](https://unsplash.com/@andriyko) on [Unsplash](https://unsplash.com/photos/RCfi7vgJjUY).</span><span class="co">](images/kitten-unsplash.jpg)</span>{fig-alt="A kitten walking in a field of green grass."}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is rendered to HTML as:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"quarto-figure quarto-figure-center"</span><span class="dt">&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>   <span class="dt">&lt;</span><span class="kw">figure</span><span class="ot"> class</span><span class="op">=</span><span class="st">"figure"</span><span class="dt">&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;&lt;</span><span class="kw">img</span><span class="ot"> src</span><span class="op">=</span><span class="st">"images/kitten-unsplash.jpg"</span><span class="ot"> class</span><span class="op">=</span><span class="st">"img-fluid figure-img"</span><span class="ot"> alt</span><span class="op">=</span><span class="st">"A kitten walking in a field of green grass."</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">figcaption</span><span class="ot"> class</span><span class="op">=</span><span class="st">"figure-caption"</span><span class="dt">&gt;</span>An example caption for an image. Photo by <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"https://unsplash.com/@andriyko"</span><span class="dt">&gt;</span>Andriyko Podilnyk<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span> on <span class="dt">&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"https://unsplash.com/photos/RCfi7vgJjUY"</span><span class="dt">&gt;</span>Unsplash<span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;</span>.<span class="dt">&lt;/</span><span class="kw">figcaption</span><span class="dt">&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>   <span class="dt">&lt;/</span><span class="kw">figure</span><span class="dt">&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note the <code>&lt;img&gt;</code> tag in the rendered HTML has an <code>alt</code> property. This is critical for accessibility, and all images <strong>must</strong> have this.</p>
+</section>
+<section id="referencing-fhir-artifacts" class="level2">
+<h2 class="anchored" data-anchor-id="referencing-fhir-artifacts">Referencing FHIR artifacts</h2>
+<ul>
+<li><p><a href="https://www.hl7.org/fhir/resourcelist.html">FHIR resources</a> should be referred to as “FHIR resources”, not “Resources” or “resources” to avoid confusion with other kinds of resources.</p></li>
+<li><p><mark>Specific FHIR resources should be referred to like “<a href="https://www.hl7.org/fhir/patient.html">Patient</a>,” and hyperlinked to the relevant FHIR spec page the <strong>first</strong> time they appear</mark> (or again if you think it’s likely the reader will want to refer to the FHIR spec, like if you are introducing a screenshot of the “Resource Content” spec table, it is probably helpful to link back to the FHIR resource’s page in the spec).<br>
+<br>
+This mirrors the capitalization that appears on the <a href="https://www.hl7.org/fhir/resourcelist.html">FHIR resources list</a>.<br>
+<br>
+Once you have linked to the FHIR spec’s resource page for the first time, refer to the resource like: Patient.</p></li>
+<li><p>Reference to specific elements should be in backticks like <code>`Patient.name`</code> when referencing the “name” element in Patient. Use the full element path including the resource name unless it’s too unwieldy/repetitive.</p>
+<ul>
+<li>Don’t hyperlink <code>Patient.name</code> directly, but if it’s useful to link to the element details, you can do it like so:<br>
+<br>
+The <code>Patient.name</code> element (<a href="https://www.hl7.org/fhir/patient-definitions.html#Patient.name">details here</a>) stores one or more names associated with an individual.</li>
+</ul></li>
+<li><p>Links to the FHIR spec should be…</p>
+<ul>
+<li><p>…to the current version (<code>https://www.hl7.org/fhir/patient.html</code>) if you are generally referring to something in the spec in a way that is version-independent.</p></li>
+<li><p>…to a specific version if you are referring to something specific – like a specific element or quoting the spec – that could change over time you should link to a specific version (<code>https://www.hl7.org/fhir/R4B/patient.html</code>)</p>
+<ul>
+<li><p>A heuristic for this: if you think the link might be broken in a future FHIR release, use a release-specific link.</p></li>
+<li><p>Likewise, if you refer to content that might change (even if the link still resolves), use a release-specific link.</p></li>
+<li><p>If we want to “upgrade” the documentation in the future, we can search for all instances of <code>https://www.hl7.org/fhir/R4B/</code>, and then check those links for</p></li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="referencing-the-fhir-specification" class="level2">
+<h2 class="anchored" data-anchor-id="referencing-the-fhir-specification">Referencing the FHIR specification</h2>
+<p>For narrative content, use long block quotes with a link in the preceding sentence.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Example of citing the FHIR spec
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <a href="https://www.hl7.org/fhir/R4B/modules.html">FHIR specification notes that it can be difficult to know where to start</a>:</p>
+<blockquote class="blockquote">
+<p>FHIR is a platform specification that defines a set of capabilities used across the healthcare process, in all jurisdictions, and in lots of different contexts. While the basics of the FHIR specification are relatively straight-forward (see the Overviews: <a href="https://www.hl7.org/fhir/R4B/overview.html">General</a>, <a href="https://www.hl7.org/fhir/R4B/overview-dev.html">Developers</a>, <a href="https://www.hl7.org/fhir/R4B/overview-clinical.html">Clinical</a>, and <a href="https://www.hl7.org/fhir/R4B/overview-arch.html">Architects</a>), it can still be difficult to know where to start when implementing a solution based on FHIR.</p>
+</blockquote>
+</div>
+</div>
+<p>Note that this links to a specific version of FHIR (<code>https://www.hl7.org/fhir/R4B/modules.html</code>) as it is a direct quote.</p>
+<p>Also note that the hyperlinks in the excerpt are maintained in the blockquote. The easiest way to accomplish this is to copy from the FHIR spec and directly paste into the <code>.qmd</code> file.</p>
+<p>We will often refer to the “Resource Content”/“Profile Content” table for a FHIR resource or profile. This should be implemented as a single screenshot taken on a high DPI screen (like a MacBook screen) at 100% browser zoom for each table.</p>
+<p>Screenshots of profiles’ tables should include the tabs at the top to identify which view of the table is being displayed. The screenshot should be introduced with a link to the profile in question, like below.</p>
+<p>For example, here is the differential from <a href="https://www.hl7.org/fhir/R4B/devicemetricobservation.html">the Device Metric Observation Profile R4B</a>:</p>
+<p><a href="https://www.hl7.org/fhir/R4B/devicemetricobservation.html#profile"><img src="images/image-1899311563.png" class="img-fluid" alt="Screenshot of the profile definition table in the Device Metric Observation Profile in FHIR R4B."></a></p>
+<p>Captions are not necessary for these screenshots. However, the images still need <code>alt</code> text and should link to the page where the screenshot was taken. Version-specific links should be used.</p>
+<p>The same approach should be used for these tables in FHIR resources, though it is not necessary to include the tabs.</p>
+<p>Here’s a screenshot from the <a href="https://www.hl7.org/fhir/R4B/observation.html">Observation resource</a> as an example:</p>
+<p><a href="https://www.hl7.org/fhir/R4B/observation.html#resource"><img src="images/observation.png" class="img-fluid" alt="Screenshot of the resource content table for the FHIR Observation resource."></a></p>
+<p>Note that the image hyperlink includes the <code>#resource</code> anchor to bring the reader directly to the “Resource Content” table in the documentation.</p>
+<p>It is ok to only include part of these tables in the screenshot if that is beneficial. The example from Observation above is quite long, and it might be helpful to crop unnecessary parts. If you do this, you should do some lightweight image editing like so:</p>
+<p><a href="https://www.hl7.org/fhir/R4B/observation.html#resource"><img src="images/image-1375861502.png" class="img-fluid" alt="Excerpt from the resource contents table for the FHIR Observation resource."></a></p>
+<p>If we do this frequently, we can look into standardizing how this is done for consistency.</p>
+</section>
+<section id="accessibility" class="level2">
+<h2 class="anchored" data-anchor-id="accessibility">Accessibility</h2>
+<p>All web pages on this site should pass the “FastPass” check with the <a href="https://accessibilityinsights.io">Accessibility Insights</a> browser extension.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<!-- scripts.html -->
+<!-- any content in this file is inserted right before </body> -->
+
+<!-- Append index.html to any links ending with '/'
+
+Example:
+
+<a href="https://example.org/workshops/bulk-data/">
+
+will turn into:
+
+<a href="https://example.org/workshops/bulk-data/index.html">
+
+This ensures consistent behavior across different deployment platforms
+and enables other scripts like role-based module highlighting.
+-->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("a[href]").forEach(link => {
+      if( link.getAttribute("href").endsWith("/") ) {
+        link.setAttribute("href", link.getAttribute("href") + "index.html");
+      }
+    })
+  });
+</script>
+
+<!-- Fix a11y issues with side menu -->
+<script>
+const elements = document.querySelectorAll('.sidebar-menu-container a.sidebar-item-text[data-bs-toggle="collapse"], .sidebar-menu-container a.sidebar-item-toggle[data-bs-toggle="collapse"]')
+
+elements.forEach(element => {
+    element.setAttribute('role', 'group');
+});
+</script>
+
+<!-- JSON Viewer
+Intercept all instances of:
+
+``` json
+```
+
+and replace it with a fancy JSON viewer. If the content is
+invalid JSON then the default Quarto rendering will occur.
+-->
+<script type="text/javascript" src="https://unpkg.com/dompurify@3.0.1/dist/purify.min.js"></script> <!-- load JS Sanitizer -->
+<script>
+    function jsonViewer(json, collapsible=false) {
+        let TEMPLATES = {
+            item: '<div class="json_view__item"><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--%TYPE%">%VALUE%</div></div>',
+            itemCollapsible: '<label class="json_view__item json_view__item--collapsible"><input type="checkbox" class="json_view__toggle"/><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--type-%TYPE%">%VALUE%</div>%CHILDREN%</label>',
+            itemCollapsibleOpen: '<label class="json_view__item json_view__item--collapsible"><input type="checkbox" checked class="json_view__toggle"/><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--type-%TYPE%">%VALUE%</div>%CHILDREN%</label>'
+        };
+
+        function createItem(key, value, type){
+            let element = TEMPLATES.item.replace('%KEY%', key);
+
+            if((key == 'div') && (type=='string')) { // Removes Resource.text.div value (looks bloated)
+                element = element.replace('%VALUE%', '...');
+            } else if(type == 'string') {
+                element = element.replace('%VALUE%', '"' + value + '"');
+            } else {
+                element = element.replace('%VALUE%', value);
+            }
+
+            element = element.replace('%TYPE%', type);
+
+            return element;
+        }
+
+        function createCollapsibleItem(key, value, type, children){
+            let tpl = 'itemCollapsible';
+
+            if(collapsible) {
+                tpl = 'itemCollapsibleOpen';
+            }
+
+            let element = TEMPLATES[tpl].replace('%KEY%', key);
+
+            element = element.replace('%VALUE%', type);
+            element = element.replace('%TYPE%', type);
+            element = element.replace('%CHILDREN%', children);
+
+            return element;
+        }
+
+        function handleChildren(key, value, type) {
+            let html = '';
+
+            for(let item in value) { 
+                let _key = item,
+                    _val = value[item];
+
+                html += handleItem(_key, _val);
+            }
+
+            return createCollapsibleItem(key, value, type, html);
+        }
+
+        function handleItem(key, value) {
+            let type = typeof value;
+ 
+            if( Array.isArray( value ) ) {
+                return handleChildren(key, value, "array");
+            }
+
+            if(typeof value === 'object') {        
+                return handleChildren(key, value, type);
+            }
+
+            return createItem(key, value, type);
+        }
+
+        function parseObject(obj) {
+            _result = '<div class="json_view">';
+
+            for(let item in obj) { 
+                let key = item,
+                    value = obj[item];
+
+                _result += handleItem(key, value);
+            }
+
+            _result += '</div>';
+
+            return _result;
+        }
+        
+        try {
+            return parseObject(JSON.parse(json));
+        }
+        catch(err) {
+            console.log("Could not render JSON viewer: ", err);
+            console.log("for string: ", json);
+            return null;
+        }
+
+    };
+
+
+    function parseHTML(string) {
+        let sanitized = DOMPurify.sanitize(string);
+        let parser = new DOMParser();
+        return parser.parseFromString(sanitized, "text/html").body.firstChild;
+    }
+
+    let jsonCodeBlocks = document.querySelectorAll("code.sourceCode.json");
+    jsonCodeBlocks.forEach((jsonCode) => {
+        let json = jsonCode.innerText;
+        let codeBlock = jsonCode.parentNode.parentNode;
+        let uid = codeBlock.id;
+        let documentLocation = codeBlock.parentNode;
+        let viewerHTML = jsonViewer(json, true);
+
+        let tabContainer = parseHTML(`
+          <div>
+            <ul class="nav nav-tabs" id="${uid}Tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="${uid}ViewerTab" data-bs-toggle="tab" data-bs-target="#${uid}Viewer" type="button" role="tab" aria-controls="${uid}Viewer" aria-selected="true">Viewer</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="${uid}JsonTab" data-bs-toggle="tab" data-bs-target="#${uid}Json" type="button" role="tab" aria-controls="${uid}Json" aria-selected="false">JSON</button>
+              </li>
+            </ul>
+            <div class="tab-content" id="${uid}TabContent" style="height:50vh;overflow:scroll;">
+              <div class="tab-pane fade show active" id="${uid}Viewer" role="tabpanel" aria-labelledby="${uid}ViewerTab"></div>
+              <div class="tab-pane fade" id="${uid}Json" role="tabpanel" aria-labelledby="${uid}JsonTab"></div>
+            </div>
+          </div>
+        `)
+
+        if( viewerHTML != null ) {
+            documentLocation.replaceChild(tabContainer, codeBlock);
+
+            tabContainer.querySelector(`div#${uid}TabContent div#${uid}Viewer`).appendChild( parseHTML(viewerHTML) );
+            tabContainer.querySelector(`div#${uid}TabContent div#${uid}Json`).appendChild(codeBlock);
+        }
+    });
+</script>
+
+<!-- Role-based Module Highlighting
+
+For any *.qmd file with roles defined in frontmatter,
+running script/update-module-role-map will generate
+modules/mappings.js. Then any markup with class .highlight-by-role, i.e:
+
+:::{.highlight-by-role}
+ - [mod1](/mod1)
+ - [mod2](/mod2)
+ - [mod3](/mod3)
+:::
+
+will highlight the links in the list assigned to the users roles.
+
+The user can select a role by pressing a button with data-role=*
+attribute. The possible roles are:
+
+Possible Roles:
+  investigator
+  research-leader
+  informaticist
+  software-engineer
+  clinician-scientist
+-->
+<script>
+const all_modules = document.querySelectorAll(".highlight-by-role ul li");
+
+/* highlights modules corresponding to role via role_module_map
+ * @param: string - role name in lower kebab case
+ */
+function select_modules(string) {
+    // remove all highlights
+    all_modules.forEach((li_node) => {
+        var mark_node = li_node.firstChild;
+        var a_node = mark_node.firstChild;
+
+        if( mark_node.nodeName == "MARK" ) {
+            li_node.removeChild(mark_node);
+            li_node.appendChild(a_node);
+        }
+    });
+
+    // add highlights based on role_module_map
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == string ) {
+            mapping.modules.forEach((interest_module) => {
+                document.querySelectorAll(`li [href*="${interest_module.slug}"]`).forEach((interest_a_node) => {
+
+                    //console.log("selecting module ", interest_a_node);
+
+                    var interest_li_node = interest_a_node.parentNode;
+                    var mark_node = document.createElement("mark");
+                    interest_li_node.appendChild(mark_node);
+                    mark_node.appendChild(interest_a_node);
+
+                    //console.log("appended ", interest_a_node, " to ", mark_node);
+                });
+            });
+            return;
+        }
+    })
+}
+
+
+// clears previously selected roles, highlights the selected role, and sets "role" in local storage
+function select_role(role) {
+    store.setItem("role", role);
+
+    document.querySelectorAll("[data-role]").forEach((a_node) => {
+        a_node.classList.remove("btn", "btn-sm", "btn-secondary", "fw-bold", "rounded");
+        a_node.classList.add("btn-role");
+    });
+
+    var selected_a_node = document.querySelector(`[data-role="${role}"]`);
+    selected_a_node.classList.add("btn", "btn-sm", "btn-secondary", "fw-bold", "rounded");
+    selected_a_node.classList.remove("btn-role");
+}
+
+
+// trigger role selection on clicking <a data-role=...>
+document.querySelectorAll("a[data-role]").forEach((role_link) => {
+    role_link.addEventListener("click", (e) => {
+        var role = e.target.dataset.role;
+        select_role(role);
+        select_modules(role);
+    });
+});
+
+// set default role and execute select_role and select_modules once to make sure feature is working
+window.addEventListener("load", () => {
+    if( store.getItem("role") ) {
+        select_role(store.getItem("role"));
+        select_modules(store.getItem("role"));
+    }
+    else {
+        const DEFAULT_ROLE = "research-leader";
+
+        select_role(DEFAULT_ROLE);
+        select_modules(DEFAULT_ROLE);
+    }
+});
+</script>
+
+<!-- Navigation Override
+
+Overwrite Quarto's Next/Previous buttons to point to modules
+for the user's role
+-->
+<script>
+// Below function is usable by CC BY-SA 3.0 from https://stackoverflow.com/a/6475125
+String.prototype.toTitleCase = function() {
+  let i, j, str, lowers, uppers;
+  str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+
+  // Certain minor words should be left lowercase unless 
+  // they are the first or last words in the string
+  lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At', 
+  'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'Onto', 'To', 'With'];
+  for (i = 0, j = lowers.length; i < j; i++)
+    str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'), 
+      function(txt) {
+        return txt.toLowerCase();
+      });
+
+  // Certain words such as initialisms or acronyms should be left uppercase
+  uppers = ['ID', 'TV', 'FHIR'];
+  for (i = 0, j = uppers.length; i < j; i++)
+    str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'), 
+      uppers[i].toUpperCase());
+
+  return str;
+}
+
+// Custom Hack to overwrite Quarto's built in navigators
+document.addEventListener("DOMContentLoaded", function() {
+    // Get current module and role
+    const current_module_slug = window.location.toString().split('/').pop().split('.')[0];
+    const role = store.getItem("role");
+
+    // Get next and prev modules data
+    let prev_href, prev_text;
+    let next_href, next_text;
+
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == role ) {
+            for(let i=0; i<mapping.modules.length; i++) {
+                if( mapping.modules[i].slug == current_module_slug ) {
+                    function slug_to_url(slug) {
+                        if( window.location.pathname.includes('modules') ) {
+                            // replace "modules/*" in current URL with "modules/<slug>.html"
+                            return window.location.toString().replace(/modules\/.*/, "modules/" + slug + ".html");
+                        }
+                        else {
+                            // this case is irrelevant since prev/next buttons are only role-based in modules
+                            return window.location.toString() + "/modules/" + slug + ".html";
+                        }
+                    }
+
+                    prev_href = (i > 0) ? slug_to_url(mapping.modules[i-1].slug) : null;
+                    prev_text = (i > 0) ? mapping.modules[i-1].text : null;
+
+                    next_href = (i+1 < mapping.modules.length) ? slug_to_url(mapping.modules[i+1].slug) : null;
+                    next_text = (i+1 < mapping.modules.length) ? mapping.modules[i+1].text : null;
+                }
+            }
+        }
+    });
+
+
+    // Overwrite prev link
+    if( prev_href ) {
+        const prev_link_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link");
+        const prev_text_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link .nav-page-text");
+        if( prev_link_elmt ) {
+
+            prev_link_elmt.href = prev_href
+            //prev_link_elmt.classList.add("btn", "btn-outline-custom", "rounded");
+            //prev_link_elmt.parentNode.classList.toggle("nav-page");
+            prev_text_elmt.innerText = prev_text;
+        }
+    }
+
+    // Overwrite next link
+    if( next_href ) {
+        const next_link_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link");
+        const next_text_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link .nav-page-text");
+
+        if( next_link_elmt ) {
+            next_link_elmt.href = next_href;
+            //next_link_elmt.classList.add("btn", "btn-outline-custom", "rounded");
+            //next_link_elmt.parentNode.classList.toggle("nav-page");
+            next_text_elmt.innerText = next_text;
+        }
+    }
+
+    // if document has #key-points then move pagination to next after it
+    key_points = document.querySelector("#key-points");
+    if( key_points ) {
+        let page_nav = document.querySelector("nav.page-navigation");
+        key_points.insertAdjacentElement("afterend", page_nav);
+    }
+
+});
+
+
+// Override style of Quarto page navigation (prev/next buttons)
+document.addEventListener("DOMContentLoaded", function() {
+
+    const page_navigators = document.querySelectorAll(".pagination-link");
+    page_navigators.forEach((node) => {
+
+        node.classList.add("btn", "btn-outline-custom", "rounded");
+        node.parentNode.classList.remove("nav-page");
+        node.parentNode.parentNode.style.gridRow = "initial";
+    });
+});
+
+// Set external links to open in a new tab
+document.addEventListener("DOMContentLoaded", function() {
+    var all_links = document.querySelectorAll('a');
+    for (var i = 0; i < all_links.length; i++){
+        var a = all_links[i];
+        if(a.hostname != location.hostname) {
+                a.target = '_blank';
+        }
+    }
+})
+
+</script>
+
+<!-- Lightbox 
+
+Intercept all instances of:
+
+:::{#id .mermaid-lightbox data-caption='my caption'}
+```{mermaid}
+mermaid markdown content...
+```
+:::
+
+and overwrite it with a popup lightbox for easy viewing of diagram.
+Powered by GLightbox: https://github.com/biati-digital/glightbox
+-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.1/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox@3.3.1/dist/js/glightbox.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const mermaidElements = document.querySelectorAll('.mermaid-lightbox');
+
+    mermaidElements.forEach(element => {
+      const id = element.id;
+      const caption = element.getAttribute('data-caption');
+
+      const lightboxFigure = document.createElement('a');
+      lightboxFigure.setAttribute('href', '#' + id);
+      lightboxFigure.className = 'glightbox';
+      lightboxFigure.setAttribute('data-description', caption);
+      lightboxFigure.setAttribute('data-width', "90%");
+      lightboxFigure.setAttribute('data-height', "90%");
+
+      const clonedElement = element.cloneNode(true);
+      lightboxFigure.appendChild(clonedElement);
+
+      const figcaption = document.createElement('figcaption');
+      figcaption.textContent = 'Click diagram to enlarge';
+      lightboxFigure.appendChild(figcaption);
+
+      element.parentNode.replaceChild(lightboxFigure, element);
+    });
+
+    // Initialize GLightbox
+    const lightbox = GLightbox({
+        selector: '.glightbox'
+    });
+  })
+</script>
+
+<!-- This script dynamically updates the copyright year in the footer -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get the current year
+    var currentYear = new Date().getFullYear();
+    
+    // Find the span element where we'll put the year
+    var span = document.getElementById('current-year');
+    
+    if (span) {
+        // If the span exists, update its content with the current year
+        span.textContent = currentYear;
+    }
+    });
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/nih-odss\.github\.io\/fhir-for-research\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/README.md">License information</a><br>Approved for Public Release / Case #24-3701<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
