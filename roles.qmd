@@ -5,7 +5,7 @@ sidebar: false
 
 -   **Investigator** A clinician/scientist who is in a research PI, co-I, or staff scientist position. Their role requires enough technical informatics understanding to design and conduct research, and interface closely with technical staff responsible for implementation of informatics approaches including FHIR.
 
--   **Research Leaders** Member of the leadership responsible for shaping research strategy and capacity across an institution's research portfolio. This persona may include roles like CTR PIs, Institute directors, or health system executives like Chief Scientific Officers or Chief Research Informatics Officers.
+-   **Research Leaders** Member of the leadership responsible for shaping research strategy and capacity across an institution's research portfolio. This persona may include roles like PIs, Institute directors, or health system executives like Chief Scientific Officers or Chief Research Informatics Officers.
 
 -   **Informaticist** A technical role primarily responsible for working hands-on with clinical data. This role involve elements of software engineering, but is not focused primarily on developing software. Deep familiarity with clinical data and databases can be assumed, but there may be heterogeneous experience with FHIR and related technology.
 
