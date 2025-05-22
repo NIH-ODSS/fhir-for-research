@@ -353,7 +353,7 @@ If you are interested in using the FHIR API to access data, you may want to revi
       else {
         outputNode.innerHTML = `
           <div>
-            <h4>Live response from <code>${baseUriInput.value}</code>:</h4>
+            <h4>Live response from <code>${url}</code>:</h4>
             <ul class="nav nav-tabs" id="outputTabs" role="tablist">
               <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="outputViewerTab" data-bs-toggle="tab" data-bs-target="#outputViewer" type="button" role="tab" aria-controls="outputViewer" aria-selected="true">Viewer</button>
