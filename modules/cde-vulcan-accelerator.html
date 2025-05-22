@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-10-26">
+
+<title>HL7 Vulcan Accelerator – FHIR® for Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../modules/cde-implementation-examples.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-3419ea62b3ca2d77d3d547f86109e84e.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-eaeb381c6b7494c50009502241a4985c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-3419ea62b3ca2d77d3d547f86109e84e.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-af98926d0583c5c51969b47002cc0811.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-0be736326fa27cb69a659b517a529c05.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-af98926d0583c5c51969b47002cc0811.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<!-- head.html -->
+<!-- any content in this file is inserted into <head></head> -->
+
+<script src="../modules/mappings.js"></script>
+
+<script>
+// test if local storage is available and inititilize global variable store, code adapted from:
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+function initLocalStorage() {
+  let storage;
+  try {
+    storage = window["localStorage"];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return storage;
+  } catch (e) {
+    console.log("Error: local storage unavailable.");
+    return (
+      e instanceof DOMException &&
+      // everything except Firefox
+      (e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === "QuotaExceededError" ||
+        // Firefox
+        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage &&
+          storage.length !== 0
+    );
+  }
+}
+
+var store = initLocalStorage();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Yantramanav:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="HL7 Vulcan Accelerator – FHIR® for Research">
+<meta property="og:description" content="">
+<meta property="og:site_name" content="FHIR® for Research">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="..">
+    <span class="navbar-title">FHIR® for Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/introduction"> 
+<span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../sections/technologies" aria-current="page"> 
+<span class="menu-text">Technologies</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hands-on-practice"> 
+<span class="menu-text">Hands-on <span class="collapse-lg-xl">Practice</span></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hosting-your-own-workshop"> 
+<span class="menu-text">Hosting Your Own Workshop</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../contribute"> <i class="bi bi-question-circle-fill" role="img">
+</i> 
+<span class="menu-text"><span class="collapse-lg-xl">Questions &amp; Contributions</span></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/NIH-ODSS/fhir-for-research"> <i class="bi bi-github" role="img" aria-label="View the GitHub repository for this site">
+</i> 
+<span class="menu-text"><span class="collapse-sm">View on GitHub</span></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../modules/cde-introduction">Common Data Elements (CDEs)</a></li><li class="breadcrumb-item"><a href="../modules/cde-vulcan-accelerator">HL7 Vulcan Accelerator</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sections/technologies" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technologies</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">FHIR Implementation Guides</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/data-modeling-what-is-fhir-ig" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">What is a FHIR IG?</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/data-modeling-reading-igs" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reading IGs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/data-modeling-real-world-igs" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Real World IGs</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/data-modeling-writing-igs" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Writing IGs</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">SMART on FHIR</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/smart-on-fhir-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/smart-on-fhir-tech" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Details</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">CDS Hooks</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cds-hooks-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cds-hooks-types" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Types of CDS Hooks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cds-hooks-tech" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Clinical Quality Language</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/clinical-quality-language-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/clinical-quality-language-example" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">REDCap</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/redcap-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/redcap-fhir" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">REDCap on FHIR</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Synthea</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-overview" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Synthea Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-running" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Synthea</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-customizing" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Customizing Synthea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
+ <span class="menu-text">Bulk Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/bulk-fhir-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bulk Data Access</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/bulk-fhir-tech" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Example</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../webinars/bulk-data" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Webinar</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true">
+ <span class="menu-text">Emerging Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/fhir-emerging-innovations" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Emerging Use Cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/fhir-research" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Real World Research</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/genomics" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Genomics Data Standardization</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true">
+ <span class="menu-text">Common Data Elements (CDEs)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-introduction" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-harmonization" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Harmonization</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-fhir" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">CDEs &amp; FHIR</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-implementation-examples" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Implementation Examples</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/cde-vulcan-accelerator" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">HL7 Vulcan Accelerator</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#origins-and-evolution-of-vulcan" id="toc-origins-and-evolution-of-vulcan" class="nav-link" data-scroll-target="#origins-and-evolution-of-vulcan"><span class="header-section-number">2</span> Origins and evolution of Vulcan</a>
+  <ul class="collapse">
+  <li><a href="#why-vulcan-was-established" id="toc-why-vulcan-was-established" class="nav-link" data-scroll-target="#why-vulcan-was-established"><span class="header-section-number">2.1</span> Why Vulcan was established</a></li>
+  <li><a href="#formation-and-launch" id="toc-formation-and-launch" class="nav-link" data-scroll-target="#formation-and-launch"><span class="header-section-number">2.2</span> Formation and launch</a></li>
+  <li><a href="#the-hl7-fhir-accelerator-model" id="toc-the-hl7-fhir-accelerator-model" class="nav-link" data-scroll-target="#the-hl7-fhir-accelerator-model"><span class="header-section-number">2.3</span> The HL7 FHIR Accelerator model</a></li>
+  <li><a href="#federal-and-regulatory-participation" id="toc-federal-and-regulatory-participation" class="nav-link" data-scroll-target="#federal-and-regulatory-participation"><span class="header-section-number">2.4</span> Federal and regulatory participation</a></li>
+  </ul></li>
+  <li><a href="#key-milestones-and-progress" id="toc-key-milestones-and-progress" class="nav-link" data-scroll-target="#key-milestones-and-progress"><span class="header-section-number">3</span> Key milestones and progress</a></li>
+  <li><a href="#vulcan-projects-and-fhir-implementation-guides" id="toc-vulcan-projects-and-fhir-implementation-guides" class="nav-link" data-scroll-target="#vulcan-projects-and-fhir-implementation-guides"><span class="header-section-number">4</span> Vulcan projects and FHIR implementation guides</a>
+  <ul class="collapse">
+  <li><a href="#clinical-study-schedules-of-activities" id="toc-clinical-study-schedules-of-activities" class="nav-link" data-scroll-target="#clinical-study-schedules-of-activities"><span class="header-section-number">4.1</span> Clinical study schedules of activities</a></li>
+  <li><a href="#real-world-data-for-clinical-research" id="toc-real-world-data-for-clinical-research" class="nav-link" data-scroll-target="#real-world-data-for-clinical-research"><span class="header-section-number">4.2</span> Real-world data for clinical research</a></li>
+  <li><a href="#adverse-event-reporting" id="toc-adverse-event-reporting" class="nav-link" data-scroll-target="#adverse-event-reporting"><span class="header-section-number">4.3</span> Adverse event reporting</a></li>
+  <li><a href="#clinical-protocol-digitization" id="toc-clinical-protocol-digitization" class="nav-link" data-scroll-target="#clinical-protocol-digitization"><span class="header-section-number">4.4</span> Clinical protocol digitization</a></li>
+  <li><a href="#other-vulcan-activities" id="toc-other-vulcan-activities" class="nav-link" data-scroll-target="#other-vulcan-activities"><span class="header-section-number">4.5</span> Other Vulcan activities</a></li>
+  <li><a href="#vulcan-interoperability-bridge-from-standards-to-implementation" id="toc-vulcan-interoperability-bridge-from-standards-to-implementation" class="nav-link" data-scroll-target="#vulcan-interoperability-bridge-from-standards-to-implementation"><span class="header-section-number">4.6</span> Vulcan Interoperability Bridge: from standards to implementation</a></li>
+  </ul></li>
+  <li><a href="#alignment-with-nih-cdes-and-research-interoperability-infrastructure" id="toc-alignment-with-nih-cdes-and-research-interoperability-infrastructure" class="nav-link" data-scroll-target="#alignment-with-nih-cdes-and-research-interoperability-infrastructure"><span class="header-section-number">5</span> Alignment with NIH CDEs and research interoperability infrastructure</a></li>
+  <li><a href="#from-computable-cdes-to-interoperable-research-infrastructure" id="toc-from-computable-cdes-to-interoperable-research-infrastructure" class="nav-link" data-scroll-target="#from-computable-cdes-to-interoperable-research-infrastructure"><span class="header-section-number">6</span> From computable CDEs to interoperable research infrastructure</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">7</span> Conclusion</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../modules/cde-introduction">Common Data Elements (CDEs)</a></li><li class="breadcrumb-item"><a href="../modules/cde-vulcan-accelerator">HL7 Vulcan Accelerator</a></li></ol></nav><h1 class="title display-7">HL7 Vulcan Accelerator</h1></header>
+
+
+<div id="metadata-container" style="display: flex;">
+<!-- Begin reading time block -->
+  <div id="reading-time-container" style="display: none">
+    <svg aria-hidden="true" role="img" focusable="false" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+    <span id="reading-time"></span> min. reading time&nbsp;
+  </div>
+<!-- end reading time block -->
+
+<!-- last updated -->
+<div class="date">Last updated: October 26, 2026</div>
+</div> <!-- end metadata div -->
+
+<!-- script for reading time -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+    // Step 1: Count words in parent document
+    let totalWords = 0;
+    const mainContent = document.querySelector('#quarto-document-content');
+    if (mainContent) {
+      const parentWords = mainContent.innerText.trim().split(/\s+/).length;
+      totalWords += parentWords;
+    }
+
+    // We'll update the badge once we've processed ALL iframes (or there are none)
+    function updateReadingTimeBadge(wordCount) {
+      const wpm = 200;
+      const readingTime = Math.ceil(wordCount / wpm);
+
+      document.getElementById('reading-time').textContent = readingTime;
+      document.getElementById('reading-time-container').style.display = '';
+    }
+
+    // Step 2: Gather iframes
+    const iframes = document.querySelectorAll('iframe');
+
+    // If there are no iframes, just show the reading time for parent content
+    if (iframes.length === 0) {
+      updateReadingTimeBadge(totalWords);
+      return;
+    }
+
+    // We only update after ALL iframes have loaded or errored
+    let pending = iframes.length;
+
+    // Helper to decrement pending count and update once done
+    function iframeDone() {
+      pending--;
+      if (pending === 0) {
+        // All iframes processed
+        updateReadingTimeBadge(totalWords);
+      }
+    }
+
+    // Step 3: Iterate through each iframe
+    iframes.forEach(iframe => {
+      // Listen for 'load' (fires whether same-origin or cross-origin)
+      iframe.addEventListener('load', function() {
+        try {
+          // Attempt to read the iframe's text (works only if same-origin)
+          const iframeDoc = iframe.contentWindow.document;
+          const iframeText = (iframeDoc.body.innerText || "").trim();
+          const iframeWords = iframeText.split(/\s+/).filter(Boolean).length;
+
+          totalWords += iframeWords;
+        } catch (err) {
+          // Cross-origin or any other error
+          console.warn("Could not read iframe content (possibly cross-origin):", err);
+          // No addition to totalWords
+        }
+        // Mark this iframe as processed
+        iframeDone();
+      }, { once: true });
+
+      // Listen for 'error' in case the iframe fails to load
+      iframe.addEventListener('error', function() {
+        console.warn("Iframe failed to load:", iframe.src);
+        // Just move on (no addition to totalWords)
+        iframeDone();
+      }, { once: true });
+    });
+
+  });
+  </script>
+ <!-- end script for reading time -->
+
+<header>
+<!--
+-->
+
+
+
+
+</header>
+
+<!-- begin roles block -->
+<div class="role-tags" aria-label="Relevant roles">
+  <span class="role-tags-label">Roles:</span>
+  <span class="role-tag">Investigator</span>
+  <span class="role-tag">Research Leaders</span>
+  <span class="role-tag">Informaticist</span>
+  <span class="role-tag">Software Engineer</span>
+  <span class="role-tag">Clinician Scientist/Trainee</span>
+  <a href="../roles" class="role-info-link" aria-label="Learn more about roles">
+    <svg aria-hidden="true" role="img" focusable="false" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+</a>
+</div>
+<!-- end roles block -->
+
+<!-- Begin learning objectives block -->
+
+<div class="callout-tip callout callout-style-default callout-captioned" id="learning-objectives">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Learning objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>
+    Describe the origins, purpose, and evolution of the HL7 Vulcan Accelerator.
+</li>
+<li>
+    Identify major Vulcan milestones and FHIR implementation guides that support clinical research interoperability.
+</li>
+<li>
+    Explain how Vulcan coordinates standards development, implementation guidance, and testing across clinical research stakeholders.
+</li>
+<li>
+    Describe how computable CDEs, standardized terminology, and FHIR implementation guidance can support Vulcan-related research workflows.
+</li>
+<li>
+    Recognize opportunities for aligning NIH CDEs with FHIR-enabled research infrastructure to support data sharing and reuse.
+</li>
+</ol>
+</div>
+</div>
+
+<!-- End learning objectives block -->
+
+<!-- Hack to add key points block at end of page-->
+<!-- End hack to add key points block at end of page-->
+
+
+<section id="introduction" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">1</span> Introduction</h2>
+<p>Clinical research increasingly depends on data collected across electronic health records (EHRs), research repositories, clinical trial systems, registries, and other healthcare information systems. Yet clinical care and research have historically operated in separate data environments, requiring researchers to manually abstract information, enter the same information into multiple systems, or develop study-specific approaches to data exchange.</p>
+<p>As described in the <a href="../modules/cde-fhir">CDEs &amp; FHIR module</a>, interoperability requires both shared meaning and standardized mechanisms to represent and exchange information. Common data elements (CDEs) standardize what data mean and, where specified, what is collected. FHIR provides a standardized mechanism for representing and exchanging information, while implementation guides (IGs) establish requirements for consistent implementation across systems.</p>
+<p>The <a href="https://hl7vulcan.org/">HL7 Vulcan Accelerator</a> (Vulcan) was established to address this challenge by bringing together stakeholders to develop, test, and advance FHIR-based interoperability solutions. Vulcan illustrates how standardized research concepts, computable specifications, and implementation guidance can support reusable research workflows.</p>
+</section>
+<section id="origins-and-evolution-of-vulcan" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="origins-and-evolution-of-vulcan"><span class="header-section-number">2</span> Origins and evolution of Vulcan</h2>
+<section id="why-vulcan-was-established" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="why-vulcan-was-established"><span class="header-section-number">2.1</span> Why Vulcan was established</h3>
+<p>The adoption of EHRs and development of FHIR created new opportunities to exchange clinical information electronically. However, clinical research had not benefited from these advances to the same extent as routine healthcare delivery.</p>
+<p>Research sponsors, academic medical centers, clinical research sites, and technology vendors continue to rely on separate information systems and study-specific processes to collect and exchange research information. For example, information documented in an EHR during routine clinical care might need to be manually abstracted and entered again into an electronic case report form for a clinical trial.</p>
+<p>Differences in definitions, terminology, data structures, and technical interfaces continue to complicate data exchange or reuse, increasing administrative burden and limiting integration between clinical care and research workflows.</p>
+<p>Vulcan was established to bridge this gap by extending the use of FHIR and related interoperability standards into translational and clinical research. Its <a href="https://hl7vulcan.org/">goals and activities</a> include:</p>
+<ul>
+<li>Bridging existing gaps between clinical care and clinical research.</li>
+<li>Coordinating standards development across research stakeholders.</li>
+<li>Building on existing interoperability standards and avoiding unnecessary duplication.</li>
+<li>Developing FHIR implementation guidance for research workflows.</li>
+<li>Supporting more efficient acquisition, exchange, and reuse of clinical information for research.</li>
+</ul>
+</section>
+<section id="formation-and-launch" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="formation-and-launch"><span class="header-section-number">2.2</span> Formation and launch</h3>
+<p>Vulcan <a href="https://www.fda.gov/drugs/electronic-regulatory-submission-and-review/role-cder-health-level-seven-hl7-vulcan-accelerator">formed in September 2019</a> through a collaboration involving government agencies, academic institutions, technology companies, standards development organizations, patient representatives, and industry stakeholders. It <a href="https://blog.hl7.org/hl7-fhir-accelerator-for-translational-and-clinical-research-vulcan-launches">formally launched in August 2020</a> as an HL7 FHIR Accelerator. Organizations involved at launch included TransCelerate BioPharma, Duke University, Johns Hopkins University, Oregon Health &amp; Science University, UT Health San Antonio, the Society for Clinical Data Management, the U.S. National Library of Medicine, the National Center for Advancing Translational Sciences (NCATS), the Danish Medicines Agency, and the U.S. Food and Drug Administration (FDA).</p>
+</section>
+<section id="the-hl7-fhir-accelerator-model" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="the-hl7-fhir-accelerator-model"><span class="header-section-number">2.3</span> The HL7 FHIR Accelerator model</h3>
+<p>FHIR Accelerators are collaborative initiatives organized around specific interoperability challenges. They bring together stakeholders to prioritize use cases, coordinate standards development, test technical specifications, and promote adoption.</p>
+<p>Vulcan applies this model to clinical research by developing implementation guidance, aligning research requirements with existing standards, and testing implementations through HL7 Connectathons and other demonstrations. Vulcan works within the HL7 standards development process, collaborating with relevant HL7 work groups to develop and publish implementation artifacts.</p>
+<p>FHIR provides the underlying standard, while Vulcan helps coordinate how that standard is applied to clinical research problems.</p>
+</section>
+<section id="federal-and-regulatory-participation" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="federal-and-regulatory-participation"><span class="header-section-number">2.4</span> Federal and regulatory participation</h3>
+<p>Federal participation has been an important component of Vulcan’s development. FDA was among its founding organizations, and its <a href="https://www.fda.gov/drugs/electronic-regulatory-submission-and-review/role-cder-health-level-seven-hl7-vulcan-accelerator">Center for Drug Evaluation and Research (CDER) has contributed to Vulcan’s governance, real-world data retrieval, and adverse event work</a>.</p>
+<p>Vulcan’s activities also intersect with broader federal efforts to modernize clinical trials, improve regulatory information exchange, and support reuse of clinical information for research. Its multi-stakeholder structure provides a venue for coordinating implementation requirements across government, research, and industry organizations.</p>
+</section>
+</section>
+<section id="key-milestones-and-progress" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="key-milestones-and-progress"><span class="header-section-number">3</span> Key milestones and progress</h2>
+<p>Vulcan has progressed from identifying shared interoperability requirements toward publishing implementation guides and supporting practical implementation demonstrations.</p>
+<p><a href="https://blog.hl7.org/hl7-fhir-accelerator-for-translational-and-clinical-research-vulcan-launches">Early Vulcan activities focused</a> on establishing consensus around clinical research interoperability requirements and identifying priority use cases including real-world data, phenotypic data exchange, and clinical study schedules of activities.</p>
+<p>As Vulcan matured, its activities increasingly emphasized published FHIR implementation guides, reusable technical specifications, and collaborative implementation testing.</p>
+<p>This progression reflects a broader movement from defining research interoperability requirements toward demonstrating how standards can be applied across clinical and research systems.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Date</th>
+<th>Milestone</th>
+<th>Significance</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>September 2019</strong></td>
+<td><a href="https://www.fda.gov/drugs/electronic-regulatory-submission-and-review/role-cder-health-level-seven-hl7-vulcan-accelerator">Formation of Vulcan</a></td>
+<td>Initiated multi-stakeholder collaboration to bridge clinical care and research.</td>
+</tr>
+<tr class="even">
+<td><strong>August 2020</strong></td>
+<td><a href="https://blog.hl7.org/hl7-fhir-accelerator-for-translational-and-clinical-research-vulcan-launches">Formal launch as an HL7 FHIR Accelerator</a></td>
+<td>Established a coordinated initiative for research interoperability.</td>
+</tr>
+<tr class="odd">
+<td><strong>2020–2021</strong></td>
+<td>Initial use cases established</td>
+<td>Prioritized real-world data, Phenopackets, and schedules of activities.</td>
+</tr>
+<tr class="even">
+<td><strong>April 2023</strong></td>
+<td><a href="https://hl7.org/fhir/uv/vulcan-schedule/STU1/">Clinical Study Schedule of Activities IG, STU1</a></td>
+<td>Published trial-use guidance for structured study schedules.</td>
+</tr>
+<tr class="odd">
+<td><strong>May 2023</strong></td>
+<td><a href="https://hl7.org/fhir/uv/vulcan-rwd/STU1/">Retrieval of Real World Data for Clinical Research IG, STU1</a></td>
+<td>Published guidance for retrieving EHR-derived information for research.</td>
+</tr>
+<tr class="even">
+<td><strong>June 2023</strong></td>
+<td><a href="https://www.cdisc.org/news/vulcan-fhirr-accelerator-connects-cdisc-hl7-and-ich-m11-project-digitize-exchange-clinical">Vulcan–CDISC protocol digitization collaboration announced</a></td>
+<td>Initiated work on structured clinical trial protocol exchange aligned with ICH M11 and CDISC standards.</td>
+</tr>
+<tr class="odd">
+<td><strong>2024</strong></td>
+<td><a href="https://hl7.org/fhir/uv/ae-research-ig/">Adverse Event Clinical Research IG, STU1</a></td>
+<td>Published FHIR guidance for representing adverse event information.</td>
+</tr>
+<tr class="even">
+<td><strong>June 2025</strong></td>
+<td><a href="https://hl7news.hl7.org/2026/01/06/a-year-of-growth-for-hl7-vulcan/">First Vulcan Interoperability Bridge cohort demonstrations</a></td>
+<td>Demonstrated six use cases involving four implementation guides and more than 30 participating organizations.</td>
+</tr>
+</tbody>
+</table>
+<p>These milestones represent different stages of maturity. A project announcement establishes planned collaboration, while a published implementation guide provides a technical specification that organizations can implement and test.</p>
+<p>Standards for Trial Use (STU) support implementation experience, feedback, and refinement. Similarly, demonstrations can establish technical feasibility but do not necessarily indicate widespread production adoption.</p>
+<p>Vulcan’s expanding portfolio of research-focused FHIR interoperability projects reflects its evolution from consensus-building toward reusable implementation guidance and practical applications, with varying levels of maturity and adoption across projects.</p>
+</section>
+<section id="vulcan-projects-and-fhir-implementation-guides" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="vulcan-projects-and-fhir-implementation-guides"><span class="header-section-number">4</span> Vulcan projects and FHIR implementation guides</h2>
+<p>One of Vulcan’s major accomplishments has been the development of domain-specific implementation guides that apply FHIR to clinical research workflows.</p>
+<p>As discussed in the <a href="../modules/cde-fhir">CDEs &amp; FHIR module</a>, implementing a computable CDE involves more than selecting a FHIR resource. It requires a coordinated set of semantic and technical artifacts that preserve the meaning of a research concept and support consistent implementation, validation, exchange, and reuse.</p>
+<p>Vulcan projects provide examples of how these capabilities can be brought together around research workflows. The discussion of CDEs in the context of Vulcan below illustrates possible applications of this guidance.</p>
+<section id="clinical-study-schedules-of-activities" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="clinical-study-schedules-of-activities"><span class="header-section-number">4.1</span> Clinical study schedules of activities</h3>
+<p>A clinical study schedule of activities (SoA) describes the assessments, procedures, interventions, and other activities required at specified study visits or points in time.</p>
+<p>Traditionally, schedules have been represented in protocol documents or tables that require manual interpretation before implementation in clinical trial management, electronic data capture platforms, or EHR-integrated research workflows.</p>
+<p>The <a href="https://hl7.org/fhir/uv/vulcan-schedule/STU1/">Vulcan Clinical Study Schedule of Activities Implementation Guide</a>, published in April 2023, defines a FHIR R4 approach for representing and exchanging structured study schedules. Its <a href="https://hl7.org/fhir/uv/vulcan-schedule/STU1/basic-structure.html">core model</a> uses <a href="https://hl7.org/fhir/R4/researchstudy.html">ResearchStudy</a> to identify the study, <a href="https://hl7.org/fhir/R4/plandefinition.html">PlanDefinition</a> to describe the schedule and planned visits, and <a href="https://hl7.org/fhir/R4/activitydefinition.html">ActivityDefinition</a> to describe activities.</p>
+<p>A structured schedule identifies when an assessment is required, while a standardized CDE defines what information should be collected, including the question, response domain, terminology, and other specifications. For example, a multicenter study may require a pain intensity assessment at baseline and follow-up visits. A computable schedule can represent when the assessment is required, while a FHIR <a href="https://hl7.org/fhir/questionnaire.html">Questionnaire</a> informed by a computable CDE could support consistent data collection (note that this is a speculative use of Questionnaire; the SoA STU1 guide focuses on scheduling and does not profile Questionnaire).</p>
+<p>This work is particularly relevant to broader efforts to digitize clinical research protocols and standardize study operational metadata.</p>
+</section>
+<section id="real-world-data-for-clinical-research" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="real-world-data-for-clinical-research"><span class="header-section-number">4.2</span> Real-world data for clinical research</h3>
+<p>Real-world data (RWD) include information generated during routine healthcare delivery and other everyday activities. EHR-derived information may support observational research, cohort identification, safety studies, and real-world evidence generation. However, differences in coding, completeness, provenance, and clinical context can complicate reuse.</p>
+<p>The <a href="https://hl7.org/fhir/uv/vulcan-rwd/STU1/">Vulcan Retrieval of Real World Data for Clinical Research Implementation Guide</a>, published in May 2023, provides FHIR R4 guidance for identifying patient cohorts and retrieving relevant healthcare information. Its STU1 scope is retrospective analysis of existing EHR data; it does not cover prospective study data collection or downstream transformation for regulatory submissions.</p>
+<p>Standardized research definitions help establish which clinical variables are required and how retrieved information should be interpreted. For example, an EHR may expose a pain intensity observation through FHIR, but researchers must still determine whether the measurement, timing, response scale, and clinical context satisfy the study’s requirements. CDEs, terminology bindings, and explicit metadata can support consistent interpretation of these data.</p>
+</section>
+<section id="adverse-event-reporting" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="adverse-event-reporting"><span class="header-section-number">4.3</span> Adverse event reporting</h3>
+<p>Adverse event reporting requires accurate representation and exchange of information about events occurring during clinical research, including event characteristics, timing, seriousness, severity, outcomes, and relationships to study interventions.</p>
+<p><a href="https://hl7.org/fhir/uv/ae-research-ig/">Vulcan’s Adverse Event Clinical Research Implementation Guide</a> provides a foundational profile of the FHIR <a href="https://hl7.org/fhir/R5/adverseevent.html">AdverseEvent</a> resource. The published STU1 version 1.0.1 uses FHIR R5 and includes constraints, terminology bindings, and examples; an <a href="https://hl7.org/fhir/uv/ae-research-backport-ig/">R4 backport</a> is also available. FDA’s CDER has participated in this work.</p>
+<p>Standardized adverse event definitions and response specifications can support consistent capture and interpretation of safety-related information. FHIR implementation guidance provides mechanisms for exchanging that information across systems.</p>
+</section>
+<section id="clinical-protocol-digitization" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="clinical-protocol-digitization"><span class="header-section-number">4.4</span> Clinical protocol digitization</h3>
+<p>Clinical trial protocols describe study design, populations, interventions, eligibility criteria, and required assessments. Much of this information has traditionally been maintained in narrative documents requiring manual interpretation.</p>
+<p>In June 2023, Vulcan and the Clinical Data Interchange Standards Consortium (CDISC) <a href="https://www.cdisc.org/news/vulcan-fhirr-accelerator-connects-cdisc-hl7-and-ich-m11-project-digitize-exchange-clinical">announced a collaborative project</a> to advance electronic exchange of structured clinical research protocols, aligned with ICH M11 and CDISC standards.</p>
+<p>As discussed in the <a href="../modules/cde-harmonization">CDE harmonization module</a>, <a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/m11-clinical-electronic-structured-harmonised-protocol">ICH M11</a> standardizes protocol content and structure, while the <a href="https://www.cdisc.org/ddf">CDISC Unified Study Definitions Model (USDM)</a> provides a computable model for representing and exchanging study definitions.</p>
+<p>Computable CDEs complement these standards by providing standardized definitions, terminology bindings, and validation requirements for variables collected through protocol-defined assessments.</p>
+</section>
+<section id="other-vulcan-activities" class="level3" data-number="4.5">
+<h3 data-number="4.5" class="anchored" data-anchor-id="other-vulcan-activities"><span class="header-section-number">4.5</span> Other Vulcan activities</h3>
+<p>Vulcan’s <a href="https://hl7vulcan.org/projects/">broader portfolio</a> includes phenotypic exchange, FHIR-to-OMOP interoperability, and electronic product information (ePI). These projects vary in their stages of development, testing, publication, and adoption.</p>
+<p><strong>Phenopackets</strong> are a standardized, machine-readable way to describe an individual’s observable characteristics (phenotypes), clinical findings, and related health information. Developed by the Global Alliance for Genomics and Health (GA4GH), the <a href="https://phenopacket-schema.readthedocs.io/en/latest/">GA4GH Phenopacket Schema</a> supports consistent representation of patient characteristics, particularly in rare disease research, genomics, and precision medicine. Phenopackets are relevant to Vulcan’s phenotypic exchange activities because they can facilitate the exchange and reuse of detailed phenotype information across clinical care and research systems.</p>
+<p>The <a href="https://ohdsi.github.io/CommonDataModel/">Observational Medical Outcomes Partnership (OMOP) Common Data Model</a> provides a standardized structure and terminology framework for organizing observational healthcare data to support research and analysis across institutions. While FHIR supports standardized representation and exchange of health information, OMOP organizes data for downstream research and analytics. Vulcan’s FHIR-to-OMOP interoperability activities explore approaches for mapping between these complementary models to support reuse of clinical data for research.</p>
+</section>
+<section id="vulcan-interoperability-bridge-from-standards-to-implementation" class="level3" data-number="4.6">
+<h3 data-number="4.6" class="anchored" data-anchor-id="vulcan-interoperability-bridge-from-standards-to-implementation"><span class="header-section-number">4.6</span> Vulcan Interoperability Bridge: from standards to implementation</h3>
+<p>The <a href="https://vulcaninteroperabilitybridge.org/">Vulcan Interoperability Bridge (VIB)</a>, introduced in the <a href="../modules/cde-fhir">CDEs &amp; FHIR module</a>, supports practical implementation and testing of FHIR-based clinical research interoperability. VIB brings together research sponsors, clinical research sites, EHR vendors, health information exchanges, and other organizations to demonstrate standards-based research workflows.</p>
+<p>According to <a href="https://hl7news.hl7.org/2026/01/06/a-year-of-growth-for-hl7-vulcan/">HL7’s retrospective on Vulcan’s work in 2025</a>, the first VIB cohort completed demonstrations in June 2025 involving more than 30 organizations, six use cases, and four implementation guides. The <a href="https://vulcaninteroperabilitybridge.org/use-cases/">demonstrations</a> addressed research site-to-sponsor communication, exchange between sponsors’ internal systems, regulatory information exchange, and real-world data access through health information exchanges and patient engagement.</p>
+<p>VIB illustrates the progression from published implementation guides to testing interoperability across participating systems. These demonstrations provide evidence of technical feasibility, although broader production adoption requires further evaluation.</p>
+<p>For NIH research, VIB demonstrates potential pathways for reducing research burden through standards-based data exchange. It also reinforces the importance of computable CDEs, including standardized definitions, terminology bindings, and machine-readable specifications, to preserve meaning as research information moves between systems.</p>
+</section>
+</section>
+<section id="alignment-with-nih-cdes-and-research-interoperability-infrastructure" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="alignment-with-nih-cdes-and-research-interoperability-infrastructure"><span class="header-section-number">5</span> Alignment with NIH CDEs and research interoperability infrastructure</h2>
+<p>Vulcan’s work connects research requirements with existing healthcare information exchange infrastructure. For example, the <a href="https://hl7.org/fhir/uv/vulcan-rwd/STU1/">RWD STU1 guide</a> builds on International Patient Access (IPA) profiles and describes how its requirements can be combined with jurisdiction-specific guides such as US Core. Its <a href="https://hl7.org/fhir/uv/vulcan-rwd/STU1/technical.html">dependencies include SMART App Launch</a>, which supports authorized application access. These standards create opportunities to reuse routine clinical information, but an available FHIR API does not by itself ensure that a study’s required data are present or suitable for reuse.</p>
+<p>The NIH CDE ecosystem and Vulcan address complementary aspects of this challenge. NIH CDEs establish standardized definitions and metadata for research variables, while Vulcan advances FHIR-based implementation approaches that support exchange and reuse of clinical and research information. The NIH CDE Repository already <a href="https://www.nlm.nih.gov/oet/ed/navigator/cder3/index.html">exports forms as FHIR Questionnaire resources in JSON</a> (but this does not necessarily guarantee consistent terminology bindings, explicit context and constraints, validation rules, and implementation guidance for a given set of CDEs – in other words, a machine-readable representation of CDEs does not guarantee semantic interoperability).</p>
+<p>For example, CDEs may define individual questions and allowable responses within a patient-reported outcome assessment, while FHIR Questionnaire can represent the collection instrument and <a href="https://hl7.org/fhir/questionnaireresponse.html">QuestionnaireResponse</a> represents completed responses.</p>
+<p>Several NIH-supported programs, including the NIH HEAL Initiative, demonstrate the importance of standardized data definitions for harmonization and secondary research use. Aligning computable CDEs with interoperable standards creates opportunities to extend these capabilities across clinical research environments; see the <a href="../modules/cde-implementation-examples">CDE implementation examples module</a> for additional program examples.</p>
+<p>The broader opportunity is to establish reusable semantic and computable infrastructure that supports electronic phenotyping, cohort identification, clinical trial recruitment, real-world evidence generation, and SI-enabled research.</p>
+</section>
+<section id="from-computable-cdes-to-interoperable-research-infrastructure" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="from-computable-cdes-to-interoperable-research-infrastructure"><span class="header-section-number">6</span> From computable CDEs to interoperable research infrastructure</h2>
+<p>This module concludes the CDE-related modules by connecting standardized research data definitions to the broader goal of interoperable research infrastructure:</p>
+<ul>
+<li>The <a href="../modules/cde-introduction">CDE introduction</a>, <a href="../modules/cde-harmonization">harmonization</a>, and <a href="../modules/cde-fhir">CDEs &amp; FHIR</a> modules introduced the NIH CDE ecosystem, the architecture of computable CDEs, and their alignment with complementary interoperability standards and data models.</li>
+<li>The <a href="../modules/cde-implementation-examples">implementation examples module</a> describes CDE adoption across research programs and clinical domains.</li>
+<li>This module illustrates how Vulcan coordinates standards development and implementation to support interoperable clinical research workflows.</li>
+</ul>
+<p>No single standard provides end-to-end research interoperability. CDEs establish shared meaning, clinical terminologies encode concepts and values, FHIR supports standardized representation and exchange, and implementation guides define requirements for consistent implementation. Putting these capabilities into practice also requires governance, maintained mappings and versions, and testing across participating systems.</p>
+<p>Vulcan demonstrates how these complementary capabilities can be coordinated to address clinical research interoperability challenges.</p>
+<p>These capabilities could also support SI-enabled research by improving the consistency, interpretability, and reuse of data across research settings. However, standardization and interoperability alone do not ensure data quality, completeness, or model validity.</p>
+</section>
+<section id="conclusion" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">7</span> Conclusion</h2>
+<p>Since its formation in 2019 and formal launch in 2020, Vulcan has advanced research-focused FHIR guidance and collaborative initiatives involving real-world data, study schedules, adverse event reporting, protocol digitization, and other research workflows. Its work reinforces the central theme of this training series: meaningful interoperability requires both shared meaning and standardized approaches to data exchange.</p>
+<p>The goal is to build on CDE dictionaries and existing machine-readable exports so that maintained, versioned definitions can be implemented consistently, validated against explicit rules, and reused across research workflows. This requires ongoing stewardship and testing as definitions, systems, and research needs change.</p>
+<p>Vulcan illustrates one pathway for translating these capabilities into practice and advancing reusable research infrastructure.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<!-- scripts.html -->
+<!-- any content in this file is inserted right before </body> -->
+
+<!-- Append index.html to any links ending with '/'
+
+Example:
+
+<a href="https://example.org/workshops/bulk-data/">
+
+will turn into:
+
+<a href="https://example.org/workshops/bulk-data/index.html">
+
+This ensures consistent behavior across different deployment platforms
+and enables other scripts like role-based module highlighting.
+-->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("a[href]").forEach(link => {
+      if( link.getAttribute("href").endsWith("/") ) {
+        link.setAttribute("href", link.getAttribute("href") + "index.html");
+      }
+    })
+  });
+</script>
+
+<!-- Fix a11y issues with side menu -->
+<script>
+const elements = document.querySelectorAll('.sidebar-menu-container a.sidebar-item-text[data-bs-toggle="collapse"], .sidebar-menu-container a.sidebar-item-toggle[data-bs-toggle="collapse"]')
+
+elements.forEach(element => {
+    element.setAttribute('role', 'group');
+});
+</script>
+
+<!-- Role-based Module Highlighting
+
+For any *.qmd file with roles defined in frontmatter,
+running script/update-module-role-map will generate
+modules/mappings.js. Then any markup with class .highlight-by-role, i.e:
+
+:::{.highlight-by-role}
+ - [mod1](/mod1)
+ - [mod2](/mod2)
+ - [mod3](/mod3)
+:::
+
+will highlight the links in the list assigned to the users roles.
+
+The user can select a role by pressing a button with data-role=*
+attribute. The possible roles are:
+
+Possible Roles:
+  investigator
+  research-leader
+  informaticist
+  software-engineer
+  clinician-scientist
+-->
+<script>
+const all_modules = document.querySelectorAll(".highlight-by-role ul li");
+
+function slugify(str) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/* highlights modules corresponding to role via role_module_map
+ * @param: role_name - role name in lower kebab case
+ */
+function select_modules(role_name) {
+    // Remove existing highlights
+    document.querySelectorAll('mark[data-role]').forEach(mark => {
+      mark.replaceWith(...mark.childNodes);
+    });
+
+    // What modules should be highlighted based on the selected role?
+    var highlighted_module_slugs = role_module_map.filter(x => x.role === role_name).map(x => x.modules)[0].map(x => x.slug);
+
+    // Add in highlights of the currently selected role, just in the containers where
+    // there should be highlights.
+    [
+        '.sidebar-menu-container', // On module pages (left sidebar)
+        '.highlight-by-role' // On section pages (list of modules)
+    ].forEach((container_css_path) => {
+        document.querySelectorAll(container_css_path).forEach(container => {
+            highlighted_module_slugs.forEach((slug) => {
+                container.querySelectorAll(`li a[href*="${slug}"]`).forEach((ahref) => {
+                    var li = ahref.parentNode;
+                    var mark = document.createElement("mark");
+                    mark.dataset.role = role_name;
+                    li.appendChild(mark);
+                    mark.appendChild(ahref);
+                });
+            });
+        });
+    });
+
+    // For module pages, highlight the currently active role
+    document.querySelectorAll(".role-tags .role-tag").forEach((el) => {
+        if (slugify(el.textContent.trim()) === role_name) {
+          el.style.fontWeight = "bold";
+        }
+      });
+}
+
+
+// clears previously selected roles, highlights the selected role, and sets "role" in local storage
+function select_role(role) {
+    store.setItem("role", role);
+    document.querySelector(`.roles-select-list input[data-role="${role}"]`).checked = true;
+}
+
+// trigger role selection on clicking <input data-role=...>
+document.querySelectorAll(".roles-select-list input[data-role]").forEach((role_link) => {
+    role_link.addEventListener("click", (e) => {
+        const role = e.target.dataset.role;
+        select_role(role);
+        select_modules(role);
+    });
+});
+
+// set default role and execute select_role and select_modules once to make sure feature is working
+window.addEventListener("load", () => {
+  const role = store.getItem("role") || "research-leader";
+  select_role(role);
+  select_modules(role);
+});
+</script>
+
+<!-- Navigation Override
+
+Overwrite Quarto's Next/Previous buttons to point to modules
+for the user's role
+-->
+<script>
+// Below function is usable by CC BY-SA 3.0 from https://stackoverflow.com/a/6475125
+String.prototype.toTitleCase = function() {
+  let i, j, str, lowers, uppers;
+  str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+
+  // Certain minor words should be left lowercase unless 
+  // they are the first or last words in the string
+  lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At', 
+  'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'Onto', 'To', 'With'];
+  for (i = 0, j = lowers.length; i < j; i++)
+    str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'), 
+      function(txt) {
+        return txt.toLowerCase();
+      });
+
+  // Certain words such as initialisms or acronyms should be left uppercase
+  uppers = ['ID', 'TV', 'FHIR'];
+  for (i = 0, j = uppers.length; i < j; i++)
+    str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'), 
+      uppers[i].toUpperCase());
+
+  return str;
+}
+
+// Custom Hack to overwrite Quarto's built in navigators
+document.addEventListener("DOMContentLoaded", function() {
+    // Get current module and role
+    const current_module_slug = window.location.pathname.split('.')[0].trim(1).split('/').slice(1).join('/');
+    const role = store.getItem("role");
+
+    function slug_to_url(slug) {
+       return `${window.location.origin}/${slug}.html`
+    }
+
+    // Get next and prev modules data
+    let prev_href, prev_text;
+    let next_href, next_text;
+
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == role ) {
+            for(let i=0; i<mapping.modules.length; i++) {
+                if( mapping.modules[i].slug == current_module_slug ) {
+
+                    prev_href = (i > 0) ? slug_to_url(mapping.modules[i-1].slug) : null;
+                    prev_text = (i > 0) ? mapping.modules[i-1].text : null;
+
+                    next_href = (i+1 < mapping.modules.length) ? slug_to_url(mapping.modules[i+1].slug) : null;
+                    next_text = (i+1 < mapping.modules.length) ? mapping.modules[i+1].text : null;
+                }
+            }
+        }
+    });
+
+
+    // Overwrite prev link
+    if( prev_href ) {
+        const prev_link_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link");
+        const prev_text_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link .nav-page-text");
+        if( prev_link_elmt ) {
+
+            prev_link_elmt.href = prev_href
+            prev_text_elmt.innerText = prev_text;
+        }
+    }
+
+    // Overwrite next link
+    if( next_href ) {
+        const next_link_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link");
+        const next_text_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link .nav-page-text");
+
+        if( next_link_elmt ) {
+            next_link_elmt.href = next_href;
+            next_text_elmt.innerText = next_text;
+        }
+    }
+
+    // if document has #key-points then move pagination to next after it
+    key_points = document.querySelector("#key-points");
+    if( key_points ) {
+        let page_nav = document.querySelector("nav.page-navigation");
+        key_points.insertAdjacentElement("afterend", page_nav);
+    }
+
+});
+
+
+// Override style of Quarto page navigation (prev/next buttons)
+document.addEventListener("DOMContentLoaded", function() {
+
+    const page_navigators = document.querySelectorAll(".pagination-link");
+    page_navigators.forEach((node) => {
+
+        node.classList.add("btn", "btn-outline-custom", "rounded");
+        node.parentNode.classList.remove("nav-page");
+        node.parentNode.parentNode.style.gridRow = "initial";
+    });
+});
+
+// Set external links to open in a new tab
+document.addEventListener("DOMContentLoaded", function() {
+    var all_links = document.querySelectorAll('a');
+    for (var i = 0; i < all_links.length; i++){
+        var a = all_links[i];
+        if(a.hostname != location.hostname) {
+                a.target = '_blank';
+        }
+    }
+})
+
+</script>
+
+<!-- Lightbox 
+
+Intercept all instances of:
+
+:::{#id .mermaid-lightbox data-caption='my caption'}
+```{mermaid}
+mermaid markdown content...
+```
+:::
+
+and overwrite it with a popup lightbox for easy viewing of diagram.
+Powered by GLightbox: https://github.com/biati-digital/glightbox
+-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.1/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox@3.3.1/dist/js/glightbox.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const mermaidElements = document.querySelectorAll('.mermaid-lightbox');
+
+    mermaidElements.forEach(element => {
+      const id = element.id;
+      const caption = element.getAttribute('data-caption');
+
+      const lightboxFigure = document.createElement('a');
+      lightboxFigure.setAttribute('href', '#' + id);
+      lightboxFigure.className = 'glightbox';
+      lightboxFigure.setAttribute('data-description', caption);
+      lightboxFigure.setAttribute('data-width', "90%");
+      lightboxFigure.setAttribute('data-height', "90%");
+
+      const clonedElement = element.cloneNode(true);
+      lightboxFigure.appendChild(clonedElement);
+
+      const figcaption = document.createElement('figcaption');
+      figcaption.textContent = 'Click diagram to enlarge';
+      lightboxFigure.appendChild(figcaption);
+
+      element.parentNode.replaceChild(lightboxFigure, element);
+    });
+
+    // Initialize GLightbox
+    const lightbox = GLightbox({
+        selector: '.glightbox'
+    });
+  })
+</script>
+
+<!-- This script dynamically updates the copyright year in the footer -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get the current year
+    var currentYear = new Date().getFullYear();
+    
+    // Find the span element where we'll put the year
+    var span = document.getElementById('current-year');
+    
+    if (span) {
+        // If the span exists, update its content with the current year
+        span.textContent = currentYear;
+    }
+    });
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/NIH-ODSS\.github\.io\/fhir-for-research");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../modules/cde-implementation-examples" class="pagination-link" aria-label="Implementation Examples">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Implementation Examples</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/?tab=readme-ov-file#license">License information</a><br>Approved for Public Release / Case #25-3098<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

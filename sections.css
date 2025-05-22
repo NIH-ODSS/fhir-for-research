@@ -1,0 +1,82 @@
+/* Section landing pages reuse the homepage palette and type styles. */
+.section-page {
+  padding-block: 3.5rem 4.5rem;
+}
+
+.section-intro {
+  max-width: 95ch;
+  margin-bottom: 2.5rem;
+}
+
+.section-intro h1 {
+  margin: 0 0 1.3rem;
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.section-intro > p:not(:first-child),
+.section-card > p {
+  color: var(--home-muted);
+}
+
+.section-next {
+  margin-top: 1.5rem;
+  padding-left: 1rem;
+  border-left: 3px solid #398985;
+}
+
+.section-next p { margin-bottom: 0; }
+.section-next a { font-weight: 700; text-underline-offset: 0.2em; }
+
+
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.section-card {
+  padding: 1.8rem;
+  background: var(--home-surface);
+  border: 1px solid var(--home-border);
+  border-radius: 0.4rem;
+  scroll-margin-top: 5rem;
+}
+
+.section-page .section-card h2 {
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+.section-card ul {
+  margin: 1.3rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.section-card li { padding-left: 0.15rem; margin-block: 0.5rem; }
+.section-card li::marker { color: var(--home-link); }
+.section-card a { font-weight: 500; text-underline-offset: 0.2em; }
+
+.section-continue {
+  background: var(--home-surface-alt);
+  border: 1px solid var(--home-border);
+}
+
+.section-continue .home-button {
+  background: var(--home-ink);
+  color: #fff;
+}
+
+.section-continue .home-button:hover {
+  background: var(--home-link);
+}
+
+@media (max-width: 767px) {
+  .section-page { padding-block: 2rem 3rem; }
+  .section-intro { margin-bottom: 2rem; }
+  .section-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .section-card { padding: 1.4rem; }
+  .section-roles { padding: 1.2rem; }
+}

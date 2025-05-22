@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-10-30">
+
+<title>SQL on FHIR Workshop – FHIR® for Research</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../workshops/smart-on-fhir/index.html" rel="next">
+<link href="../workshops/bulk-data/index.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-3419ea62b3ca2d77d3d547f86109e84e.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-eaeb381c6b7494c50009502241a4985c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-3419ea62b3ca2d77d3d547f86109e84e.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-af98926d0583c5c51969b47002cc0811.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-0be736326fa27cb69a659b517a529c05.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-af98926d0583c5c51969b47002cc0811.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<!-- head.html -->
+<!-- any content in this file is inserted into <head></head> -->
+
+<script src="../modules/mappings.js"></script>
+
+<script>
+// test if local storage is available and inititilize global variable store, code adapted from:
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+function initLocalStorage() {
+  let storage;
+  try {
+    storage = window["localStorage"];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return storage;
+  } catch (e) {
+    console.log("Error: local storage unavailable.");
+    return (
+      e instanceof DOMException &&
+      // everything except Firefox
+      (e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === "QuotaExceededError" ||
+        // Firefox
+        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage &&
+          storage.length !== 0
+    );
+  }
+}
+
+var store = initLocalStorage();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Yantramanav:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="SQL on FHIR Workshop – FHIR® for Research">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://NIH-ODSS.github.io/fhir-for-research/workshops/images/sql-on-fhir-workflow.svg">
+<meta property="og:site_name" content="FHIR® for Research">
+<meta property="og:image:alt" content="Workflow: get FHIR data, load JSON into Python memory, process it with a ViewDefinition, and use or store the resulting tabular data.">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="..">
+    <span class="navbar-title">FHIR® for Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/introduction"> 
+<span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/technologies"> 
+<span class="menu-text">Technologies</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../sections/hands-on-practice" aria-current="page"> 
+<span class="menu-text">Hands-on <span class="collapse-lg-xl">Practice</span></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hosting-your-own-workshop"> 
+<span class="menu-text">Hosting Your Own Workshop</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../contribute"> <i class="bi bi-question-circle-fill" role="img">
+</i> 
+<span class="menu-text"><span class="collapse-lg-xl">Questions &amp; Contributions</span></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/NIH-ODSS/fhir-for-research"> <i class="bi bi-github" role="img" aria-label="View the GitHub repository for this site">
+</i> 
+<span class="menu-text"><span class="collapse-sm">View on GitHub</span></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../workshops/sql-on-fhir">SQL on FHIR</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sections/hands-on-practice" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Workshops</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">FHIR Analysis, CDS and Genomics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../workshops/data-analysis-cds" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../workshops/data-analysis-cds/01-fhir-analysis" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part 1: FHIR Data Analysis</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../workshops/data-analysis-cds/02-genomics-cds" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part 2: Genomics CDS</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../workshops/bulk-data" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">FHIR Bulk Data</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../workshops/sql-on-fhir" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">SQL on FHIR</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../workshops/smart-on-fhir" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">SMART on FHIR</span></a>
+  </div>
+</li>
+        <li class="px-0"><hr class="sidebar-divider hi "></li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../workshops/running-notebooks" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Workshop Notebooks</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#dependencies" id="toc-dependencies" class="nav-link" data-scroll-target="#dependencies">Dependencies</a></li>
+  <li><a href="#get-fhir-data" id="toc-get-fhir-data" class="nav-link" data-scroll-target="#get-fhir-data">Get FHIR data</a>
+  <ul class="collapse">
+  <li><a href="#example-patient-blood-pressure" id="toc-example-patient-blood-pressure" class="nav-link" data-scroll-target="#example-patient-blood-pressure">Example: patient blood pressure</a></li>
+  <li><a href="#constructing-a-fhir-search-request" id="toc-constructing-a-fhir-search-request" class="nav-link" data-scroll-target="#constructing-a-fhir-search-request">Constructing a FHIR search request</a></li>
+  <li><a href="#running-the-search-request" id="toc-running-the-search-request" class="nav-link" data-scroll-target="#running-the-search-request">Running the search request</a></li>
+  <li><a href="#inspecting-the-json" id="toc-inspecting-the-json" class="nav-link" data-scroll-target="#inspecting-the-json">Inspecting the JSON</a></li>
+  <li><a href="#loading-ndjson-into-python" id="toc-loading-ndjson-into-python" class="nav-link" data-scroll-target="#loading-ndjson-into-python">Loading NDJSON into Python</a></li>
+  </ul></li>
+  <li><a href="#process-data-with-viewdefinitions" id="toc-process-data-with-viewdefinitions" class="nav-link" data-scroll-target="#process-data-with-viewdefinitions">Process data with ViewDefinitions</a>
+  <ul class="collapse">
+  <li><a href="#group-fhir-resources-by-type" id="toc-group-fhir-resources-by-type" class="nav-link" data-scroll-target="#group-fhir-resources-by-type">Group FHIR resources by type</a></li>
+  <li><a href="#use-fhirpath-to-select-elements" id="toc-use-fhirpath-to-select-elements" class="nav-link" data-scroll-target="#use-fhirpath-to-select-elements">Use FHIRPath to select elements</a></li>
+  <li><a href="#defining-a-viewdefinition" id="toc-defining-a-viewdefinition" class="nav-link" data-scroll-target="#defining-a-viewdefinition">Defining a ViewDefinition</a></li>
+  <li><a href="#repeated-elements-and-missing-values" id="toc-repeated-elements-and-missing-values" class="nav-link" data-scroll-target="#repeated-elements-and-missing-values">Repeated elements and missing values</a></li>
+  <li><a href="#linking-resource-instances-across-resource-types" id="toc-linking-resource-instances-across-resource-types" class="nav-link" data-scroll-target="#linking-resource-instances-across-resource-types">Linking resource instances across resource types</a></li>
+  <li><a href="#example-processing-blood-pressure-data-with-a-viewdefinition" id="toc-example-processing-blood-pressure-data-with-a-viewdefinition" class="nav-link" data-scroll-target="#example-processing-blood-pressure-data-with-a-viewdefinition">Example: processing blood pressure data with a ViewDefinition</a></li>
+  </ul></li>
+  <li><a href="#using-the-tabular-data" id="toc-using-the-tabular-data" class="nav-link" data-scroll-target="#using-the-tabular-data">Using the tabular data</a>
+  <ul class="collapse">
+  <li><a href="#example-conditions" id="toc-example-conditions" class="nav-link" data-scroll-target="#example-conditions">Example: Conditions</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="sql-on-fhir.ipynb" download="sql-on-fhir.ipynb"><i class="bi bi-journal-code"></i>Jupyter</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7">SQL on FHIR Workshop</h1></header>
+
+
+<div id="metadata-container" style="display: flex;">
+<!-- Begin reading time block -->
+  <div id="reading-time-container" style="display: none">
+    <svg aria-hidden="true" role="img" focusable="false" width="14" height="14" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+    <span id="reading-time"></span> min. reading time&nbsp;
+  </div>
+<!-- end reading time block -->
+
+<!-- last updated -->
+<div class="date">Last updated: October 30, 2026</div>
+</div> <!-- end metadata div -->
+
+<!-- script for reading time -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+    // Step 1: Count words in parent document
+    let totalWords = 0;
+    const mainContent = document.querySelector('#quarto-document-content');
+    if (mainContent) {
+      const parentWords = mainContent.innerText.trim().split(/\s+/).length;
+      totalWords += parentWords;
+    }
+
+    // We'll update the badge once we've processed ALL iframes (or there are none)
+    function updateReadingTimeBadge(wordCount) {
+      const wpm = 200;
+      const readingTime = Math.ceil(wordCount / wpm);
+
+      document.getElementById('reading-time').textContent = readingTime;
+      document.getElementById('reading-time-container').style.display = '';
+    }
+
+    // Step 2: Gather iframes
+    const iframes = document.querySelectorAll('iframe');
+
+    // If there are no iframes, just show the reading time for parent content
+    if (iframes.length === 0) {
+      updateReadingTimeBadge(totalWords);
+      return;
+    }
+
+    // We only update after ALL iframes have loaded or errored
+    let pending = iframes.length;
+
+    // Helper to decrement pending count and update once done
+    function iframeDone() {
+      pending--;
+      if (pending === 0) {
+        // All iframes processed
+        updateReadingTimeBadge(totalWords);
+      }
+    }
+
+    // Step 3: Iterate through each iframe
+    iframes.forEach(iframe => {
+      // Listen for 'load' (fires whether same-origin or cross-origin)
+      iframe.addEventListener('load', function() {
+        try {
+          // Attempt to read the iframe's text (works only if same-origin)
+          const iframeDoc = iframe.contentWindow.document;
+          const iframeText = (iframeDoc.body.innerText || "").trim();
+          const iframeWords = iframeText.split(/\s+/).filter(Boolean).length;
+
+          totalWords += iframeWords;
+        } catch (err) {
+          // Cross-origin or any other error
+          console.warn("Could not read iframe content (possibly cross-origin):", err);
+          // No addition to totalWords
+        }
+        // Mark this iframe as processed
+        iframeDone();
+      }, { once: true });
+
+      // Listen for 'error' in case the iframe fails to load
+      iframe.addEventListener('error', function() {
+        console.warn("Iframe failed to load:", iframe.src);
+        // Just move on (no addition to totalWords)
+        iframeDone();
+      }, { once: true });
+    });
+
+  });
+  </script>
+ <!-- end script for reading time -->
+
+<header>
+<!--
+-->
+
+
+
+
+</header>
+
+<!-- begin roles block -->
+<!-- end roles block -->
+
+<!-- Begin learning objectives block -->
+
+
+<!-- End learning objectives block -->
+
+<!-- Hack to add key points block at end of page-->
+<!-- End hack to add key points block at end of page-->
+
+
+<section id="introduction" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="introduction">Introduction</h2>
+<p>In this workshop, you will retrieve FHIR data, load it into Python, select elements with <a href="https://www.hl7.org/fhir/fhirpath.html">FHIRPath</a> and <a href="https://sql-on-fhir.org/ig/StructureDefinition-ViewDefinition.html">SQL on FHIR ViewDefinitions</a>, and create tables for analysis. You do not need extensive Python experience, but some familiarity will be helpful.</p>
+<p>This is the workflow we will be using:</p>
+<p><img src="images/sql-on-fhir-workflow.svg" class="img-fluid" alt="Workflow: get FHIR data, load JSON into Python memory, process it with a ViewDefinition, and use or store the resulting tabular data."></p>
+<p>First, FHIR data is retrieved and loaded into memory from JSON. This JSON is then processed using the SQL on FHIR ViewDefinition approach. This produces a tabular representation of the FHIR data that can be used downstream for analysis.</p>
+<div class="content-hidden" data-when-format="ipynb">
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>View/Run Notebook
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This page can be viewed or run as a Jupyter notebook:</p>
+<p><a href="https://colab.research.google.com/github/NIH-ODSS/fhir-for-research/blob/gh-pages/workshops/sql-on-fhir.ipynb"><img src="../images/badges/colab.svg" alt="Open in Colab"></a> <a href="https://nbviewer.org/urls/NIH-ODSS.github.io/fhir-for-research/workshops/sql-on-fhir.ipynb"><img src="../images/badges/nbviewer.svg" alt="View in NBViewer"></a> <a href="./sql-on-fhir.ipynb" download=""><img src="../images/badges/download_notebook.svg" alt="Download notebook"></a></p>
+<p>See <a href="../workshops/running-notebooks">Running Workshop Notebooks</a> for more information about these options.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="dependencies" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="dependencies">Dependencies</h2>
+<p>The following Python libraries are needed for this exercise. Make sure the cell below runs without errors before continuing.</p>
+<div id="a8957b46" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter, defaultdict</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> copy <span class="im">import</span> deepcopy</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> urllib.parse <span class="im">import</span> urljoin</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> httpx</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> JSON, display</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlonfhir</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Ready to work with FHIR data."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Ready to work with FHIR data.</code></pre>
+</div>
+</div>
+</section>
+<section id="get-fhir-data" class="level2">
+<h2 class="anchored" data-anchor-id="get-fhir-data">Get FHIR data</h2>
+<p>Outside this workshop, data might come from an EHR or another FHIR-enabled source. However, for this workshop, we will use <a href="../modules/synthetic-data">synthetic data</a> on a public FHIR R4 test server. In production, a FHIR server typically requires authentication and authorization, but this is ignored as out of scope for this workshop.</p>
+<p>There are two input formats to consider:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Format</th>
+<th>Typical source</th>
+<th>What Python needs to load</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>JSON</td>
+<td>FHIR <code>read</code> or <code>search</code></td>
+<td>A <code>read</code> returns a resource; a <code>search</code> returns a <a href="https://hl7.org/fhir/R4/bundle.html">Bundle</a> containing entries with resources.</td>
+</tr>
+<tr class="even">
+<td>NDJSON</td>
+<td>FHIR Bulk Data <code>$export</code> or a downloaded dataset</td>
+<td>Each nonempty line is a separate JSON resource.</td>
+</tr>
+</tbody>
+</table>
+<p>This notebook does not cover FHIR represented as XML, which is an alternative to JSON but is not as widely used in modern software.</p>
+<p>For more on the FHIR API interactions, see <a href="../modules/fhir-accessing-data">Using the FHIR API to access data</a>.</p>
+<section id="example-patient-blood-pressure" class="level3">
+<h3 class="anchored" data-anchor-id="example-patient-blood-pressure">Example: patient blood pressure</h3>
+<p>Our initial goal is to <strong>retrieve patients with blood pressure readings</strong>. There are three key questions that will guide the approach we take in getting the relevant data from the FHIR server:</p>
+<ol type="1">
+<li>Which resource types contain the information?</li>
+<li>Which terminology identifies the observations of interest?</li>
+<li>Where are the measurement values stored?</li>
+</ol>
+<p>To determine which FHIR resource types are relevant, look at the <a href="https://hl7.org/fhir/R4/resourcelist.html">FHIR R4 resource list</a>. Then look at the elements in these resources to determine where measurement values are stored, and if there is relevant terminology. A Large Language Model (LLM) can be helpful for this in suggesting a starting point, but be sure to verify its suggestions against the FHIR specification and, once you retrieve it, your data.</p>
+<p>For this example, <a href="https://hl7.org/fhir/R4/patient.html">Patient</a> and <a href="https://hl7.org/fhir/R4/observation.html">Observation</a> are most relevant: Patient is used to represent demographic information, while Observation has the actual blood pressure measurement.</p>
+<p>The <a href="https://hl7.org/fhir/us/core/StructureDefinition-us-core-blood-pressure.html">US Core blood pressure profile</a> provides some additional guidance on how these values are likely represented in FHIR in the United States:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Meaning</th>
+<th><a href="http://loinc.org">LOINC</a> code</th>
+<th>Element containing the code</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Blood pressure panel</td>
+<td><code>85354-9</code></td>
+<td><code>Observation.code.coding</code></td>
+</tr>
+<tr class="even">
+<td>Systolic blood pressure</td>
+<td><code>8480-6</code></td>
+<td><code>Observation.component.code.coding</code></td>
+</tr>
+<tr class="odd">
+<td>Diastolic blood pressure</td>
+<td><code>8462-4</code></td>
+<td><code>Observation.component.code.coding</code></td>
+</tr>
+</tbody>
+</table>
+<p>This gives us enough of a starting point to start trying to pull the data.</p>
+</section>
+<section id="constructing-a-fhir-search-request" class="level3">
+<h3 class="anchored" data-anchor-id="constructing-a-fhir-search-request">Constructing a FHIR search request</h3>
+<p>We will run the following search request against our FHIR server:</p>
+<pre class="text"><code>GET {base}/Patient
+    ?_has:Observation:subject:code=http://loinc.org|85354-9
+    &amp;_revinclude=Observation:subject</code></pre>
+<p>The <a href="https://hl7.org/fhir/R4/search.html#has"><code>_has</code> parameter</a> selects Patients referenced by an Observation where the Observation has code <code>85354-9</code> (the LOINC code identifying the blood pressure panel). The <a href="https://hl7.org/fhir/R4/search.html#include"><code>_revinclude</code> parameter</a> asks the server to return Observations for these Patients – without <code>_revinclude</code>, you would just get Patient resource instances. <code>Observation:subject</code> identifies the linkage between the Patient and the Observation (namely, <code>Observation.subject.reference</code> points to the Patient resource, for example <code>Patient/123</code>). Note that this will return <em>all</em> Observations for these Patients, so you will need to filter by <code>code</code> after retrieving them. <code>_revinclude</code> does not provide a code filter for the included Observations.</p>
+<p>Not all FHIR servers support <code>_revinclude</code>. If yours does not but supports <code>_has</code>, you can first retrieve the relevant Patient resource instances using <code>_has</code> as above (but without <code>_revinclude</code>). Then iterate through these Patients to search for Observation resource instances using <code>subject=Patient/{id}</code> and <code>code=http://loinc.org|85354-9</code>.</p>
+</section>
+<section id="running-the-search-request" class="level3">
+<h3 class="anchored" data-anchor-id="running-the-search-request">Running the search request</h3>
+<p>FHIR uses HTTP, so a general-purpose library such as <a href="https://www.python-httpx.org/"><code>httpx</code></a> can make requests. The helper function below checks for HTTP errors, parses JSON, and handles pagination (FHIR servers typically split search results into separate “pages”, just like search engines do). When more results are available, the response contains a <code>next</code> link; this function follows that link to retrieve the next page.</p>
+<p>By default, the helper retrieves <strong>just the first three pages</strong>. You can adjust this if you want by setting <code>max_pages=None</code> in the call to <code>fetch_bundles()</code>.</p>
+<div id="6fb7b8b0" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Public FHIR server we are using for this workshop; you can substitute the base URL for any</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># FHIR server you have access to here, but if there is authentication, you will need to modify</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># `fetch_bundles()` to handle this.</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>BASE_URL <span class="op">=</span> <span class="st">"https://hapi.fhir.org/baseR4"</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fetch_bundles(resource_type, params, max_pages<span class="op">=</span><span class="dv">3</span>):</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    bundles <span class="op">=</span> []</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>BASE_URL<span class="sc">}</span><span class="ss">/</span><span class="sc">{</span>resource_type<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    query <span class="op">=</span> params</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> httpx.Client(timeout<span class="op">=</span><span class="dv">60</span>, follow_redirects<span class="op">=</span><span class="va">True</span>) <span class="im">as</span> client:</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> url:</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            response <span class="op">=</span> client.get(url, params<span class="op">=</span>query)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            response.raise_for_status()</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>            bundle <span class="op">=</span> response.json()</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> bundle.get(<span class="st">"resourceType"</span>) <span class="op">!=</span> <span class="st">"Bundle"</span>:</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Expected a FHIR search Bundle."</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>            bundles.append(bundle)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"Retrieved page </span><span class="sc">{</span><span class="bu">len</span>(bundles)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            next_link <span class="op">=</span> <span class="bu">next</span>(</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                (link[<span class="st">"url"</span>] <span class="cf">for</span> link <span class="kw">in</span> bundle.get(<span class="st">"link"</span>, [])</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>                 <span class="cf">if</span> link.get(<span class="st">"relation"</span>) <span class="op">==</span> <span class="st">"next"</span>),</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>                <span class="va">None</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            url <span class="op">=</span> urljoin(<span class="bu">str</span>(response.url), next_link) <span class="cf">if</span> next_link <span class="cf">else</span> <span class="va">None</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>            query <span class="op">=</span> <span class="va">None</span>  <span class="co"># The next link already contains its query parameters.</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> max_pages <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="kw">and</span> <span class="bu">len</span>(bundles) <span class="op">&gt;=</span> max_pages:</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> url:</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">print</span>(<span class="st">"Stopped at the page limit; more results are available."</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> bundles</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>bp_params <span class="op">=</span> {</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">"_count"</span>: <span class="st">"10"</span>,</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">"_revinclude"</span>: <span class="st">"Observation:subject"</span>,</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"_has:Observation:subject:code"</span>: <span class="st">"http://loinc.org|85354-9"</span>,</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>bundles_httpx <span class="op">=</span> fetch_bundles(<span class="st">"Patient"</span>, bp_params)</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(bundles_httpx)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Retrieved page 1
+Retrieved page 2
+Retrieved page 3
+Stopped at the page limit; more results are available.</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>3</code></pre>
+</div>
+</div>
+<p>Note that the public FHIR server we are using (<code>https://hapi.fhir.org/baseR4</code>) can change its contents over time, so you may not see exactly the same output as is shown on this page if you run this code yourself.</p>
+</section>
+<section id="inspecting-the-json" class="level3">
+<h3 class="anchored" data-anchor-id="inspecting-the-json">Inspecting the JSON</h3>
+<p>It can be helpful to print out the JSON returned from the FHIR server to look at the data. Note that this is synthetic data, so there is no PHI or PII.</p>
+<p>The <code>indent=2</code> parameter adds spacing to make the JSON easier to read. The <code>[:50]</code> at the end controls the number of lines that are printed (the JSON is quite long otherwise).</p>
+<div id="9d9620f2" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(json.dumps(bundles_httpx[<span class="dv">0</span>], indent<span class="op">=</span><span class="dv">2</span>).splitlines()[:<span class="dv">50</span>]))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{
+  "resourceType": "Bundle",
+  "id": "53f56135-18d3-4533-9550-68337c9783c4",
+  "meta": {
+    "lastUpdated": "2026-11-02T10:44:26.521-05:00"
+  },
+  "type": "searchset",
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://hapi.fhir.org/baseR4/Patient?_count=10&amp;_has%3AObservation%3Asubject%3Acode=http%3A%2F%2Floinc.org%7C85354-9&amp;_revinclude=Observation%3Asubject"
+    },
+    {
+      "relation": "next",
+      "url": "https://hapi.fhir.org/baseR4?_getpages=53f56135-18d3-4533-9550-68337c9783c4&amp;_getpagesoffset=10&amp;_count=10&amp;_pretty=true&amp;_bundletype=searchset"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "https://hapi.fhir.org/baseR4/Patient/9e85889f-b9a1-4eef-a2d5-cdac0808a65c",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "9e85889f-b9a1-4eef-a2d5-cdac0808a65c",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2026-09-25T17:25:45.753-04:00",
+          "source": "#nGp2VsMmkZXSsTOr"
+        },
+        "text": {
+          "status": "generated",
+          "div": "&lt;div xmlns=\"http://www.w3.org/1999/xhtml\"&gt;&lt;div class=\"hapiHeaderText\"&gt;Jonas &lt;b&gt;KELLER &lt;/b&gt;&lt;/div&gt;&lt;table class=\"hapiPropertyTable\"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Identifier&lt;/td&gt;&lt;td&gt;MRN-1002&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Date of birth&lt;/td&gt;&lt;td&gt;&lt;span&gt;03 November 1965&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;"
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "MR"
+                }
+              ]
+            },
+            "system": "urn:meridian:organization:804a1780-790b-4e0e-ab9c-69762587c7e7",
+            "value": "MRN-1002",
+            "assigner": {
+              "display": "Test - Hospital 01"
+            }
+          }
+        ],</code></pre>
+</div>
+</div>
+<p>Some notebook interfaces support a collapsible tree through IPython that is even easier to read:</p>
+<div id="a383b0b0" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>JSON(bundles_httpx[<span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>&lt;IPython.core.display.JSON object&gt;</code></pre>
+</div>
+</div>
+<p>(This does not work in the web rendering of this notebook. Download the Jupyter Notebook version with the buttons at the top of this page to see this work.)</p>
+<p>If your interface does not show an interactive tree, try the syntax highlighting provided by <code>rich</code>:</p>
+<div id="bf1ffbe8" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span>, print_json</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rich.syntax <span class="im">import</span> Syntax</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Truncate to 50 lines.</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>json_preview <span class="op">=</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(json.dumps(bundles_httpx[<span class="dv">0</span>], indent<span class="op">=</span><span class="dv">2</span>, default<span class="op">=</span><span class="bu">str</span>).splitlines()[:<span class="dv">50</span>])</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(Syntax(json_preview, <span class="st">"json"</span>, theme<span class="op">=</span><span class="st">"monokai"</span>))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># If you want to print without truncating, run this:</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># print_json(data=bundles_httpx[0], default=str)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">{</span><span style="background-color: #272822">                                                                                                                  </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">  </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"resourceType"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"Bundle"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                                        </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">  </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"id"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"53f56135-18d3-4533-9550-68337c9783c4"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                    </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">  </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"meta"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: {</span><span style="background-color: #272822">                                                                                                        </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">    </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"lastUpdated"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"2026-11-02T10:44:26.521-05:00"</span><span style="background-color: #272822">                                                                 </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">  },</span><span style="background-color: #272822">                                                                                                               </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">  </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"type"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"searchset"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                                             </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">  </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"link"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: [</span><span style="background-color: #272822">                                                                                                        </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">    {</span><span style="background-color: #272822">                                                                                                              </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">      </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"relation"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"self"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                                          </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">      </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"url"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"https://hapi.fhir.org/baseR4/Patient?_count=10&amp;_has%3AObservation%3Asubject%3Acode=http%3A%2F%2Floinc</span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">    },</span><span style="background-color: #272822">                                                                                                             </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">    {</span><span style="background-color: #272822">                                                                                                              </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">      </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"relation"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"next"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                                          </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">      </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"url"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"https://hapi.fhir.org/baseR4?_getpages=53f56135-18d3-4533-9550-68337c9783c4&amp;_getpagesoffset=10&amp;_count</span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">    }</span><span style="background-color: #272822">                                                                                                              </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">  ],</span><span style="background-color: #272822">                                                                                                               </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">  </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"entry"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: [</span><span style="background-color: #272822">                                                                                                       </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">    {</span><span style="background-color: #272822">                                                                                                              </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">      </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"fullUrl"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"https://hapi.fhir.org/baseR4/Patient/9e85889f-b9a1-4eef-a2d5-cdac0808a65c"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                      </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">      </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"resource"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: {</span><span style="background-color: #272822">                                                                                                </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">        </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"resourceType"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"Patient"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                                 </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">        </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"id"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"9e85889f-b9a1-4eef-a2d5-cdac0808a65c"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                              </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">        </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"meta"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: {</span><span style="background-color: #272822">                                                                                                  </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">          </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"versionId"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"1"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                                        </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">          </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"lastUpdated"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"2026-09-25T17:25:45.753-04:00"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                          </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">          </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"source"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"#nGp2VsMmkZXSsTOr"</span><span style="background-color: #272822">                                                                            </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">        },</span><span style="background-color: #272822">                                                                                                         </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">        </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"text"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: {</span><span style="background-color: #272822">                                                                                                  </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">          </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"status"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"generated"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                                   </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">          </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"div"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"&lt;div xmlns=\"http://www.w3.org/1999/xhtml\"&gt;&lt;div class=\"hapiHeaderText\"&gt;Jonas &lt;b&gt;KELLER &lt;/b&gt;&lt;/d</span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">        },</span><span style="background-color: #272822">                                                                                                         </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">        </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"identifier"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: [</span><span style="background-color: #272822">                                                                                            </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">          {</span><span style="background-color: #272822">                                                                                                        </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">            </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"use"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"usual"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                                        </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">            </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"type"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: {</span><span style="background-color: #272822">                                                                                              </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">              </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"coding"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: [</span><span style="background-color: #272822">                                                                                          </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">                {</span><span style="background-color: #272822">                                                                                                  </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">                  </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"system"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"http://terminology.hl7.org/CodeSystem/v2-0203"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                       </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">                  </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"code"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"MR"</span><span style="background-color: #272822">                                                                                     </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">                }</span><span style="background-color: #272822">                                                                                                  </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">              ]</span><span style="background-color: #272822">                                                                                                    </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">            },</span><span style="background-color: #272822">                                                                                                     </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">            </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"system"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"urn:meridian:organization:804a1780-790b-4e0e-ab9c-69762587c7e7"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                            </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">            </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"value"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"MRN-1002"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">,</span><span style="background-color: #272822">                                                                                   </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">            </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"assigner"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: {</span><span style="background-color: #272822">                                                                                          </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">              </span><span style="color: #ff4689; text-decoration-color: #ff4689; background-color: #272822">"display"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">: </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #272822">"Test - Hospital 01"</span><span style="background-color: #272822">                                                                      </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">            }</span><span style="background-color: #272822">                                                                                                      </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">          }</span><span style="background-color: #272822">                                                                                                        </span>
+<span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #272822">        ],</span><span style="background-color: #272822">                                                                                                         </span>
+</pre>
+</div>
+</div>
+<p>You can also save the result to a JSON file and open it in a local viewer. Here is how you dump JSON out to a file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"bundles.json"</span>, <span class="st">"w"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> handle:</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    json.dump(bundles_httpx, handle, indent<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"bundles.json"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> handle:</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    saved_bundles <span class="op">=</span> json.load(handle)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>A web interface like <a href="https://jsonhero.io/">JSON Hero</a> can be helpful for browsing through a JSON hierarchy, but note that you should never put real patient data into any online JSON viewer.</p>
+<p>Choose one of these approaches to print out the JSON returned by the FHIR server and explore its contents.</p>
+</section>
+<section id="loading-ndjson-into-python" class="level3">
+<h3 class="anchored" data-anchor-id="loading-ndjson-into-python">Loading NDJSON into Python</h3>
+<p>Sometimes you will receive an <a href="https://www.hl7.org/fhir/nd-json.html">NDJSON</a> file rather than a Bundle, such as with a <a href="../modules/bulk-fhir-tech">FHIR Bulk Data</a> workflow.</p>
+<p>The code below shows how to load an NDJSON file into Python:</p>
+<div id="7fde6c88" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># There are two possible sources: a web URL and a local file. The code below tries to read the</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># local file first, and then falls back to the web URL if the local file does not exist.</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ndjson_url <span class="op">=</span> <span class="st">"https://NIH-ODSS.github.io/fhir-for-research"</span> <span class="op">+</span> <span class="st">"/workshops/bulk-data/synthea_10.ndjson"</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>ndjson_path <span class="op">=</span> Path(<span class="st">"bulk-data/synthea_10.ndjson"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> ndjson_path.exists():</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    ndjson_path <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> ndjson_path <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>:</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the file locally if possible</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> ndjson_path.<span class="bu">open</span>(encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> handle:</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        ndjson_resources <span class="op">=</span> [json.loads(line) <span class="cf">for</span> line <span class="kw">in</span> handle <span class="cf">if</span> line.strip()]</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Otherwise, load from the web</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> httpx.stream(<span class="st">"GET"</span>, ndjson_url, timeout<span class="op">=</span><span class="dv">60</span>, follow_redirects<span class="op">=</span><span class="va">True</span>) <span class="im">as</span> response:</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        response.raise_for_status()</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        ndjson_resources <span class="op">=</span> [</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>            json.loads(line) <span class="cf">for</span> line <span class="kw">in</span> response.iter_lines() <span class="cf">if</span> line.strip()</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>Counter(resource[<span class="st">"resourceType"</span>] <span class="cf">for</span> resource <span class="kw">in</span> ndjson_resources)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>Counter({'Observation': 1317,
+         'Claim': 347,
+         'Encounter': 308,
+         'ExplanationOfBenefit': 308,
+         'Procedure': 243,
+         'Immunization': 149,
+         'DiagnosticReport': 64,
+         'Condition': 56,
+         'MedicationRequest': 39,
+         'Organization': 26,
+         'Practitioner': 26,
+         'CareTeam': 23,
+         'CarePlan': 23,
+         'Goal': 12,
+         'Patient': 10,
+         'AllergyIntolerance': 7,
+         'ImagingStudy': 2,
+         'Device': 1})</code></pre>
+</div>
+</div>
+<p>This lists the count of each FHIR resource type in the NDJSON file that was loaded.</p>
+<div id="9803f212" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>JSON(ndjson_resources[<span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>&lt;IPython.core.display.JSON object&gt;</code></pre>
+</div>
+</div>
+<p>(<code>JSON()</code> does not work in the web rendering of this notebook. Download the Jupyter Notebook version with the buttons at the top of this page to see this work.)</p>
+<p>You can loop the above approach to read multiple NDJSON files. For a large dataset, it may be necessary to apply a batch processing approach: process a subset of files, apply the ViewDefinition (described below), write the resulting rows to a file or database, and repeat. Tools like <a href="https://duckdb.org/">DuckDB</a> that avoid storing all data in memory, or a database like <a href="https://www.sqlite.org/">SQLite</a> can be useful in this scenario but are beyond the scope of this workshop.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Why use NDJSON if you want tables?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If the data you need are accessible from an existing tabular source, like a data warehouse, using FHIR in NDJSON format may not make sense: it would be preferable to get the data directly from the tabular source. However, in some cases NDJSON is the only available format or you may be using a portable workflow that leverages FHIR to generate similar output across multiple data sources.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="process-data-with-viewdefinitions" class="level2">
+<h2 class="anchored" data-anchor-id="process-data-with-viewdefinitions">Process data with ViewDefinitions</h2>
+<p>Regardless of your data source (Bundles from a FHIR API, or NDJSON), you can use ViewDefinitions to transform the FHIR data into a tabular format.</p>
+<p>Please review the <a href="https://sql-on-fhir.org/ig/StructureDefinition-ViewDefinition.html">ViewDefinition documentation</a> for a full description of how ViewDefinition works. A few of the key concepts are also covered below.</p>
+<section id="group-fhir-resources-by-type" class="level3">
+<h3 class="anchored" data-anchor-id="group-fhir-resources-by-type">Group FHIR resources by type</h3>
+<p>ViewDefinitions are resource-specific, so the first step is to organize the FHIR resource instances by resource type:</p>
+<div id="ed2b6198" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>DATA_SOURCE <span class="op">=</span> <span class="st">"search"</span>  <span class="co"># Change to "ndjson" to use the NDJSON FHIR data</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> DATA_SOURCE <span class="op">==</span> <span class="st">"search"</span>:</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    raw_resources <span class="op">=</span> [</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        entry[<span class="st">"resource"</span>]</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> bundle <span class="kw">in</span> bundles_httpx</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> entry <span class="kw">in</span> bundle.get(<span class="st">"entry"</span>, [])</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">"resource"</span> <span class="kw">in</span> entry</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> DATA_SOURCE <span class="op">==</span> <span class="st">"ndjson"</span>:</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    raw_resources <span class="op">=</span> ndjson_resources</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Choose 'search' or 'ndjson'."</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>resources <span class="op">=</span> defaultdict(<span class="bu">dict</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Organize resource instances into a dict of dicts. The outer dict uses the resource type as the key,</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="co"># and the inner dict uses the resource instance id as the key. The value is the full resource.</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> resource <span class="kw">in</span> raw_resources:</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Ignore any resources missing an `id`</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"id"</span> <span class="kw">in</span> resource:</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>        resources[resource[<span class="st">"resourceType"</span>]][resource[<span class="st">"id"</span>]] <span class="op">=</span> resource</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>{resource_type: <span class="bu">len</span>(items) <span class="cf">for</span> resource_type, items <span class="kw">in</span> resources.items()}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>{'Patient': 30, 'Observation': 902}</code></pre>
+</div>
+</div>
+</section>
+<section id="use-fhirpath-to-select-elements" class="level3">
+<h3 class="anchored" data-anchor-id="use-fhirpath-to-select-elements">Use FHIRPath to select elements</h3>
+<p><a href="https://hl7.org/fhirpath/">FHIRPath</a> is a tool for selecting and extracting specific data elements from FHIR resource instances. For example, the date of birth can be selected from a Patient resource instance using the FHIRPath <code>birthDate</code>. Another example: <code>name.first().family</code> selects one of the patient’s family names (it’s possible to have multiple names in FHIR), and <code>name.first().given.first()</code> selects that name’s first given name.</p>
+<p>You can explore FHIRPath using the <a href="https://hl7.github.io/fhirpath.js/">FHIRPath sandbox</a> with <a href="https://www.hl7.org/fhir/us/core/Patient-example.json">an example synthetic Patient resource instance</a>.</p>
+</section>
+<section id="defining-a-viewdefinition" class="level3">
+<h3 class="anchored" data-anchor-id="defining-a-viewdefinition">Defining a ViewDefinition</h3>
+<p>A <a href="https://sql-on-fhir.org/ig/StructureDefinition-ViewDefinition.html">SQL on FHIR ViewDefinition</a> maps the hierarchical FHIR data elements onto columns in a table. This is operationalized as a Python dictionary (example below) that then is processed by <code>sqlonfhir.evaluate</code> along with a list of resources.</p>
+<p>In the example below, <code>resource</code> identifies the FHIR resource type targeted by this ViewDefinition. Each <code>column</code> item maps <code>name</code> (the column name) to the FHIR element via <code>path</code>. The second selection <a href="https://sql-on-fhir.org/ig/StructureDefinition-ViewDefinition.html#unnesting-semantics">manages how null values are handled for the name-related elements</a>.</p>
+<div id="d73d2828" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>patient_view <span class="op">=</span> {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"resource"</span>: <span class="st">"Patient"</span>,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"select"</span>: [</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">"column"</span>: [</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"name"</span>: <span class="st">"patient_id"</span>, <span class="st">"path"</span>: <span class="st">"getResourceKey()"</span>},</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"name"</span>: <span class="st">"gender"</span>, <span class="st">"path"</span>: <span class="st">"gender"</span>},</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"name"</span>: <span class="st">"birth_date"</span>, <span class="st">"path"</span>: <span class="st">"birthDate"</span>},</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>            ]</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>            <span class="st">"forEachOrNull"</span>: (</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>                <span class="st">"iif(name.where(use = 'official').exists(), "</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>                <span class="st">"name.where(use = 'official').first(), name.first())"</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>            <span class="st">"column"</span>: [</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"name"</span>: <span class="st">"family"</span>, <span class="st">"path"</span>: <span class="st">"family"</span>},</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>                {<span class="st">"name"</span>: <span class="st">"given"</span>, <span class="st">"path"</span>: <span class="st">"given.first()"</span>},</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>            ],</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>patient_rows <span class="op">=</span> sqlonfhir.evaluate(resources[<span class="st">"Patient"</span>].values(), deepcopy(patient_view))</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>patient_rows[:<span class="dv">5</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>[{'family': 'Keller',
+  'given': 'Jonas',
+  'patient_id': '9e85889f-b9a1-4eef-a2d5-cdac0808a65c',
+  'gender': 'male',
+  'birth_date': '1965-11-03'},
+ {'family': 'Chen',
+  'given': 'Alex',
+  'patient_id': 'alex-chen',
+  'gender': 'male',
+  'birth_date': '1982-03-15'},
+ {'family': 'Doe',
+  'given': 'Abobobo',
+  'patient_id': '31766',
+  'gender': None,
+  'birth_date': None},
+ {'family': 'Gil Herrero',
+  'given': 'Lucía',
+  'patient_id': '33791',
+  'gender': 'female',
+  'birth_date': '1971-12-21'},
+ {'family': 'Marín Herrero',
+  'given': 'Ana',
+  'patient_id': '33792',
+  'gender': 'female',
+  'birth_date': '1950-08-01'}]</code></pre>
+</div>
+</div>
+<p>In <code>forEachOrNull</code>, priority is given to the name element marked as <code>official</code> if it exists.</p>
+<p>The <a href="https://github.com/sassoftware/sqlonfhir"><code>sqlonfhir</code> Python runner</a> returns a list of dictionaries: one dictionary per row, with column names as keys and the data as values. This can be directly fed into Pandas to create a DataFrame:</p>
+<div id="566bf29a" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>patients <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    patient_rows,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Put the columns in a more logical order than the default</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>[<span class="st">"patient_id"</span>, <span class="st">"gender"</span>, <span class="st">"birth_date"</span>, <span class="st">"family"</span>, <span class="st">"given"</span>],</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>patients.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">patient_id</th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">birth_date</th>
+<th data-quarto-table-cell-role="th">family</th>
+<th data-quarto-table-cell-role="th">given</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>9e85889f-b9a1-4eef-a2d5-cdac0808a65c</td>
+<td>male</td>
+<td>1965-11-03</td>
+<td>Keller</td>
+<td>Jonas</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>alex-chen</td>
+<td>male</td>
+<td>1982-03-15</td>
+<td>Chen</td>
+<td>Alex</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>31766</td>
+<td>None</td>
+<td>None</td>
+<td>Doe</td>
+<td>Abobobo</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>33791</td>
+<td>female</td>
+<td>1971-12-21</td>
+<td>Gil Herrero</td>
+<td>Lucía</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>33792</td>
+<td>female</td>
+<td>1950-08-01</td>
+<td>Marín Herrero</td>
+<td>Ana</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="repeated-elements-and-missing-values" class="level3">
+<h3 class="anchored" data-anchor-id="repeated-elements-and-missing-values">Repeated elements and missing values</h3>
+<p>FHIR elements such as <code>Patient.name</code> can contain multiple values. A ViewDefinition can turn each selected value into a separate row. <a href="https://sql-on-fhir.org/ig/StructureDefinition-ViewDefinition.html#unnesting-semantics">More information on <code>forEach</code> and <code>forEachOrNull</code> is available here</a>.</p>
+<p>The Patient view uses <code>forEachOrNull</code> so a patient without a name still appears in the output; if <code>forEach</code> were used, all patients without names meeting the specified selection criteria would be skipped.</p>
+</section>
+<section id="linking-resource-instances-across-resource-types" class="level3">
+<h3 class="anchored" data-anchor-id="linking-resource-instances-across-resource-types">Linking resource instances across resource types</h3>
+<p>The SQL on FHIR <code>getResourceKey()</code> function returns an identifying id for the resource in question. For example, in an Observation resource, <code>subject.getReferenceKey(Patient)</code> provides the Patient key using the <code>Observation.subject</code> reference to a Patient. This allows you to connect Observations with Patients in your data processing pipeline or analysis. Note that this function is specific to SQL on FHIR, so a general FHIRPath tool may not recognize this function.</p>
+<p>Note that the Python SQL on FHIR implementation used here expects relative references such as <code>Patient/123</code>. However, synthetic data may use <a href="https://en.wikipedia.org/wiki/Universally_unique_identifier">UUIDs</a> instead; these must be converted to a relative reference:</p>
+<div id="1c6912db" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>patient_references <span class="op">=</span> {</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"</span><span class="sc">{</span>BASE_URL<span class="sc">}</span><span class="ss">/Patient/</span><span class="sc">{</span>patient[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span>: <span class="ss">f"Patient/</span><span class="sc">{</span>patient[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> patient <span class="kw">in</span> resources[<span class="st">"Patient"</span>].values()</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> DATA_SOURCE <span class="op">==</span> <span class="st">"ndjson"</span>:</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    patient_references.update({</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"urn:uuid:</span><span class="sc">{</span>patient[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span>: <span class="ss">f"Patient/</span><span class="sc">{</span>patient[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> patient <span class="kw">in</span> resources[<span class="st">"Patient"</span>].values()</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    patient_references.update({</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>        entry[<span class="st">"fullUrl"</span>]: <span class="ss">f"Patient/</span><span class="sc">{</span>entry[<span class="st">'resource'</span>][<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> bundle <span class="kw">in</span> bundles_httpx</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> entry <span class="kw">in</span> bundle.get(<span class="st">"entry"</span>, [])</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> entry.get(<span class="st">"resource"</span>, {}).get(<span class="st">"resourceType"</span>) <span class="op">==</span> <span class="st">"Patient"</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>        <span class="kw">and</span> <span class="st">"id"</span> <span class="kw">in</span> entry[<span class="st">"resource"</span>] <span class="kw">and</span> <span class="st">"fullUrl"</span> <span class="kw">in</span> entry</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prepare_subjects(items):</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    prepared <span class="op">=</span> deepcopy(items)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> resource <span class="kw">in</span> prepared:</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>        subject <span class="op">=</span> resource.get(<span class="st">"subject"</span>, {})</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>        reference <span class="op">=</span> subject.get(<span class="st">"reference"</span>)</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> reference <span class="kw">in</span> patient_references:</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>            subject[<span class="st">"reference"</span>] <span class="op">=</span> patient_references[reference]</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> prepared</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="example-processing-blood-pressure-data-with-a-viewdefinition" class="level3">
+<h3 class="anchored" data-anchor-id="example-processing-blood-pressure-data-with-a-viewdefinition">Example: processing blood pressure data with a ViewDefinition</h3>
+<p>Below is an example of a ViewDefinition applied to the blood pressure Observation resource instances. It uses <code>where</code> to filter by the LOINC identifying the blood pressure panel, and uses <code>constant</code> to specify all the relevant LOINCs near the top of the ViewDefinition (this is helpful if you have a long ViewDefinition so constants are not scattered throughout).</p>
+<div id="a6fd8931" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Note: The supplied Synthea NDJSON file uses LOINC `55284-4` for its blood pressure panels,</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># rather than the US Core code `85354-9` used in the search.</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>BP_PANEL_CODE <span class="op">=</span> <span class="st">"55284-4"</span> <span class="cf">if</span> DATA_SOURCE <span class="op">==</span> <span class="st">"ndjson"</span> <span class="cf">else</span> <span class="st">"85354-9"</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>bp_view <span class="op">=</span> {</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"resource"</span>: <span class="st">"Observation"</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"constant"</span>: [</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"name"</span>: <span class="st">"bp_panel"</span>, <span class="st">"valueCode"</span>: BP_PANEL_CODE},</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"name"</span>: <span class="st">"systolic_bp"</span>, <span class="st">"valueCode"</span>: <span class="st">"8480-6"</span>},</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"name"</span>: <span class="st">"diastolic_bp"</span>, <span class="st">"valueCode"</span>: <span class="st">"8462-4"</span>},</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"where"</span>: [{</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"path"</span>: <span class="st">"code.coding.exists(system = 'http://loinc.org' and code = %bp_panel)"</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    }],</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"select"</span>: [{</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">"column"</span>: [</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"name"</span>: <span class="st">"observation_id"</span>, <span class="st">"path"</span>: <span class="st">"getResourceKey()"</span>},</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"name"</span>: <span class="st">"patient_id"</span>, <span class="st">"path"</span>: <span class="st">"subject.getReferenceKey(Patient)"</span>},</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"name"</span>: <span class="st">"effective_datetime"</span>, <span class="st">"path"</span>: <span class="st">"effective.ofType(dateTime)"</span>},</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    }],</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="co"># We want to pull the same data elements for both systolic and diastolic blood pressure, so we</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="co"># can use some nested loops to add additional columns to the ViewDefinition rather than</span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="co"># having to manually repeat them.</span></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label <span class="kw">in</span> (<span class="st">"systolic"</span>, <span class="st">"diastolic"</span>):</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>    component_path <span class="op">=</span> (</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">"component.where(code.coding.exists("</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"system = 'http://loinc.org' and code = %</span><span class="sc">{</span>label<span class="sc">}</span><span class="ss">_bp)).first()"</span></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> suffix, path <span class="kw">in</span> (</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>        (<span class="st">""</span>, <span class="st">"valueQuantity.value"</span>),</span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"_unit"</span>, <span class="st">"valueQuantity.unit"</span>),</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"_unit_code"</span>, <span class="st">"valueQuantity.code"</span>),</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"_unit_system"</span>, <span class="st">"valueQuantity.system"</span>),</span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"_absent_reason"</span>, <span class="st">"dataAbsentReason.coding.first().code"</span>),</span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>    ):</span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>        bp_view[<span class="st">"select"</span>][<span class="dv">0</span>][<span class="st">"column"</span>].append({</span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>            <span class="st">"name"</span>: <span class="ss">f"</span><span class="sc">{</span>label<span class="sc">}{</span>suffix<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>            <span class="st">"path"</span>: <span class="ss">f"</span><span class="sc">{</span>component_path<span class="sc">}</span><span class="ss">.</span><span class="sc">{</span>path<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>bp_rows <span class="op">=</span> sqlonfhir.evaluate(prepare_subjects(<span class="bu">list</span>(resources[<span class="st">"Observation"</span>].values())), deepcopy(bp_view))</span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>blood_pressures <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>    bp_rows,</span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>[column[<span class="st">"name"</span>] <span class="cf">for</span> column <span class="kw">in</span> bp_view[<span class="st">"select"</span>][<span class="dv">0</span>][<span class="st">"column"</span>]],</span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a>blood_pressures.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">observation_id</th>
+<th data-quarto-table-cell-role="th">patient_id</th>
+<th data-quarto-table-cell-role="th">effective_datetime</th>
+<th data-quarto-table-cell-role="th">systolic</th>
+<th data-quarto-table-cell-role="th">systolic_unit</th>
+<th data-quarto-table-cell-role="th">systolic_unit_code</th>
+<th data-quarto-table-cell-role="th">systolic_unit_system</th>
+<th data-quarto-table-cell-role="th">systolic_absent_reason</th>
+<th data-quarto-table-cell-role="th">diastolic</th>
+<th data-quarto-table-cell-role="th">diastolic_unit</th>
+<th data-quarto-table-cell-role="th">diastolic_unit_code</th>
+<th data-quarto-table-cell-role="th">diastolic_unit_system</th>
+<th data-quarto-table-cell-role="th">diastolic_absent_reason</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>76414303-d526-4400-b8fb-32eb6840d1d5</td>
+<td>9e85889f-b9a1-4eef-a2d5-cdac0808a65c</td>
+<td>2026-08-29T01:14:03.95769+00:00</td>
+<td>148</td>
+<td>mmHg</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>88</td>
+<td>mmHg</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>bfc89c85-1467-4391-bdbf-493336f9c33d</td>
+<td>9e85889f-b9a1-4eef-a2d5-cdac0808a65c</td>
+<td>2026-05-04T01:14:03.95769+00:00</td>
+<td>136</td>
+<td>mmHg</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>84</td>
+<td>mmHg</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>33671</td>
+<td>33791</td>
+<td>2026-03-02</td>
+<td>174.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+<td>92.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>33674</td>
+<td>33791</td>
+<td>2026-03-31</td>
+<td>141.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+<td>92.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>33677</td>
+<td>33791</td>
+<td>2026-05-08</td>
+<td>141.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+<td>96.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Note that <code>effective_datetime</code> is populated only for <code>Observation.effectiveDateTime</code>, but some Observation resource instances instead use <code>Observation.effectivePeriod</code>, which would need separate mapping.</p>
+</section>
+</section>
+<section id="using-the-tabular-data" class="level2">
+<h2 class="anchored" data-anchor-id="using-the-tabular-data">Using the tabular data</h2>
+<p>Data from the Patient resource instances can be merged into the blood pressure data:</p>
+<div id="65a45aa6" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>bp_with_patients <span class="op">=</span> blood_pressures.merge(</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    patients,</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">"patient_id"</span>,</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    validate<span class="op">=</span><span class="st">"many_to_one"</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    indicator<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>bp_with_patients.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">observation_id</th>
+<th data-quarto-table-cell-role="th">patient_id</th>
+<th data-quarto-table-cell-role="th">effective_datetime</th>
+<th data-quarto-table-cell-role="th">systolic</th>
+<th data-quarto-table-cell-role="th">systolic_unit</th>
+<th data-quarto-table-cell-role="th">systolic_unit_code</th>
+<th data-quarto-table-cell-role="th">systolic_unit_system</th>
+<th data-quarto-table-cell-role="th">systolic_absent_reason</th>
+<th data-quarto-table-cell-role="th">diastolic</th>
+<th data-quarto-table-cell-role="th">diastolic_unit</th>
+<th data-quarto-table-cell-role="th">diastolic_unit_code</th>
+<th data-quarto-table-cell-role="th">diastolic_unit_system</th>
+<th data-quarto-table-cell-role="th">diastolic_absent_reason</th>
+<th data-quarto-table-cell-role="th">gender</th>
+<th data-quarto-table-cell-role="th">birth_date</th>
+<th data-quarto-table-cell-role="th">family</th>
+<th data-quarto-table-cell-role="th">given</th>
+<th data-quarto-table-cell-role="th">_merge</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>76414303-d526-4400-b8fb-32eb6840d1d5</td>
+<td>9e85889f-b9a1-4eef-a2d5-cdac0808a65c</td>
+<td>2026-08-29T01:14:03.95769+00:00</td>
+<td>148</td>
+<td>mmHg</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>88</td>
+<td>mmHg</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>male</td>
+<td>1965-11-03</td>
+<td>Keller</td>
+<td>Jonas</td>
+<td>both</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>bfc89c85-1467-4391-bdbf-493336f9c33d</td>
+<td>9e85889f-b9a1-4eef-a2d5-cdac0808a65c</td>
+<td>2026-05-04T01:14:03.95769+00:00</td>
+<td>136</td>
+<td>mmHg</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>84</td>
+<td>mmHg</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+<td>male</td>
+<td>1965-11-03</td>
+<td>Keller</td>
+<td>Jonas</td>
+<td>both</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>33671</td>
+<td>33791</td>
+<td>2026-03-02</td>
+<td>174.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+<td>92.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+<td>female</td>
+<td>1971-12-21</td>
+<td>Gil Herrero</td>
+<td>Lucía</td>
+<td>both</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>33674</td>
+<td>33791</td>
+<td>2026-03-31</td>
+<td>141.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+<td>92.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+<td>female</td>
+<td>1971-12-21</td>
+<td>Gil Herrero</td>
+<td>Lucía</td>
+<td>both</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>33677</td>
+<td>33791</td>
+<td>2026-05-08</td>
+<td>141.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+<td>96.0</td>
+<td>mm[Hg]</td>
+<td>mm[Hg]</td>
+<td>http://unitsofmeasure.org</td>
+<td>None</td>
+<td>female</td>
+<td>1971-12-21</td>
+<td>Gil Herrero</td>
+<td>Lucía</td>
+<td>both</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>In the code above, the <code>many_to_one</code> check prevents duplicate Patient keys from silently creating duplicate rows. The <code>indicator</code> parameter adds a <code>_merge</code> column to the DataFrame to show if a given row was matched with a patient or not.</p>
+<div id="78bf1455" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Patients: </span><span class="sc">{</span><span class="bu">len</span>(patients)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Blood pressure readings: </span><span class="sc">{</span><span class="bu">len</span>(blood_pressures)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Readings without a matched Patient: </span><span class="sc">{</span>(bp_with_patients[<span class="st">'_merge'</span>] <span class="op">==</span> <span class="st">'left_only'</span>)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Patients: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">30</span>
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Blood pressure readings: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">93</span>
+</pre>
+</div>
+<div class="cell-output cell-output-display">
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Readings without a matched Patient: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>
+</pre>
+</div>
+</div>
+<p>The <code>bp_with_patients</code> DataFrame is now in a format that is much more useful for analysis than the raw FHIR data. You can write this out to a <code>.csv</code> file with code like this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>bp_with_patients.drop(columns<span class="op">=</span><span class="st">"_merge"</span>).to_csv(<span class="st">"blood_pressures.csv"</span>, index<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="example-conditions" class="level3">
+<h3 class="anchored" data-anchor-id="example-conditions">Example: Conditions</h3>
+<p>The example below shows how you can search for Patients with an ICD-10-CM <code>E11.9</code> (type 2 diabetes mellitus without complications) <a href="https://hl7.org/fhir/R4/condition.html">Condition</a>. This follows the same pattern as the blood pressure example above.</p>
+<p>Here is the code to do the FHIR search:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>condition_bundles <span class="op">=</span> fetch_bundles(<span class="st">"Patient"</span>, {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"_count"</span>: <span class="st">"10"</span>,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"_revinclude"</span>: <span class="st">"Condition:patient"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"_has:Condition:patient:code"</span>: <span class="st">"http://hl7.org/fhir/sid/icd-10-cm|E11.9"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>condition_resources <span class="op">=</span> {</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    (entry[<span class="st">"resource"</span>][<span class="st">"resourceType"</span>], entry[<span class="st">"resource"</span>][<span class="st">"id"</span>]): entry[<span class="st">"resource"</span>]</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> bundle <span class="kw">in</span> condition_bundles</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entry <span class="kw">in</span> bundle.get(<span class="st">"entry"</span>, [])</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"id"</span> <span class="kw">in</span> entry.get(<span class="st">"resource"</span>, {})</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalize references using the Patients returned by this search.</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>patient_references.update({</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"</span><span class="sc">{</span>BASE_URL<span class="sc">}</span><span class="ss">/Patient/</span><span class="sc">{</span>resource[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span>: <span class="ss">f"Patient/</span><span class="sc">{</span>resource[<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> resource <span class="kw">in</span> condition_resources.values()</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> resource[<span class="st">"resourceType"</span>] <span class="op">==</span> <span class="st">"Patient"</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>patient_references.update({</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    entry[<span class="st">"fullUrl"</span>]: <span class="ss">f"Patient/</span><span class="sc">{</span>entry[<span class="st">'resource'</span>][<span class="st">'id'</span>]<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> bundle <span class="kw">in</span> condition_bundles</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> entry <span class="kw">in</span> bundle.get(<span class="st">"entry"</span>, [])</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> entry.get(<span class="st">"resource"</span>, {}).get(<span class="st">"resourceType"</span>) <span class="op">==</span> <span class="st">"Patient"</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">and</span> <span class="st">"id"</span> <span class="kw">in</span> entry[<span class="st">"resource"</span>] <span class="kw">and</span> <span class="st">"fullUrl"</span> <span class="kw">in</span> entry</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Note that like with Observation above, this will return all Condition resource instances for the selected patients (not just those Conditions indicating <code>E11.9</code>), so filtering will be required in the ViewDefinition:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>condition_view <span class="op">=</span> {</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"resource"</span>: <span class="st">"Condition"</span>,</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"where"</span>: [{</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"path"</span>: (</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">"code.coding.exists(system = 'http://hl7.org/fhir/sid/icd-10-cm' "</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">"and code = 'E11.9')"</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    }],</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"select"</span>: [{</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"column"</span>: [</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"name"</span>: <span class="st">"condition_id"</span>, <span class="st">"path"</span>: <span class="st">"getResourceKey()"</span>},</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"name"</span>: <span class="st">"patient_id"</span>, <span class="st">"path"</span>: <span class="st">"subject.getReferenceKey(Patient)"</span>},</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>            {<span class="st">"name"</span>: <span class="st">"code_text"</span>, <span class="st">"path"</span>: <span class="st">"code.text"</span>},</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>            {</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>                <span class="st">"name"</span>: <span class="st">"code_value"</span>,</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>                <span class="st">"path"</span>: (</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"code.coding.where(system = 'http://hl7.org/fhir/sid/icd-10-cm' "</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>                    <span class="st">"and code = 'E11.9').first().code"</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>                ),</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>            },</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>    }],</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>conditions <span class="op">=</span> pd.DataFrame(sqlonfhir.evaluate(</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    prepare_subjects(<span class="bu">list</span>(condition_resources.values())), deepcopy(condition_view)</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>conditions.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<!-- scripts.html -->
+<!-- any content in this file is inserted right before </body> -->
+
+<!-- Append index.html to any links ending with '/'
+
+Example:
+
+<a href="https://example.org/workshops/bulk-data/">
+
+will turn into:
+
+<a href="https://example.org/workshops/bulk-data/index.html">
+
+This ensures consistent behavior across different deployment platforms
+and enables other scripts like role-based module highlighting.
+-->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("a[href]").forEach(link => {
+      if( link.getAttribute("href").endsWith("/") ) {
+        link.setAttribute("href", link.getAttribute("href") + "index.html");
+      }
+    })
+  });
+</script>
+
+<!-- Fix a11y issues with side menu -->
+<script>
+const elements = document.querySelectorAll('.sidebar-menu-container a.sidebar-item-text[data-bs-toggle="collapse"], .sidebar-menu-container a.sidebar-item-toggle[data-bs-toggle="collapse"]')
+
+elements.forEach(element => {
+    element.setAttribute('role', 'group');
+});
+</script>
+
+<!-- Role-based Module Highlighting
+
+For any *.qmd file with roles defined in frontmatter,
+running script/update-module-role-map will generate
+modules/mappings.js. Then any markup with class .highlight-by-role, i.e:
+
+:::{.highlight-by-role}
+ - [mod1](/mod1)
+ - [mod2](/mod2)
+ - [mod3](/mod3)
+:::
+
+will highlight the links in the list assigned to the users roles.
+
+The user can select a role by pressing a button with data-role=*
+attribute. The possible roles are:
+
+Possible Roles:
+  investigator
+  research-leader
+  informaticist
+  software-engineer
+  clinician-scientist
+-->
+<script>
+const all_modules = document.querySelectorAll(".highlight-by-role ul li");
+
+function slugify(str) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/* highlights modules corresponding to role via role_module_map
+ * @param: role_name - role name in lower kebab case
+ */
+function select_modules(role_name) {
+    // Remove existing highlights
+    document.querySelectorAll('mark[data-role]').forEach(mark => {
+      mark.replaceWith(...mark.childNodes);
+    });
+
+    // What modules should be highlighted based on the selected role?
+    var highlighted_module_slugs = role_module_map.filter(x => x.role === role_name).map(x => x.modules)[0].map(x => x.slug);
+
+    // Add in highlights of the currently selected role, just in the containers where
+    // there should be highlights.
+    [
+        '.sidebar-menu-container', // On module pages (left sidebar)
+        '.highlight-by-role' // On section pages (list of modules)
+    ].forEach((container_css_path) => {
+        document.querySelectorAll(container_css_path).forEach(container => {
+            highlighted_module_slugs.forEach((slug) => {
+                container.querySelectorAll(`li a[href*="${slug}"]`).forEach((ahref) => {
+                    var li = ahref.parentNode;
+                    var mark = document.createElement("mark");
+                    mark.dataset.role = role_name;
+                    li.appendChild(mark);
+                    mark.appendChild(ahref);
+                });
+            });
+        });
+    });
+
+    // For module pages, highlight the currently active role
+    document.querySelectorAll(".role-tags .role-tag").forEach((el) => {
+        if (slugify(el.textContent.trim()) === role_name) {
+          el.style.fontWeight = "bold";
+        }
+      });
+}
+
+
+// clears previously selected roles, highlights the selected role, and sets "role" in local storage
+function select_role(role) {
+    store.setItem("role", role);
+    document.querySelector(`.roles-select-list input[data-role="${role}"]`).checked = true;
+}
+
+// trigger role selection on clicking <input data-role=...>
+document.querySelectorAll(".roles-select-list input[data-role]").forEach((role_link) => {
+    role_link.addEventListener("click", (e) => {
+        const role = e.target.dataset.role;
+        select_role(role);
+        select_modules(role);
+    });
+});
+
+// set default role and execute select_role and select_modules once to make sure feature is working
+window.addEventListener("load", () => {
+  const role = store.getItem("role") || "research-leader";
+  select_role(role);
+  select_modules(role);
+});
+</script>
+
+<!-- Navigation Override
+
+Overwrite Quarto's Next/Previous buttons to point to modules
+for the user's role
+-->
+<script>
+// Below function is usable by CC BY-SA 3.0 from https://stackoverflow.com/a/6475125
+String.prototype.toTitleCase = function() {
+  let i, j, str, lowers, uppers;
+  str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+
+  // Certain minor words should be left lowercase unless 
+  // they are the first or last words in the string
+  lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At', 
+  'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'Onto', 'To', 'With'];
+  for (i = 0, j = lowers.length; i < j; i++)
+    str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'), 
+      function(txt) {
+        return txt.toLowerCase();
+      });
+
+  // Certain words such as initialisms or acronyms should be left uppercase
+  uppers = ['ID', 'TV', 'FHIR'];
+  for (i = 0, j = uppers.length; i < j; i++)
+    str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'), 
+      uppers[i].toUpperCase());
+
+  return str;
+}
+
+// Custom Hack to overwrite Quarto's built in navigators
+document.addEventListener("DOMContentLoaded", function() {
+    // Get current module and role
+    const current_module_slug = window.location.pathname.split('.')[0].trim(1).split('/').slice(1).join('/');
+    const role = store.getItem("role");
+
+    function slug_to_url(slug) {
+       return `${window.location.origin}/${slug}.html`
+    }
+
+    // Get next and prev modules data
+    let prev_href, prev_text;
+    let next_href, next_text;
+
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == role ) {
+            for(let i=0; i<mapping.modules.length; i++) {
+                if( mapping.modules[i].slug == current_module_slug ) {
+
+                    prev_href = (i > 0) ? slug_to_url(mapping.modules[i-1].slug) : null;
+                    prev_text = (i > 0) ? mapping.modules[i-1].text : null;
+
+                    next_href = (i+1 < mapping.modules.length) ? slug_to_url(mapping.modules[i+1].slug) : null;
+                    next_text = (i+1 < mapping.modules.length) ? mapping.modules[i+1].text : null;
+                }
+            }
+        }
+    });
+
+
+    // Overwrite prev link
+    if( prev_href ) {
+        const prev_link_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link");
+        const prev_text_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link .nav-page-text");
+        if( prev_link_elmt ) {
+
+            prev_link_elmt.href = prev_href
+            prev_text_elmt.innerText = prev_text;
+        }
+    }
+
+    // Overwrite next link
+    if( next_href ) {
+        const next_link_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link");
+        const next_text_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link .nav-page-text");
+
+        if( next_link_elmt ) {
+            next_link_elmt.href = next_href;
+            next_text_elmt.innerText = next_text;
+        }
+    }
+
+    // if document has #key-points then move pagination to next after it
+    key_points = document.querySelector("#key-points");
+    if( key_points ) {
+        let page_nav = document.querySelector("nav.page-navigation");
+        key_points.insertAdjacentElement("afterend", page_nav);
+    }
+
+});
+
+
+// Override style of Quarto page navigation (prev/next buttons)
+document.addEventListener("DOMContentLoaded", function() {
+
+    const page_navigators = document.querySelectorAll(".pagination-link");
+    page_navigators.forEach((node) => {
+
+        node.classList.add("btn", "btn-outline-custom", "rounded");
+        node.parentNode.classList.remove("nav-page");
+        node.parentNode.parentNode.style.gridRow = "initial";
+    });
+});
+
+// Set external links to open in a new tab
+document.addEventListener("DOMContentLoaded", function() {
+    var all_links = document.querySelectorAll('a');
+    for (var i = 0; i < all_links.length; i++){
+        var a = all_links[i];
+        if(a.hostname != location.hostname) {
+                a.target = '_blank';
+        }
+    }
+})
+
+</script>
+
+<!-- Lightbox 
+
+Intercept all instances of:
+
+:::{#id .mermaid-lightbox data-caption='my caption'}
+```{mermaid}
+mermaid markdown content...
+```
+:::
+
+and overwrite it with a popup lightbox for easy viewing of diagram.
+Powered by GLightbox: https://github.com/biati-digital/glightbox
+-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.1/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox@3.3.1/dist/js/glightbox.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const mermaidElements = document.querySelectorAll('.mermaid-lightbox');
+
+    mermaidElements.forEach(element => {
+      const id = element.id;
+      const caption = element.getAttribute('data-caption');
+
+      const lightboxFigure = document.createElement('a');
+      lightboxFigure.setAttribute('href', '#' + id);
+      lightboxFigure.className = 'glightbox';
+      lightboxFigure.setAttribute('data-description', caption);
+      lightboxFigure.setAttribute('data-width', "90%");
+      lightboxFigure.setAttribute('data-height', "90%");
+
+      const clonedElement = element.cloneNode(true);
+      lightboxFigure.appendChild(clonedElement);
+
+      const figcaption = document.createElement('figcaption');
+      figcaption.textContent = 'Click diagram to enlarge';
+      lightboxFigure.appendChild(figcaption);
+
+      element.parentNode.replaceChild(lightboxFigure, element);
+    });
+
+    // Initialize GLightbox
+    const lightbox = GLightbox({
+        selector: '.glightbox'
+    });
+  })
+</script>
+
+<!-- This script dynamically updates the copyright year in the footer -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get the current year
+    var currentYear = new Date().getFullYear();
+    
+    // Find the span element where we'll put the year
+    var span = document.getElementById('current-year');
+    
+    if (span) {
+        // If the span exists, update its content with the current year
+        span.textContent = currentYear;
+    }
+    });
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/NIH-ODSS\.github\.io\/fhir-for-research");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../workshops/bulk-data" class="pagination-link" aria-label="FHIR Bulk Data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">FHIR Bulk Data</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../workshops/smart-on-fhir" class="pagination-link" aria-label="SMART on FHIR">
+        <span class="nav-page-text">SMART on FHIR</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/?tab=readme-ov-file#license">License information</a><br>Approved for Public Release / Case #25-3098<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

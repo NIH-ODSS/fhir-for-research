@@ -1,0 +1,268 @@
+body {
+  --nav-border: #aac7e5;
+}
+.nav-footer { border-top: 1px solid var(--nav-border); }
+
+.column-screen .hero {
+  margin-top: -2em;
+}
+
+#env-banner {
+  border-bottom: 1px solid #e6c76f;
+  padding: 1em;
+  background-color: #fff3cd;
+  text-align: center;
+}
+.quarto-dark #env-banner {
+  color: black;
+}
+
+/* The sticky menu reserves its own space below the scrolling banner. */
+body:has(> #env-banner ~ #quarto-header) {
+  padding-top: 0 !important;
+}
+
+#env-banner ~ #quarto-header {
+  position: sticky;
+  top: 0;
+}
+
+main.content > header + ul, main.content > header + ol, main.content > header + p, main.content > header + section {
+  margin-top: 1em;
+}
+
+/* css styles */
+.highlight {
+  background-color: #fffeca;
+}
+
+#metadata-container {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+#metadata-container #reading-time-container, #metadata-container .date {
+  margin-top: -1em;
+  margin-bottom: 1em;
+}
+
+.quarto-dark #metadata-container {
+  color: white;
+}
+
+#metadata-container svg {
+  vertical-align: -0.15em;
+}
+
+#reading-time-container + .date::before {
+  content: " | ";
+}
+
+.role-tags {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  row-gap: 0.3rem;
+}
+
+.role-tags-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  margin-right: 0.1rem;
+}
+.quarto-dark .role-tags-label {
+  color: white;
+}
+
+.role-tag {
+  background: #e8f0f8;
+  color: #005a9c;
+  padding: 0.15rem 0.55rem;
+  border-radius: 3px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.role-info-link {
+  display: inline;
+  color: #4a7da8;
+  margin-left: 0.15rem;
+}
+
+.role-info-link svg {
+  vertical-align: -0.15em;
+}
+
+.role-info-link:hover {
+  color: #005a9c;
+}
+
+.btn-outline-custom {
+  color: #20558a;
+  border-color: #20558a;
+}
+
+.btn-outline-custom:hover {
+  color: white;
+  background-color: #20558a;
+}
+
+/* Hide left and right footers in favor of a single centered footer */
+.nav-footer-left, .nav-footer-right {
+  display: none;
+}
+
+/* glightbox customization */
+.figure {
+  text-align: center;
+}
+
+.gslide-description {
+  background-color: black !important;
+  color: white;
+  text-align: center;
+}
+
+/* json viewer css */
+.json_view {
+  font-family: monospace;
+  font-size: 16px;
+}
+.json_view > .json_view__item {
+  display: block;
+}
+
+.json_view__item {
+  display: none;
+  margin-top: 10px;
+  padding-left: 20px;
+  user-select: none;
+}
+
+.json_view__item--collapsible {
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+.json_view__item--collapsible::before {
+  content: "+";
+  position: absolute;
+  left: 5px;
+}
+.json_view__item--collapsible::after {
+  background-color: lightgrey;
+  content: "";
+  height: 100%;
+  left: 9px;
+  position: absolute;
+  top: 26px;
+  width: 1px;
+}
+.json_view__item--collapsible:hover > .json_view__key, .json_view__item--collapsible:hover > .json_view__value {
+  text-decoration: underline;
+}
+
+.json_view__toggle {
+  display: none;
+}
+.json_view__toggle:checked ~ .json_view__item {
+  display: block;
+}
+
+.json_view__key {
+  color: darkblue;
+  display: inline;
+}
+.json_view__key::after {
+  content: ": ";
+}
+
+.json_view__value {
+  display: inline;
+}
+
+.json_view__value--string {
+  color: green;
+}
+
+.json_view__value--number {
+  color: blue;
+}
+
+.json_view__value--boolean {
+  color: #e50000;
+}
+
+.json_view__value--type-object, .json_view__value--type-array {
+  color: #767676;
+}
+
+
+/* Learning objectives/key points */
+#learning-objectives .answer {
+  display: none;
+}
+
+#key-points .answer {
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  color: green;
+}
+
+/* CQL syntax */
+
+.cql-code {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.4rem;
+  overflow-x: auto;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  padding: 0.6rem;
+  margin: 1rem 0;
+}
+
+.cql-code-inline {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.4rem;
+    overflow-x: auto;
+    font-size: 0.78rem;
+    line-height: 1.25;
+    padding: 0.1rem;
+    margin: 0.6rem 0;
+}
+
+.cql-code code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: inherit;
+}
+
+.cql-keyword {
+  font-weight: 700;
+  color: #003f8c;
+}
+
+.cql-string {
+  color: #7a3e00;
+}
+
+.cql-identifier {
+  color: #5a1a78;
+}
+
+.cql-type {
+  color: #005a5a;
+  font-weight: 600;
+}
+
+.cql-number {
+  color: #8a4600;
+}
+
+.cql-operator {
+  color: #333;
+  font-weight: 700;
+}
