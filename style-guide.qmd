@@ -1,0 +1,314 @@
+---
+title: Style Guide
+---
+
+We use the [RStudio Visual R Markdown](https://rstudio.github.io/visual-markdown-editing/) interchangeably with writing raw Markdown in another editor like VSCode. Visual R Markdown will automatically reformat `.md` or `.qmd` files when opening them, so we do not get hung up on specific Markdown styling as we accept the default output of Visual R Markdown.
+
+The following are style rules that are not impacted by Visual R Markdown automatic reformatting.
+
+Visual R Markdown uses [Pandoc's flavor of Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown) so that's what we use when manually writing Markdown. [Quarto's Markdown guide](https://quarto.org/docs/authoring/markdown-basics.html) is also helpful.
+
+If you write Markdown by hand, you should run it through the Pandoc Markdown formatter by toggling the RStudio Visual R Markdown mode on and off. This will avoid trivial changes showing up in git commits if subsequent authors edit your file with Visual R Markdown.
+
+## Headings
+
+-   Headings in `.qmd` files should start at `<h2>` (i.e., `##` in Markdown). The `title` element of the front matter at the top of each `.qmd` file is automatically inserted as the `<h1>` for the page.
+-   The contents of heading tags, excluding the page titles, should be `Sentence case` (the first letter is capitalized), **not** Title Case. Page titles should be Title Case.
+-   Headings should not be numbered manually -- this happens automatically.
+
+## Frontmatter
+
+Each `.qmd` file in the `modules/` folder needs frontmatter like the following:
+
+    ---
+    title: FHIR From 1,000 Feet
+
+    roles:
+      - Informaticist
+      - Software Engineer
+    ---
+
+### Title
+
+Use [this website](https://individed.com/code/to-title-case/) to properly capitalize titles.
+
+### Targeted roles
+
+Roles should be listed as a YAML array in the frontmatter. The following roles are valid, and should appear verbatim as below:
+
+    - Investigator
+    - Research Leaders
+    - Informaticist
+    - Software Engineer
+    - Clinician Scientist/Trainee
+
+These are defined on the [Roles page](roles.qmd).
+
+### Learning objectives (optional)
+
+Learning objectives can be included in the frontmatter to display as part of the module content. Use the following syntax:
+
+```yaml
+learning_objectives:
+  - Learning objective 1 goes here.
+  - Learning objective 2 goes here.
+```
+
+## Voice
+
+See [Microsoft's](https://learn.microsoft.com/en-us/style-guide/grammar/person) and [Google's](https://developers.google.com/style/person) style guides for examples of using first person, second person, and imperative voice in writing.
+
+### First person
+
+Avoid singular first person pronouns ("I"/"me").
+
+Use plural first person sparingly ("we"/"us") to refer to the authors.
+
+Never use the global "we": "We need to solve world-hunger."
+
+### Second person
+
+Write as though you are speaking to the reader and use second person "you." Avoid using phrases like, "the reader."
+
+### Imperative
+
+When providing instructions, use imperative voice where possible.
+
+From [Microsoft's style guide](https://learn.microsoft.com/en-us/style-guide/grammar/person):
+
+> Change your password (Instead of *We recommend that you change your password.*)
+>
+> That didn’t work. Try again. (Instead of _We weren’t able to run the Solution Checker. Try running it again._)
+
+## Editing for clarity and brevity
+
+### Check each paragraph for the following:
+
+- Each paragraph has a purpose.
+  - **What is this paragraph telling you?** If you can't easily answer that question or the answer is the same as a nearby paragraph, remove or rewrite the paragraph.
+
+- Each sentence supports this purpose.
+  - **How does this sentence tie into the purpose of the paragraph?** If you can't easily answer the question, then remove the sentence or move it to a new paragraph.
+
+- Each sentence has a unique purpose.
+  - **What is this sentence telling you?** If it's the same thing as a previous sentence, consider removing.
+  - Exceptions are when the repetition:
+    - is intentional to solidify understanding
+    - provides a new perspective
+
+- Each sentence or phrase is meaningful.
+  - **Does the meaning of the paragraph change if you remove the sentence or phrase?** If not, remove.
+  - **Example** "At its most basic definition, terminology in IT refers to a code mapping to a concept."
+    - You can remove _"At its most basic definition"_ without losing meaning.
+
+### Check each sentence for the following:
+
+- Each word has a unique purpose.
+  - **If you remove the word, does the meaning of the sentence change?** If not, remove the word.
+  - **Example** "These meet virtually on a weekly basis for a conference call."
+    - _virtually_ and _conference call_ are redundant: only one is necessary.
+
+- "Very" and "really" are absent.
+  - **Ctrl-f for "very" and "really".** Remove these words.
+  - If necessary, replace the verb or adjective with a more description verb or adjective.
+    - **Examples** "It's really good."
+      - "It's excellent."
+
+- [Adverbs are rare.](https://www.writingforward.com/writing-tips/avoid-adverbs) Use them only when you can't replace them with a more descriptive verb.
+  - **Ctrl-f for "ly".** For each adverb you find:
+    - **Does the meaning of the sentence change if you remove the adverb?** If not, remove.
+    - **Can you replace the modified verb with a more descriptive verb and remove the adverb?** Use a thesaurus for this. If so, replace the verb and remove the adverb.
+    - If you can't remove or replace the adverb, keep it.
+  - **Example** "developing multiple resources specifically for that purpose."
+    - _specifically_ is unnecessary.
+  - **Example** "There is only one hierarchical relationship attribute."
+    - _only_ is redundant to _one_.
+  - **Example** "She ran quickly"
+    - "She sprinted"
+  - **Example** "Adverbs and adjectives appear infrequently."
+    - "Adverbs and adjectives are rare."
+
+- [Nominalizations are rare.](https://blog.wordvice.com/improve-writing-edit-nominalizations/) (Nominalizations are verbs that have become nouns. They often end in "ion" or "ing")
+  - **Ctrl-f for "ion" or "ing".** Does this word have a verb as a root? If so, can you replace the verb/"ion"-word combination with the root verb?
+  - **Example** "The sentence provides an explanation."
+    - _explanation_ is a nominalization of _to explain_. You can rewrite this sentence as "The sentence explains."
+  - **Example** "Her understanding of the situation meant that they could proceed."
+    - _understanding_ is a nominalization of _to understand_. You can rewrite this sentence as "Because she understood the situation, they could proceed."
+
+- Sentences are simple, as long as simplicity doesn't reduce readability.
+  - **Look for sentences with 2 or more commas (where the commas aren't part of a list).**
+  - **Does the sentence have multiple purposes?** If so, try dividing it into two separate sentences.
+    - **Example** "After they went to the park, they drove to a restaurant, and at the restaurant, they had dinner."
+      - The sentence says what they did after the park, _and_ what they did at the restaurant.
+      - "After they went to the park, they drove to a restaurant. At the restaurant, they had dinner."
+  - **Can you reorganize or rewrite the sentence to use fewer commas?**
+    - **Example** "In many cases, the reverse mappings are valid, but this cannot be assumed to be the case."
+      - "Reverse mappings are sometimes valid, but not always."
+      - or just "Reverse mappings may not be valid."
+    - **Example** "Using standard terminology should be a simple and logical step in health IT. However, with the complexities of many diagnoses systems, clinical narrative transferred via PDF format, various coding systems, and the cost of digitizing volumes of reference material/dictionaries, it isn't as easy as you would think."
+      - "Using standard terminology is more difficult than expected given:
+        - the complexities of many diagnoses systems,
+        - clinical narrative transferred via PDF format,
+        - various coding systems, and
+        - the cost of digitizing volumes of reference material/dictionaries"
+  - **Is the concept split into two parts with something in the middle?** If so, move whatever is in the middle at the beginning or end.
+    - **Example** "Her dog, who was so cute, chased the ball."
+      - "who was so cute" divides "Her dog chased the ball" in half.
+      - "Her adorable dog chased the ball." is better.
+
+- **You avoid jargon**
+  - **Example** "Note in the first row that Patient also has a type, which gives inheritance of additional attributes we'll discuss below."
+    - _inheritance_ is a software development concept that likely won't be easily understood by people who aren't already familiar with HL7 data types or software development.
+    - Instead, define _inheritance_ inline or use a different word.
+
+- **You use [plain language](https://www.plainlanguage.gov/).** [You use simpler words where the simple word has the same meaning.](https://www.plainlanguage.gov/guidelines/words/use-simple-words-phrases/)
+  - **Example** [Try words like "use" instead of "utilize," "about" instead of "approximately" and "try" instead of "attempt."](https://zapier.com/blog/plain-language/)
+  - **Example**
+    - [Original: "It is suggested that the wire should be connected to the terminal by the engineer when the switch-box assembly is completed."](https://zapier.com/blog/plain-language/)
+    - [Simplified: "We suggest that you connect the wire to the terminal when you finish assembling the switch-box."](https://zapier.com/blog/plain-language/)
+
+## Quotes
+
+Quotes or excerpts longer than a sentence should be in `<blockquote>` tags (in Markdown, each line is prefixed with `>`) like this:
+
+> This is a blockquote. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+## Code
+
+Use fences like this:
+
+    ```json
+    {
+        "some json": "goes here"
+    }
+    ```
+
+This will provide syntax highlighting for the indicated language, like this:
+
+``` json
+{
+    "some json": "goes here"
+}
+```
+
+## Links
+
+From the [Google documentation guide](https://google.github.io/styleguide/docguide/style.html):
+
+> Markdown link syntax allows you to set a link title, just as HTML does. Use it wisely.
+>
+> Titling your links as "link" or "here" tells the reader precisely nothing when quickly scanning your doc and is a waste of space:
+>
+>     See the syntax guide for more info: [link](syntax_guide.md).
+>     Or, check out the style guide [here](style_guide.md).
+>     DO NOT DO THIS.
+>
+> Instead, write the sentence naturally, then go back and wrap the most appropriate phrase with the link:
+>
+>     See the [syntax guide](syntax_guide.md) for more info.
+>     Or, check out the [style guide](style_guide.md).
+
+## Citing
+
+When citing web-based content, simply add a hyperlink as described above.
+
+When citing printed content or any content where an academic reader would expect a formal citation, use Quarto's built-in [citation capabilities](https://quarto.org/docs/authoring/footnotes-and-citations.html). References should be added to `references.bib` in the root of the repository.
+
+## Images
+
+Images should link the source (or include a proper citation if it's from an "academic" source) and alt text, like this:
+
+![An example caption for an image. Photo by [Andriyko Podilnyk](https://unsplash.com/@andriyko) on [Unsplash](https://unsplash.com/photos/RCfi7vgJjUY).](images/kitten-unsplash.jpg){fig-alt="A kitten walking in a field of green grass."}
+
+In the source code, this looks like:
+
+``` markdown
+![An example caption for an image. Photo by [Andriyko Podilnyk](https://unsplash.com/@andriyko) on [Unsplash](https://unsplash.com/photos/RCfi7vgJjUY).](images/kitten-unsplash.jpg){fig-alt="A kitten walking in a field of green grass."}
+```
+
+This is rendered to HTML as:
+
+``` html
+<div class="quarto-figure quarto-figure-center">
+   <figure class="figure">
+      <p><img src="images/kitten-unsplash.jpg" class="img-fluid figure-img" alt="A kitten walking in a field of green grass."></p>
+      <p></p>
+      <figcaption class="figure-caption">An example caption for an image. Photo by <a href="https://unsplash.com/@andriyko">Andriyko Podilnyk</a> on <a href="https://unsplash.com/photos/RCfi7vgJjUY">Unsplash</a>.</figcaption>
+      <p></p>
+   </figure>
+</div>
+```
+
+Note the `<img>` tag in the rendered HTML has an `alt` property. This is critical for accessibility, and all images **must** have this.
+
+## Referencing FHIR artifacts
+
+-   [FHIR resources](https://www.hl7.org/fhir/resourcelist.html) should be referred to as "FHIR resources", not "Resources" or "resources" to avoid confusion with other kinds of resources.
+
+-   <mark>Specific FHIR resources should be referred to like "[Patient](https://www.hl7.org/fhir/patient.html)," and hyperlinked to the relevant FHIR spec page the **first** time they appear</mark> (or again if you think it's likely the reader will want to refer to the FHIR spec, like if you are introducing a screenshot of the "Resource Content" spec table, it is probably helpful to link back to the FHIR resource's page in the spec).\
+    \
+    This mirrors the capitalization that appears on the [FHIR resources list](https://www.hl7.org/fhir/resourcelist.html).\
+    \
+    Once you have linked to the FHIR spec's resource page for the first time, refer to the resource like: Patient.
+
+-   Reference to specific elements should be in backticks like `` `Patient.name` `` when referencing the "name" element in Patient. Use the full element path including the resource name unless it's too unwieldy/repetitive.
+
+    -   Don't hyperlink `Patient.name` directly, but if it's useful to link to the element details, you can do it like so:\
+        \
+        The `Patient.name` element ([details here](https://www.hl7.org/fhir/patient-definitions.html#Patient.name)) stores one or more names associated with an individual.
+
+-   Links to the FHIR spec should be...
+
+    -   ...to the current version (`https://www.hl7.org/fhir/patient.html`) if you are generally referring to something in the spec in a way that is version-independent.
+
+    -   ...to a specific version if you are referring to something specific -- like a specific element or quoting the spec -- that could change over time you should link to a specific version (`https://www.hl7.org/fhir/R4B/patient.html`)
+
+        -   A heuristic for this: if you think the link might be broken in a future FHIR release, use a release-specific link.
+
+        -   Likewise, if you refer to content that might change (even if the link still resolves), use a release-specific link.
+
+        -   If we want to "upgrade" the documentation in the future, we can search for all instances of `https://www.hl7.org/fhir/R4B/`, and then check those links for
+
+## Referencing the FHIR specification
+
+For narrative content, use long block quotes with a link in the preceding sentence.
+
+::: {.callout-note icon="false"}
+## Example of citing the FHIR spec
+
+The [FHIR specification notes that it can be difficult to know where to start](https://www.hl7.org/fhir/R4B/modules.html):
+
+> FHIR is a platform specification that defines a set of capabilities used across the healthcare process, in all jurisdictions, and in lots of different contexts. While the basics of the FHIR specification are relatively straight-forward (see the Overviews: [General](https://www.hl7.org/fhir/R4B/overview.html), [Developers](https://www.hl7.org/fhir/R4B/overview-dev.html), [Clinical](https://www.hl7.org/fhir/R4B/overview-clinical.html), and [Architects](https://www.hl7.org/fhir/R4B/overview-arch.html)), it can still be difficult to know where to start when implementing a solution based on FHIR.
+:::
+
+Note that this links to a specific version of FHIR (`https://www.hl7.org/fhir/R4B/modules.html`) as it is a direct quote.
+
+Also note that the hyperlinks in the excerpt are maintained in the blockquote. The easiest way to accomplish this is to copy from the FHIR spec and directly paste into the `.qmd` file.
+
+We will often refer to the "Resource Content"/"Profile Content" table for a FHIR resource or profile. This should be implemented as a single screenshot taken on a high DPI screen (like a MacBook screen) at 100% browser zoom for each table.
+
+Screenshots of profiles' tables should include the tabs at the top to identify which view of the table is being displayed. The screenshot should be introduced with a link to the profile in question, like below.
+
+For example, here is the differential from [the Device Metric Observation Profile R4B](https://www.hl7.org/fhir/R4B/devicemetricobservation.html):
+
+[![](images/image-1899311563.png){fig-alt="Screenshot of the profile definition table in the Device Metric Observation Profile in FHIR R4B."}](https://www.hl7.org/fhir/R4B/devicemetricobservation.html#profile)
+
+Captions are not necessary for these screenshots. However, the images still need `alt` text and should link to the page where the screenshot was taken. Version-specific links should be used.
+
+The same approach should be used for these tables in FHIR resources, though it is not necessary to include the tabs.
+
+Here's a screenshot from the [Observation resource](https://www.hl7.org/fhir/R4B/observation.html) as an example:
+
+[![](images/observation.png){fig-alt="Screenshot of the resource content table for the FHIR Observation resource."}](https://www.hl7.org/fhir/R4B/observation.html#resource)
+
+Note that the image hyperlink includes the `#resource` anchor to bring the reader directly to the "Resource Content" table in the documentation.
+
+It is ok to only include part of these tables in the screenshot if that is beneficial. The example from Observation above is quite long, and it might be helpful to crop unnecessary parts. If you do this, you should do some lightweight image editing like so:
+
+[![](images/image-1375861502.png){fig-alt="Excerpt from the resource contents table for the FHIR Observation resource."}](https://www.hl7.org/fhir/R4B/observation.html#resource)
+
+If we do this frequently, we can look into standardizing how this is done for consistency.
+
+## Accessibility
+
+All web pages on this site should pass the "FastPass" check with the [Accessibility Insights](https://accessibilityinsights.io) browser extension.

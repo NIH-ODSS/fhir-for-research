@@ -1,0 +1,28 @@
+---
+title: FHIR Bulk Data Webinar
+
+toc: false
+number-sections: false
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+---
+
+## Slides
+
+```{=html}
+<iframe style="border: 3px solid #dee2e6; width: 100%; height: 475px;" src="slides.html" title="FHIR Bulk Data webinar slides, powered by Revealjs. A link to an accessible PDF of these slides is in the section below."></iframe>
+```
+### Other slide formats
+
+-   [Printable web page](slides.html?print-pdf)
+-   [Accessible PDF](Webinar%20-%20FHIR%20Bulk%20Data%20508C.pdf)
+
+::: callout-note
+For more information, please see the [FHIR Bulk Data Workshop](../../workshops/bulk-data/index.qmd).
+:::
+
+If you are running this workshop and want to set up a [compute environment](../workshop-recommendations/index.qmd#compute), [these instructions may be helpful](http://localhost:8080/workshops/bulk-data/setup.html).

@@ -1,0 +1,178 @@
+name: Quarto Publish GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: '*'
+
+env:
+  RENV_CONFIG_REPOS_OVERRIDE: "http://cran.r-project.org"
+  RENV_PATHS_CACHE: "$GITHUB_ACTION_PATH/cache"
+  RENV_PATHS_LIBRARY: "$GITHUB_ACTION_PATH/renv/library"
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PLANTUML_BIN: "$GITHUB_ACTION_PATH/plantuml.jar"
+  FHIR_SERVER: "http://localhost:8080/fhir"
+  CI_DEBUG_SERVICES: "false"  # This helps with FHIR service debugging
+  ENVIRONMENT_NAME: "production"
+  PACKAGES: |
+    libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libfontconfig1-dev
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    services:
+      fhir-server:
+        image: hapiproject/hapi:v8.0.0-1
+        ports:
+          - "8080:8080"
+        env:
+          hapi.fhir.default_encoding: json
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: 1.6.40
+
+      - name: Write APT package dependencies to a file
+        run: echo "$PACKAGES" > github-ci-apt-packages.txt
+
+      - name: Cache apt-get packages
+        uses: actions/cache@v4
+        with:
+          path: /var/lib/apt/lists
+          key: ${{ runner.os }}-apt-${{ hashFiles('github-ci-apt-packages.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          # sudo apt-get -y upgrade
+          sudo apt-get install -y $PACKAGES
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2.11.3
+
+      - name: Install R libraries
+        uses: r-lib/actions/setup-renv@v2.11.3
+        # includes dependency cache by default
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4.2.0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.5.0
+        with:
+          python-version-file: .python-version
+
+      - name: Install Python libraries
+        run: uv sync
+
+      - name: Wait for Hapi service
+        run: |
+          echo "Waiting for Hapi service to be ready..."
+          for i in {1..90}; do
+            if curl --silent --fail $FHIR_SERVER/metadata | head -n 10; then
+              echo "Hapi service is ready!"
+              break
+            fi
+            echo "Hapi service not ready yet, retrying in 2 seconds..."
+            sleep 2
+          done
+
+      - name: Upload FHIR Data
+        run: |
+          echo "Loading data..."
+          uv run ./script/load_data.py
+          echo "Data uploaded"
+
+      - name: Render Quarto
+        run: uv run quarto render
+
+      - name: Remove .html extensions and /index from links
+        run: |
+          # Find all HTML files in the current directory and its subdirectories
+          HTML_FILES=$(find . -type f -name "*.html")
+
+          # Loop through each HTML file
+          for file in $HTML_FILES; do
+              # Replace .html extension from <a> tags with empty string for relative links only
+              sed -i 's/\(<a[^>]*href="\)\([^:"]*\)\.html\("[^>]*>\)/\1\2\3/g' $file
+
+              # Replace /some/path/index with /some/path
+              sed -i 's/\(<a[^>]*href="\)\([^:"]*\)\/index\("[^>]*>\)/\1\2\3/g' $file
+          done
+
+          echo "HTML files processed successfully!"
+
+      # Work around https://github.com/quarto-dev/quarto-cli/issues/3892
+      - name: Manually copy over MP4 files
+        run: |
+          cp modules/images/*.mp4 public/modules/images/
+
+      # Upload build; GitHub recommends this to be done in the build step
+      - name: Push build to GitHub Artifacts
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: actions/upload-pages-artifact@v3.0.1
+        with:
+          path: public/
+
+      # Deploy the output for main branch
+      - name: Push build to gh-pages (default branch)
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          # Deploy
+          git config --global user.email "noreply@mitre.org"
+          git config --global user.name "Auto-build"
+          git worktree add $GITHUB_WORKSPACE/../gh-pages
+          cd $GITHUB_WORKSPACE/../gh-pages
+
+          # Refresh in case another build has happened while this was running
+          # This mitigates a race condition with multiple simultaneous builds
+          git fetch origin
+          git reset --hard origin/gh-pages
+
+          mkdir -p branches
+          mv branches ..
+          rm -rf *
+          mv ../branches .
+          cp -r $GITHUB_WORKSPACE/public/* .
+          rm -rf .github/workflows
+          git add -A
+          git commit --amend -m "Update site"
+          GIT_SSH_COMMAND='ssh -i ' git push -u --force origin gh-pages
+
+      # Deploy branches to *.github.io/[REPOSITORY]/branches/[BRANCH NAME]
+      - name: Push build to gh-pages (non-default branches)
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          # Deploy
+          git config --global user.email "noreply@mitre.org"
+          git config --global user.name "Auto-build"
+          git worktree add $GITHUB_WORKSPACE/../gh-pages
+          cd $GITHUB_WORKSPACE/../gh-pages
+
+          # Refresh in case another build has happened while this was running
+          # This mitigates a race condition with multiple simultaneous builds
+          git fetch origin
+          git reset --hard origin/gh-pages
+
+          mkdir -p branches/${GITHUB_REF_NAME##*/}
+          rm -rf branches/${GITHUB_REF_NAME##*/}/*
+          cp -r $GITHUB_WORKSPACE/public/* branches/${GITHUB_REF_NAME##*/}/
+          rm -rf .github/workflows
+          git add -A
+          git commit --amend -m "Update site"
+          GIT_SSH_COMMAND='ssh -i ' git push -u --force origin gh-pages
+
+          REPO_NAME=$(basename "${{ github.repository }}")
+          echo "Preview URL: https://$GITHUB_ACTOR.github.io/$REPO_NAME/branches/$GITHUB_REF_NAME"

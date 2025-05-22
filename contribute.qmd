@@ -1,0 +1,43 @@
+---
+title: Questions & Contributions
+toc: false
+sidebar: false
+---
+
+## Problems or questions?
+
+If you believe you have found an error on this website or have a question, [please open an issue here](https://github.com/NIH-ODSS/fhir-for-research/issues/new). You will need to sign up for a (free) GitHub account if you don't already have one.
+
+## How this website works
+
+This website is generated with software called [Quarto], which is "an open-source scientific and technical publishing system." It takes files written in [Markdown](https://quarto.org/docs/authoring/markdown-basics.html), which can include R and Python code, and renders this content into web pages.
+
+While editing, your computer can create a local preview so you can see how the Markdown files will look when published. For more information on editing, see the next section.
+
+Publishing content is done via the project's [GitHub repository](https://github.com/NIH-ODSS/fhir-for-research). If you are not familiar with git and GitHub, [GitHub's "Get started" documentation](https://docs.github.com/en/get-started/quickstart/hello-world) and [the git book](https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control) are good resources for getting started.
+
+The project's [GitHub repository](https://github.com/NIH-ODSS/fhir-for-research) automatically publishes the latest content from the `main` branch to <https://nih-odss.github.io/fhir-for-research/> via [this GitHub Action](https://github.com/NIH-ODSS/fhir-for-research/blob/main/.github/workflows/quarto.yml). It takes around 10 minutes for changes to be published.
+
+## Editing this website
+
+Anyone with a free GitHub account may suggest changes to the website by [editing a page via GitHub's website and creating a pull request](https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files).
+
+If you wish to edit locally on your computer, you may wish to use the [RStudio IDE](https://posit.co/products/open-source/rstudio/), which natively supports [Quarto]. RStudio also provides a [visual Markdown editor](https://rstudio.github.io/visual-markdown-editing/), which may be easier to use than editing raw Markdown. More information on setting up a local environment is found in the [README file](https://github.com/NIH-ODSS/fhir-for-research#readme) on GitHub. The [Quarto website also has instructions for using RStudio](https://quarto.org/docs/get-started/hello/rstudio.html).
+
+::: {.callout-tip}
+Setup instructions for local editing are available for [Mac](setup-mac.qmd) and [Windows](setup-windows.qmd).
+:::
+
+Contributions are welcomed, and once they are merged in they will be published under this website's [open source license](https://github.com/NIH-ODSS/fhir-for-research/blob/main/LICENSE).
+
+Please review the [Style Guide](style-guide.qmd) before contributing.
+
+## Customizing this website
+
+This website is made available [under an open source license](https://github.com/NIH-ODSS/fhir-for-research/blob/main/LICENSE), and can be modified for your own purposes as long as the terms of the license are followed.
+
+You can customize this website by [forking the repository on GitHub](https://docs.github.com/en/get-started/quickstart/fork-a-repo). This will create a linked copy of the existing website under your own GitHub account. You can then modify the content, and (optionally) contribute your changes back to the [parent repository](https://github.com/NIH-ODSS/fhir-for-research) via a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests). Enhancements or corrections to the content of this website are welcomed!
+
+The [modules on this website](https://github.com/NIH-ODSS/fhir-for-research/tree/main/modules) are intended to be relatively stand-alone, allowing them to be extracted for topic-specific training or other purposes.
+
+[Quarto]: https://quarto.org/

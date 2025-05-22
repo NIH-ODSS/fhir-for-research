@@ -1,0 +1,472 @@
+---
+title: Analyzing FHIR Data in a Tabular Format With Python
+learning_objectives2:
+  - Understand the high-level approaches for converting FHIR-formatted data into tabular data for analysis in Python.
+  - Learn how to request data from a FHIR server and creating tidy tabular data tables using the FHIR-PYrate library. 
+execute:
+  cache: false # changes in fhir-server env will not be picked up otherwise
+jupyter: python3
+
+format: 
+  html: default
+  ipynb: default
+
+reading_time: true
+---
+
+::: {.content-hidden when-format="ipynb"}
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/{{< env COLLAB_BINDER_PATH >}}/blob/main/workshops/data-analysis-cds/data/01-fhir-analysis.ipynb)
+[![View in NBViewer](https://raw.githubusercontent.com/jupyter/design/refs/heads/main/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/{{< env COLLAB_BINDER_PATH >}}/blob/main/workshops/data-analysis-cds/data/01-fhir-analysis.ipynb)
+ <!-- Force download instead of opening the notebook as a page-->
+<a href="./01-fhir-analysis.ipynb" download><img src="https://img.shields.io/badge/download-notebook-F37626?logo=jupyter" alt="Download Notebook"></a>
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/{{< env COLLAB_BINDER_PATH >}}/HEAD?urlpath=%2Fdoc%2Ftree%2Fworkshops%2Fdata-analysis-cds%2F01-fhir-analysis.ipynb)
+:::
+
+## Introduction
+
+For the best learning experience, run this tutorial interactively, via one of the environment setup options. Use the above button depending on your chosen [setup option](index.qmd#environment-setup).
+
+Data analysis approaches in Python often use [Pandas DataFrames](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html) to store tabular data. There are two primary approaches to loading FHIR-formatted data into Pandas DataFrames:
+
+1.  Writing Python code to manually convert FHIR instances in JSON format into DataFrames.
+
+    This does not require any special skills beyond data manipulation in Python, but in practice can be laborious (especially with large number of data elements) and prone to bugs.
+
+2.  Using a purpose-built library like [FHIR-PYrate](https://github.com/UMEssen/FHIR-PYrate) to automatically convert FHIR instances into DataFrames.
+
+    It is recommended to try this approach first, and only fall back to (1) if needed.
+
+In this tutorial, we're using a FHIR server located at **{{< env FHIR_SERVER >}}** but any FHIR server loaded with appropriate data can be used. For instructions on setting up your own test server, see [Standing up a FHIR Testing Server](../../modules/synthea-test-server.qmd).
+
+::: {.content-hidden when-format="ipynb"}
+## Learning Paths
+
+This tutorial offers three difficulty levels to accommodate different experience levels:
+
+| Level        | Focus Areas | Recommended For |
+|--------------|------|------|
+| [Beginner](#retrieving-fhir-data-beginner-level) | Basic FHIR connection, Simple data retrieval | Those new to FHIR or Python data analysis |
+| [Intermediate](#selecting-specific-columns-intermediate-level) | Column selection, FHIRPath usage | Those familiar with basic DataFrame operations |
+| [Advanced](#working-with-multiple-resources-advanced-level) | Multiple resources, Complex searching | Experienced data analysts working with FHIR |
+: Difficulty Levels {tbl-colwidths="[20,40,40]"}
+
+You can follow the tutorial sequentially or jump to the section that matches your experience level.
+:::
+
+::: {.content-visible when-format="ipynb"}
+## Dependencies
+Run the cell below to install required packages if you're in a fresh environment. 
+Skip this step if you already have these packages installed.
+
+```{python}
+#| eval: false
+
+# Install required dependencies
+try:
+  !pip install fhir_pyrate pandas==1.5.3 requests numpy==1.26.4
+
+  import numpy as np
+  if np.__version__ != '1.26.4':
+    raise ImportError("Incorrect numpy version")
+except ImportError:
+  # Force runtime restart to load the updated libraries
+  print('Restarting runtime.')
+  import os
+  os.kill(os.getpid(), 9)
+```
+
+## FHIR Server Setup
+<b>WARNING:</b> You must set a FHIR server URL below before running the
+rest of the notebook. If you don’t have access to a FHIR server, see
+<b>Standing up a FHIR Testing Server</b> on the FHIR for Research website
+for instructions.
+
+```{python}
+# | eval: false
+
+# Set your FHIR server URL
+import os
+
+# Replace with your actual FHIR server URL
+os.environ["FHIR_SERVER"] = "https://your-fhir-server-url.com"
+
+# Verify
+print(f"FHIR server set to: {os.environ.get('FHIR_SERVER')}")
+
+# Check if default URL is being used
+if os.environ.get("FHIR_SERVER") == "https://your-fhir-server-url.com":
+    print(
+        "\033[91m\033[1m\nWARNING: ACTION REQUIRED - Change the default FHIR server URL before continuing!\n\033[0m"
+    )
+```
+:::
+
+## Retrieving FHIR data (Beginner Level)
+
+In this section, you'll learn how to:
+
+- Connect to a FHIR server
+- Retrieve basic patient data
+- Convert FHIR resources to a Pandas DataFrame
+
+::: {.content-hidden when-format="ipynb"}
+::: {#tip-validation-beginner .callout-tip collapse="true"}
+## Beginner Level Validation Checklist
+
+Your setup is successful if you can confirm:
+
+1. Dependencies install without errors
+2. FHIR server connection established (status 200)
+4. DataFrame displays patient data
+
+Common issues:
+
+- Package installation errors: Check Python version (3.8+ required)
+- Empty DataFrame: Check search parameters
+:::
+:::
+Check the server connection.
+
+```{python}
+# Load dependency
+import requests, os
+
+fhir_server = os.environ.get('FHIR_SERVER')
+print(f"Using FHIR server: {fhir_server}")
+
+# Check if the server is running and connection is successful
+response = requests.get(f"{fhir_server}/metadata")
+
+print(f"Server status: {response.status_code}")
+```
+
+::: {.callout-tip}
+## Understanding the FHIR Metadata Endpoint
+
+The metadata endpoint (`/metadata`) is a special FHIR endpoint that returns the server's capability statement - a structured document that describes what the server can do. When we query this endpoint:
+
+- We're checking if the server is responsive (status code 200)
+- We're verifying it's a valid FHIR server
+- The response contains details about supported resources, operations, and search parameters
+
+This is a lightweight way to validate connectivity before attempting more complex queries.
+:::
+
+If connection to the server is successful (code 200), proceed with the next code block to pull data from the server.
+```{python}
+# Load dependencies
+from fhir_pyrate import Pirate
+import pandas as pd
+
+# Instantiate a Pirate object using the FHIR-PYrate library to query the server
+search = Pirate(
+    auth=None,  # Pass the configured session
+    base_url=fhir_server,
+    print_request_url=True,
+)
+
+# Use the whimsically named `steal_bundles()` method
+# to instantiate a search interaction
+# For more information, see https://github.com/UMEssen/FHIR-PYrate/#pirate
+bundles = search.steal_bundles(
+    resource_type="Patient",
+    request_params={
+        "_count": 10,  # Get 10 instances per page
+    },
+    num_pages=1,  # Get 1 page (so a total of 10 instances)
+)
+
+# Execute the search and convert to a Pandas DataFrame
+df = search.bundles_to_dataframe(bundles)
+
+df.head(5)
+```
+
+::: {.content-hidden when-format="ipynb"}
+::: {#tip-output .callout-tip collapse="true"}
+## Understanding Your Output
+
+If successful, you should see a DataFrame with multiple columns containing patient information. Common columns include:
+
+- identifier_0_value: Patient ID
+- gender: Patient gender
+- birthDate: Patient date of birth
+- name_0_family: Patient family name
+
+If you don't see this structure, review the validation checklist in @tip-validation-beginner.
+:::
+:::
+
+It is easier to see the contents of this DataFrame by printing out its first row vertically:
+
+```{python}
+# Print the first row of the DataFrame vertically for easier reading.
+pd.set_option("display.max_rows", 100)  # Show all rows
+df.head(1).T
+```
+
+If you look at the output above, you can see FHIR-PYrate collapsed the hierarchical FHIR data structure into DataFrame columns. FHIR-PYrate does this by taking an element from the FHIR-formatted data like `Patient.identifier[0].value` and converting to an underscore-delimited column name like `identifier_0_value`. (Note that `Patient.identifier` has multiple values in the FHIR data, so there are multiple `identifier_N_...` columns in the DataFrame.)
+
+**FHIR to DataFrame Mapping Example**
+
+| FHIR JSON Structure | DataFrame Column Name |
+|---------------------|----------------------|
+| `{"identifier": [{"value": "123"}]}` | `identifier_0_value` |
+| `{"name": [{"family": "Smith"}]}` | `name_0_family` |
+| `{"telecom": [{"system": "phone", "value": "555-1234"}]}` | `telecom_0_system`, `telecom_0_value` |
+
+This mapping allows you to access nested FHIR data using familiar DataFrame operations.
+
+## Selecting specific columns (Intermediate Level)
+::: {.content-hidden when-format="ipynb"}
+::: {#tip-skills .callout-tip collapse="true"}
+## Intermediate Skills Check
+
+Before proceeding with this section, ensure you can:
+
+- Understand FHIR resource structure
+- Work with basic DataFrame operations
+- Read FHIRPath syntax
+
+Practice Exercise:
+
+Try modifying the previous code to only retrieve patient names and birth dates.
+:::
+:::
+
+Usually not every single value from a FHIR instance is needed for analysis. There are two ways to get a more concise DataFrame:
+
+1.  Use the approach above to load all elements into a DataFrame, remove the unneeded columns, and rename the remaining columns as needed. The [`process_function` capability in FHIR-PYrate](https://github.com/UMEssen/FHIR-PYrate#bundles_to_dataframe) allows you to integrate this approach into the `bundles_to_dataframe()` method call.
+2.  Use [FHIRPath](https://hl7.org/fhirpath/) to select specific elements and map them onto column names.
+
+The second approach is typically more concise. For example, to generate a DataFrame like this...
+
+| id  | gender | date_of_birth | marital_status |
+|-----|--------|---------------|----------------|
+| ... | ...    | ...           | ...            |
+
+...you could use the following code:
+
+```{python}
+# Instantiate and perform the FHIR search interaction in a single function call
+df = search.steal_bundles_to_dataframe(
+    resource_type="Patient",
+    request_params={
+        "_count": 10,  # Get 10 instances per page
+    },
+    num_pages=1,  # Get 1 page (so a total of 10 instances)
+    fhir_paths=[
+        ("id", "identifier[0].value"),
+        ("gender", "gender"),
+        ("date_of_birth", "birthDate"),
+        ("marital_status", "maritalStatus.coding[0].code"),
+    ],
+)
+df
+```
+
+::: {.content-hidden when-format="ipynb"}
+::: {#tip-intermediate-validation .callout-tip collapse="true"}
+## Validation: Column Selection
+
+Your code is working correctly if:
+
+1. DataFrame contains only the specified columns
+2. Column names match your defined mappings
+3. Data types are appropriate (e.g., dates for birthDate)
+4. No errors in FHIRPath expressions
+:::
+:::
+
+While FHIRPath can be quite complex, its use in FHIR-PYrate is often straightforward. Nested elements are separated with `.`, and elements with multiple sub-values are identified by `[N]` where `N` is an integer starting at 0. 
+
+Examples illustrating the relationship between FHIRPath and DataFrame column names:
+
+- When using FHIRPath, `maritalStatus.coding[0].code` refers to the same data that appears in the column named `maritalStatus_coding_0_code` in the full DataFrame output. The `[0]` indicates it's the first coding in the maritalStatus array.
+
+- Similarly, in the DataFrame output we saw a column `identifier_3_type_coding_0_system` which corresponds to the FHIRPath expression `identifier[3].type.coding[0].system`. This refers to the system identifier for the type of the fourth identifier (arrays are zero-indexed).
+
+The element paths can typically be constructed by looking at the hierarchy resource pages in the FHIR specification, or by examining the column names in a full DataFrame output and converting the underscore notation to FHIRPath notation.
+
+::: {.content-hidden when-format="ipynb"}
+See [Key FHIR Resources](../../modules/key-fhir-resources.qmd) for more information on reading the FHIR specification.
+:::
+
+## Working with Multiple Resources (Advanced Level)
+
+In this section, you'll learn techniques for working with multiple FHIR resources simultaneously - a common requirement for  clinical data analysis. Building on the previous sections, we'll explore:
+
+- Handling elements with multiple values
+- Retrieving and linking related resources using `_include` and `_revinclude` parameters
+- Creating more targeted queries with resource-specific filters
+
+### Elements with multiple sub-values
+
+There are multiple `identifier[N].value` values for each instance of Patient in this dataset.
+
+```{python}
+# Instantiate and perform the FHIR search interaction in a single function call
+df = search.steal_bundles_to_dataframe(
+    resource_type="Patient",
+    request_params={
+        "_count": 10,  # Get 10 instances per page
+    },
+    num_pages=1,  # Get 1 page (so a total of 10 instances)
+    fhir_paths=[("id", "identifier[0].value"), ("identifiers", "identifier.value")],
+)
+df
+```
+
+To convert to separate columns, you can do the following:
+
+```{python}
+df.join(pd.DataFrame(df.pop("identifiers").values.tolist()).add_prefix("identifier_"))
+```
+
+This will give you separate `identifier_0`, `identifier_1`, ... columns for each `Patient.identifier[N]` value.
+
+### Retrieving multiple resource types
+
+FHIR-PYrate supports working with multiple resource types in a single query using the `_include` or `_revinclude` parameters. This allows you to retrieve related resources in a single API call.
+
+::: {.content-hidden when-format="ipynb"}
+See [Using the FHIR API to Access Data](../../modules/fhir-accessing-data.qmd#multiple-types-of-resources) for more information on constructing the parameters for FHIR search interactions.
+:::
+
+::: {.content-hidden when-format="ipynb"}
+::: {#wrn-api-limits .callout-warning}
+## Azure FHIR API Limits
+
+Azure FHIR API limits `_include` and `_revinclude` parameters to 100 items. See the [Azure documentation](https://learn.microsoft.com/en-us/azure/healthcare-apis/azure-api-for-fhir/search-samples#_include) for more details.
+:::
+:::
+
+#### Using `_revinclude` with FHIRPath
+
+In this example, we retrieve Patient resources along with related Observation resources, and we use FHIRPath to select specific fields from each resource type:
+
+```{python}
+# Retrieve patients and related observations
+dfs = search.steal_bundles_to_dataframe(
+    resource_type="Patient",
+    request_params={
+        # Get instances of Observation where `Observation.patient` refers to a fetched Patient instance
+        "_revinclude": "Observation:patient",
+        "_count": 10,  # Get 10 instances per page
+    },
+    num_pages=1,  # Get 1 page (so a total of 10 instances)
+    fhir_paths=[
+        # Common paths that could appear in either resource
+        ("id", "id"),
+        
+        # Patient-specific paths
+        ("patient_name", "name[0].family"),
+        ("birth_date", "birthDate"),
+        
+        # Observation-specific paths
+        ("observation_code", "code.coding[0].code"),
+        ("observation_value", "valueQuantity.value"),
+        ("observation_unit", "valueQuantity.unit")
+    ]
+)
+
+# `dfs` is a dictionary where the key is the FHIR resource type, and the value is the DataFrame
+# Split these into separate variables for easy access:
+df_patients = dfs["Patient"]
+df_observations = dfs["Observation"]
+
+# Each DataFrame will only contain columns relevant to its resource type
+# Empty columns are automatically removed from each DataFrame
+print(f"Patient columns: {df_patients.columns.tolist()}")
+print(f"Observation columns: {df_observations.columns.tolist()}")
+
+# Look at the first row of each DataFrame
+df_patients.head(1)
+df_observations.head(1)
+```
+
+#### Using `trade_rows_for_dataframe` for more control
+
+Sometimes you need more fine-grained control over how related resources are queried. In these cases, you can use `trade_rows_for_dataframe` to retrieve related resources based on data in an existing DataFrame:
+
+```{python}
+df_observations2 = search.trade_rows_for_dataframe(
+    df_patients,
+    resource_type="Observation",
+    request_params={
+        "_count": "10",  # Get 10 instances per page
+    },
+    num_pages=1,
+    # Load Observations where `Observation.subject` references the instance of Patient
+    # identified by `id` in the `df_patients` DataFrame
+    df_constraints={"subject": "id"},
+    fhir_paths=[
+        ("observation_id", "id"),
+        ("patient", "subject.reference"),
+        ("status", "status"),
+        ("code", "code.coding[0].code"),
+        ("code_display", "code.coding[0].display"),
+        ("value", "valueQuantity.value"),
+        ("value_units", "valueQuantity.unit"),
+        ("datetime", "effectiveDateTime"),
+    ],
+)
+
+# Look at the results
+df_observations2.head(5)
+```
+
+The `trade_rows_for_dataframe` approach offers several advantages:
+
+- More precise control over query parameters for each related resource
+- Ability to process patient data row by row, useful for large datasets
+- Option to retain columns from the original DataFrame using the `with_ref` parameter
+
+### Filtering by resource attributes
+
+When querying resources, you often need to filter by specific attributes. For example, you might want to retrieve all smoking status observations:
+
+```{python}
+# Directly search for smoking status observations
+df_observations2 = search.steal_bundles_to_dataframe(
+    resource_type="Observation",
+    request_params={
+        "code": "http://loinc.org|72166-2",  # LOINC code for smoking status
+        "_count": 20,  # Get more observations since we're not limiting by patient
+    },
+    num_pages=1,
+    fhir_paths=[
+        ("observation_id", "id"),
+        ("patient", "subject.reference"),
+        ("status", "status"),
+        ("code", "code.coding[0].code"),
+        ("code_display", "code.coding[0].display"),
+        ("value", "valueCodeableConcept.coding[0].code"),
+        ("value_display", "valueCodeableConcept.coding[0].display"),
+        ("datetime", "effectiveDateTime"),
+    ],
+)
+
+# Look at the first row of the Observations DataFrame
+df_observations2.head(15)
+```
+
+Note that when retrieving Observation resources, you'll need to choose the appropriate data type for `Observation.value[x]` based on the type of observation. For quantitative observations, use `valueQuantity.value`, but for coded observations (like smoking status), use `valueCodeableConcept.coding[0].code`.
+
+::::: {.content-hidden when-format="ipynb"}
+## Summary and Next Steps
+
+This tutorial has covered:
+
+1. **Beginner level:** Connecting to a FHIR server and retrieving basic patient data
+2. **Intermediate level:** Using FHIRPath to select specific columns and create focused DataFrames
+3. **Advanced level:** Working with multiple resources, handling nested data, and performing filtered queries
+
+To continue your learning:
+
+- Experiment with different resource types beyond Patient and Observation
+- Try more complex FHIRPath expressions to extract specific data elements
+- Combine data from multiple resources for comprehensive clinical analysis
+- Build visualization and analysis workflows with the retrieved data
+
+:::::

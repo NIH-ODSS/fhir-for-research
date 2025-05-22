@@ -1,0 +1,33 @@
+/.quarto/
+_site/
+public/
+.Rproj.user
+.Rdata
+.Rhistory
+.DS_Store
+
+# Ignore Python environments
+python_env/*
+!/python_env/.keep
+.venv
+
+/.luarc.json
+
+# Ignore JabRef temp files
+bibliography.bib.*
+
+# Ignore Jupyter Checkpoints
+.ipynb_checkpoints
+.jupyter-cache
+
+# Exclude cache files for Jupyter and tabular-r
+.jupyter_cache
+modules/tabular-r_cache/
+modules/tabular-python.ipynb
+workshops/data-analysis-cds/*.ipynb
+tabular-python_files
+*.quarto_ipynb
+
+# Exclude local FHIR server database
+fhir-server/db/*
+!fhir-server/db/.keep

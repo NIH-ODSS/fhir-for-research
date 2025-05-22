@@ -1,0 +1,27 @@
+---
+title: Setup Instructions - Mac
+
+toc: false
+number-sections: false
+---
+
+If you want to [edit this website](../contribute.qmd) locally on your Mac, here are the setup instructions:
+
+1.  Create a free [GitHub](https://github.com) if you don't have one already. Enabling [2fa](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa) is recommended (and may be required by your organization.)
+2.  Follow the [Quarto "Get Started" instructions](https://quarto.org/docs/get-started/) to install Quarto on your system
+3.  [Install R](https://cran.r-project.org/bin/macosx/)
+4.  [Install gfortran](https://cran.r-project.org/bin/macosx/tools/)
+5.  Optional: [Install RStudio](https://posit.co/download/rstudio-desktop/)
+6.  [Install git](https://git-scm.com/download/mac)
+    -   Verify install worked with `git --version` in your Terminal, which should produce a version number
+7.  [Install uv](https://docs.astral.sh/uv/getting-started/installation/)
+8.  [Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the relevant GitHub repository to your local computer
+    -   If you have write access to <https://github.com/NIH-ODSS/fhir-for-research>, use this repo
+    -   Otherwise, [create a fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
+9.  Install Python3 and Python environment:
+    -   In your Terminal, run `uv sync` and uv will take care of the rest
+    -   Alternatively: you can run `uv export --format requirements-txt` to print out requirement info on console. You can copy it to a requirements.txt file and use your own Python tooling. This way is not recommended.
+10. If you installed RStudio: go to "File \> Open Project...", and navigate to the folder of your cloned repo. You should see a `fhir-for-research.Rproj` file in this folder -- if you do, that's the right folder. Then run `renv::restore()` in the R Console to load all the R dependencies
+11. If you did not install RStudio: open terminal and run `Rscript -e "renv::restore()"`
+
+Note: Running `quarto check` in your Terminal will return what components of Quarto have been installed properly and where there might be issues.

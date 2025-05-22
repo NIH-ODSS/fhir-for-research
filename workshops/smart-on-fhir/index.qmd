@@ -1,0 +1,60 @@
+---
+title: SMART on FHIR Workshop
+
+toc: false
+number-sections: false
+
+reading_time: true
+---
+
+## Slides
+
+```{=html}
+<iframe style="border: 3px solid #dee2e6; width: 100%; height: 475px;" src="slides.html" title="SMART on FHIR workshop slides, powered by Revealjs. A link to an accessible PDF of these slides is in the section below."></iframe>
+```
+
+### Other slide formats
+
+-   [Printable web page](slides.html?print-pdf)
+-   [Accessible PDF](Workshop - SMART on FHIR 508C.pdf)
+
+## Running the sample app
+
+1.  Download or clone <https://github.com/mitre/smart-on-fhir-demo>
+2.  Open in [VSCode](https://code.visualstudio.com) (or your editor of choice)
+3.  Start a local web server (e.g. [VSCode Live Preview extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server))
+    -   [Other options for running a local web server](https://github.com/mitre/smart-on-fhir-demo#2-launch-a-http-server)
+    -   [Browser-based backup option if you can't run a local web server](https://codesandbox.io/s/github/mitre/smart-on-fhir-demo/tree/main/)
+4.  Verify you can open `http://localhost:3000/index.html` in your browser (it looks like [this](example.png))
+    -   Note that you may need to replace `3000` with the port that your local web server runs on
+    -   If you use the browser-based backup option, the web server will appear in one of the panels in the browser-based editor
+
+Working with the sample app is discussed during the workshop.
+
+## SMART EHR Launch workflow
+
+The diagram below appears in the slides, but may be easier to see on this page.
+
+::: {#mermaidSMARTWorkshop .mermaid-lightbox data-caption="Diagram showing the workflow for a SMART on FHIR EHR launch"}
+```{mermaid}
+sequenceDiagram
+    accTitle: Diagram showing the workflow for a SMART on FHIR EHR launch
+    %%{init:{'sequence':{'messageFontSize': 30, 'actorFontSize': 30}}}%%
+    participant A as localhost:3000/launch.html
+    participant B as launch.smarthealthit.org
+    participant C as localhost:3000/index.html
+    participant D as FHIR Server
+
+    B ->> B: Launch triggered via test website
+    B ->> A: Launch requested
+    A ->> B: Authorization request
+    B ->> B: Dummy provider log-in and patient selection
+    B ->> C: Authorization granted
+    C ->> B: Access token request
+    B -->> C: Access token response
+    C ->> D: Request Patient
+    D -->> C: Response with Patient JSON
+    C ->> D: Request MedicationRequests
+    D -->> C: Response with MedicationRequest JSON
+```
+:::

@@ -1,0 +1,143 @@
+---
+format:
+  revealjs:
+    theme: [default, ../../slides.scss]
+    preview-links: true
+    slide-number: c/t
+    footer: "© 2023 The MITRE Corporation / Approved for Public Release / Case #23-0966"
+editor: visual
+---
+
+# Introduction to FHIR Bulk Data {background-image="/images/nih_slide_background.png" background-size="100vw 100vh" background-color="#20558A"}
+
+National Institutes of Health (NIH), Office of the Director (OD), Office of Data Science Strategy (ODSS)
+
+<center>June 13, 2023</center>
+
+::: {style="padding-left: 3em;"}
+<small>FHIR® is the registered trademark of Health Level Seven International (HL7). Use of the FHIR trademark does not constitute an HL7 endorsement of this workshop.</small>
+:::
+
+::: footer
+:::
+
+------------------------------------------------------------------------
+
+## What is FHIR Bulk Data?
+
+-   HL7 specification, published in November 2021
+-   <https://hl7.org/fhir/uv/bulkdata/>
+
+From the spec:
+
+> Providers and organizations accountable for managing the health of populations often need to efficiently access <mark>large volumes of information on a group of individuals</mark>. For example, a health system may want to <mark>periodically retrieve updated clinical data from an EHR to a research database</mark>...
+
+## Why do we need FHIR Bulk Data?
+
+From the spec:
+
+> Existing FHIR APIs work well for accessing small amounts of data, but large exports can require hundreds of thousands of requests.
+
+FHIR Bulk Data provides a simpler, standard mechanism to extract large amounts of FHIR-format data from an EHR.
+
+## Why now?
+
+The Office of the National Coordinator for Health Information Technology ([ONC](https://www.healthit.gov))'s [Health IT Certification Program](https://www.healthit.gov/topic/certification-ehrs/certification-health-it) requires adoption of FHIR Bulk Data APIs:
+
+-   "[ONC Supports Adoption and Implementation of Bulk Data APIs](https://www.healthit.gov/buzz-blog/health-it/onc-supports-adoption-and-implementation-of-bulk-data-apis)"
+
+-   [§170.315(g)(10) Standardized API for patient and population services](https://www.healthit.gov/test-method/standardized-api-patient-and-population-services)
+
+-   FHIR Bulk Data [`group-export`](https://hl7.org/fhir/uv/bulkdata/OperationDefinition-group-export.html) required for <mark>December 2022</mark> certification deadline for [USCDI](https://www.healthit.gov/isa/united-states-core-data-interoperability-uscdi) data elements
+
+    -   [US Core FHIR Implementation Guide](https://www.hl7.org/fhir/us/core/)
+
+<aside class="notes">
+
+-   45 CFR 170.315(g)(10) is:
+    -   In Title 45 of the Code of Federal Regulations
+    -   Part 170, Section 315, Paragraph 170.315(g)(10)
+    -   [More information on how the CFR is structured](https://www.archives.gov/files/federal-register/tutorial/tutorial_060.pdf)
+    -   Text of the CFR: <https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315#p-170.315(g)(10)>
+    -   [§ 170.215(a)(4)](https://www.law.cornell.edu/cfr/text/45/170.215) lists the specific APIs including FHIR Bulk Data and SMART Application Launch
+-   <https://youtu.be/QZQ-Ldc8dKQ?t=2040> talks about the ONC requirements for `group-export`
+-   [Comments on the 21st Century Cures Act Proposed Interoperability Rule - SMART Health IT](https://smarthealthit.org/2019/05/final-smart-team-comments-on-the-21st-century-cures-act-interoperability-rule/#) talks about FHIR Bulk Data and USCDI
+
+</aside>
+
+## Aside: EHI export
+
+::: r-fit-text
+ONC's program also requires population-level data export ("EHI export"):
+
+-   [§170.315(b)(10) Electronic Health Information export](https://www.healthit.gov/test-method/electronic-health-information-export)
+
+    > *Patient population electronic health information export*. Create an export of all the electronic health information that can be stored at the time of certification by the product, of which the Health IT Module is a part.
+
+-   [§170.315(b)(10) fact sheet](https://www.healthit.gov/sites/default/files/page/2023-02/%28b%29%2810%29_EHI_Export_Factsheet_FINAL.pdf) (pdf)
+
+    > must be available to their customers by <mark>December 31, 2023</mark>
+
+-   *Can* be implemented with FHIR Bulk Data, but does not necessarily have to be FHIR Bulk Data
+
+    -   FHIR(ish) example: athenaPractice (née GE Centricity) <https://docs.mydata.athenahealth.com/fhir-r4/ehiexport.html>, which uses NDJSON, FHIR resources, and some custom resources defined in this Implementation Guide.
+:::
+
+## Vendor support
+
+-   Widespread vendor support for FHIR Bulk Data **export of groups of patients** thanks to December 2022 ONC certification deadline
+
+-   List of vendors with §170.315(g)(10) certification: <https://chpl.healthit.gov>
+
+    -   Filter for Certification Criteria → 2015 Cures Update Certification Criteria → 170.315 (G)(10): Standardized Api for Patient and Population Services (Cures Update)
+
+-   Examples: [Epic](https://fhir.epic.com/Documentation?docId=fhir_bulk_data), [Cerner](https://fhir.cerner.com/millennium/bulk-data/)
+
+## FHIR Bulk Data specifications
+
+Implementations use these specs:
+
+-   <https://hl7.org/fhir/uv/bulkdata/export.html> defines the request flow for retrieving Bulk Data from a FHIR server
+
+-   <https://www.hl7.org/fhir/smart-app-launch/backend-services.html> further describes the authorization/authentication flow
+
+## Types of Bulk Data requests
+
+-   **Patient**, to obtain resources related to all Patients
+
+-   **Group**, to obtain resources associated with a particular [Group](https://www.hl7.org/fhir/group.html)
+
+-   **System**, to obtain all resources, whether or not they are associated with a patient
+
+## High level FHIR Bulk Data request steps
+
+1.  Get an access token from the FHIR server
+2.  Request: `GET https://fhir.example.org/Group/[id]/$export`
+3.  Receive the requested FHIR data ("NDJSON" format)
+    -   Can be split into multiple files by the server to support arbitrarily large data sets
+
+## Characteristics of research that may benefit from FHIR Bulk Data
+
+::: {style="font-size: 80%;"}
+-   Need for direct access to (identified) EHR data for a specific group of patients
+
+    -   Note that there is an [open source library](https://github.com/microsoft/Tools-for-Health-Data-Anonymization/blob/master/docs/FHIR-anonymization.md) from Microsoft for de-identifying FHIR Bulk Data
+
+-   The necessary data elements are part of USCDI, or otherwise included in EHR's FHIR implementation
+
+-   Real-time access is not needed (other FHIR APIs are better for this)
+
+-   One-off data pull or regular updates
+
+-   Multi-site research without existing shared CDM
+:::
+
+## Non-EHR uses of FHIR Bulk Data
+
+From [this FHIR DevDays 2022 presentation](https://docs.google.com/presentation/d/1g0zdzPPjoqouJk8qRXU_ByNdrLE3wbYOE4HloaT3uUE/edit#slide=id.g8c17644f87_23_1146):
+
+-   [CMS ACO Beneficiary Claims Data (pilot)](https://sandbox.bcda.cms.gov/)
+
+-   [CMS Data at the Point of Care (pilot)](https://dpc.cms.gov/)
+
+-   [CMS Claims to Part D Sponsors (pilot)](https://ab2d.cms.gov/)

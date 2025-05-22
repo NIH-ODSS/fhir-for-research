@@ -1,0 +1,195 @@
+/*-- scss:defaults --*/
+$primary: #20558a !default;
+$navbar-bg: #ffffff !default;
+$navbar-bg-dark: #222222;
+$code-color: #7920a7 !default;
+
+/*-- scss:rules --*/
+
+// This is the column type in RMarkdown data frame output, which does not have
+// enough contrast by default.
+//
+// Same for the "info" at the bottom of the RMarkdown data frame output.
+// And "NA" cells.
+.pagedtable-header-type, .pagedtable-info, .pagedtable-na-cell {
+  color: #747474 !important;
+  opacity: inherit !important; // for the "NA" cells, which default to 0.3 opacity
+}
+.even .pagedtable-na-cell {
+  color: #6e6e6e !important; // darker for zebra stripe columns
+}
+
+// mermaid diagram styling
+.panel-caption,.figure-caption,figcaption {
+  color: $gray-600;
+  text-align: center;
+}
+
+.mermaid-js {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif !important;
+  height: inherit !important;
+}
+
+.fancybox__content {
+  width: 95% !important;
+  text-align: center;
+}
+
+.fancybox-figure {
+  margin-bottom: 0.5em;
+}
+
+body {
+  font-family: "Yantramanav", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+.blockquote {
+  color: var(--bs-body-color);
+}
+
+/* Make the TOC title slightly bold */
+#toc-title {
+  font-weight: 500;
+}
+
+// Fake the section title in the left navbar
+.sidebar-menu-container .sidebar-item:first-child .sidebar-item-container {
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 0.5em;
+}
+.sidebar-menu-container .sidebar-item-section .sidebar-item-container {
+  // Reset back to normal for sub-sections
+  font-weight: normal !important;
+  border-bottom: none !important;
+}
+
+// Highlight the currently open page in the sidebar
+.sidebar-item-text.sidebar-link.active {
+  font-weight: bold;
+}
+
+// Make sure citation popovers are not bolded even if the citation itself is bolded
+.citation div[data-tippy-root] {
+  font-weight: normal;
+}
+
+// Make the table of contents dark enough to meet a11y guidelines
+.header-section-number {
+  color: #6e7378;
+}
+
+// Fancy, Bootstrap-like button
+.btn-success {
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  border: 1px solid transparent;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+  color: #fff;
+  background-color: #198754;
+  text-decoration: none;
+  user-select: none;
+}
+
+
+.btn-success:hover {
+  background-color: #157347;
+  border-color: #146c43;
+  text-decoration: none;
+}
+
+.btn-role {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  user-select: none;
+  padding: .25rem .5rem;
+  font-size: .875rem;
+  border-radius: .2rem;
+  color: #6c757d;
+  border: #6c757d 1px solid;
+}
+
+
+.btn-role:hover {
+  background-color: #6c757d;
+  color: #fff;
+  text-decoration: none;
+}
+
+// Light mode highlight style
+mark {
+  background-color: #fef08a;
+  border-radius: 0.2rem;
+  padding: 0.1rem 0.1rem;
+  margin: -0.1rem -0.1rem;  // Prevents text shifting
+ }
+ 
+ // Dark mode overrides 
+ .quarto-dark {
+  mark {
+    background-color: rgba(252, 211, 77, 0.2);
+    color: #fcd34d;
+    
+    a {
+      color: #fcd34d !important;  // Force amber links
+    }
+  }
+  
+ .navbar, .navbar-collapse {
+   background-color: $navbar-bg-dark;
+   .nav-link:hover, .nav-link:focus {
+    color: white;
+   }
+   .navbar-brand:hover, .navbar-brand:focus {
+    color: white;
+   }
+
+   }
+
+ }
+ 
+ // Fix navbar height between themes
+ body {
+  padding-top: 60px !important;
+  
+  &[data-bs-offset] {
+    padding-top: 60px !important;
+  }
+ }
+ 
+ .navbar {
+  height: 60px;
+  background-color: $navbar-bg;
+ }
+.navbar-collapse {
+  background-color: $navbar-bg;
+}
+ // Reading time badge styles
+.reading-time-badge {
+  display: inline-block;
+  margin-left: 0;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.9em;
+  vertical-align: middle;
+  background-color: #eee;
+  color: #212529;
+}
+
+// Dark mode override for reading time badge
+.quarto-dark {
+  .reading-time-badge {
+    background-color: #2d3339;
+    color: #e9ecef;
+  }
+}

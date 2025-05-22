@@ -1,0 +1,106 @@
+---
+title: "Real World Research Using FHIR"
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives:
+  - question: Identify examples of how FHIR has already been used by researchers.
+    answer: Researchers have used FHIR to extract data from EHRs, define phenotypes that are portable across systems and institutions, and enable research that requires integration with clinical workflows.
+
+reading_time: true
+---
+
+Researchers have published work using FHIR in a number of areas, usually related to:
+
+-   Extracting data from EHRs.
+-   Defining phenotypes that are portable across systems and institutions.
+-   Enabling research that requires integration with clinical workflows.
+
+Below are summaries of recent published research in each of these areas. At the bottom of this page is a list of other published research involving FHIR.
+
+## Extracting data
+
+-   @cheng2023 used FHIR to automatically populate clinical trial case report forms. In a COVID-19-related trial at Vanderbilt University Medical Center, they populated 10,081 of 11,952 values (84%) using FHIR, with 89% agreement with human entry. Manual review indicated that disagreement with human entry was often due to errors in manual data entry, suggesting that the FHIR-based approach could improve accuracy over manual chart abstraction.
+
+-   @zong2021 evaluated using FHIR to automatically populate case report forms for a colorectal cancer clinical trial. The were able to successfully extract a portion of the data needed to fill case report forms with 98.5% positive predictive value and 96.2% sensitivity using clinical records from 331 Mayo Clinic patients.
+
+-   @Lenert_2021 describes a way of using FHIR to replace custom data pipelines for extracting COVID-19 data from EHRs. They used FHIR to populate [PCORnet](https://pcornet.org/) and [OMOP](https://www.ohdsi.org/data-standardization/) databases with significantly less delay than previous approaches. (For more information on PCORnet and OMOP, please see [Common Data Models](cdms.qmd).) This approach should be portable across EHRs and institutions.
+
+-   @Wood_2021 discusses building a "Data Hub" that includes clinical data from multiple institutions for hematology research. They support ingesting data from both FHIR endpoints and OMOP databases with the goal of reducing the informatics burden on participating institutions.
+
+## Phenotype portability
+
+-   @brandt2022 created cross-institution phenotype definitions (aka cohort definitions) using a combination of FHIR and Clinical Quality Language ([CQL](https://cql.hl7.org))[^1]. Three institutions successfully used their system to identify cases and non-cases by [generating queries](https://github.com/PheMA/cql-on-omop) to run against existing [OMOP](https://www.ohdsi.org/data-standardization/) databases. Institutions that do not have OMOP research databases could possibly use FHIR and CQL directly to identify cases and non-cases, though the authors did not test this.
+
+-   @Gruendner_2022 also developed a cross-institution phenotyping approach using FHIR and CQL. Their system had four components:
+
+    1.  User-interface for writing queries.
+    2.  Backend for translating the user input to a standardized format.
+    3.  Middleware to transport the query.
+    4.  Execution service to convert the standardized query to FHIR.
+
+    Their approach could be deployed at multiple institutions and scaled to millions of records using synthetic data.
+
+[^1]: CQL is an HL7® standard that expresses inclusion and exclusion logic.
+
+## Interacting with clinical workflows
+
+FHIR can be used to integrate third-party applications with EHRs using [SMART on FHIR](https://smarthealthit.org/about-smart-2/), a standard that enables "write once, use everywhere" integration. Please see the [SMART on FHIR Introduction page](smart-on-fhir-intro.qmd#research-use-cases) for more information on real-world research use cases, including clinical decision support and data integration.
+
+SMART on FHIR can also be used to provide patients access to their clinical data directly from their provider's EHR. As of April 2023, we did not find examples of this capability in research.
+
+REDCap, a survey tool that can be used with EHRs in the clinical workflow, can also be used with FHIR. For more information on using REDCap with FHIR, please see the [introductory REDCap page](redcap-intro.qmd).
+
+## Other references
+
+Below is a list of studies that used FHIR in some way. These may help you come up with ideas of how FHIR can benefit your research:
+
+-   Adverse event reporting
+    -   @Wang_Lehmann_Botsis_2021
+-   Clinical decision support
+    -   @Jung_Bae_Seong_Oh_Kim_Yi_2022
+-   Clinical statistics and analysis
+    -   @Hong_Prodduturi_Wang_Jiang_2017
+-   Cohort building
+    -   @Gruendner_Gulden_Kampf_Mate_Prokosch_Zierk_2021
+    -   @Bradshaw_2022
+-   Data models
+    -   @Lambarki_2021
+    -   @Jiang_2017a
+    -   @Fischer_2020
+    -   @Pfaff_2019
+    -   @Jiang_2017b
+-   Environmental health and spatiotemporal data
+    -   @Xu_Cox_Stillwell_Pfaff_Champion_Ahalt_Fecho_2020
+-   Findable, Accessible, Interoperable, and Resusabe ([FAIR](https://www.go-fair.org/fair-principles/)) data principles
+    -   @Sinaci_Nunez_2020
+-   Multi-site research
+    -   @Garza_2020
+-   Patient-facing apps
+    -   @Pawelek_Baca-Motes_Pandit_Berk_Ramos_2022
+    -   @Bartschke_Börner_Thun_2021
+    -   @Burkhardt_Brandt_Lee_Karras_Bugni_Cvitkovic_Chen_Lober_2021
+    -   @Ploner_Prokosch_2020
+    -   @Chatterjee_Pahari_Prinz_2022
+-   REDCap
+    -   The [REDCap introduction page](redcap-intro.qmd)
+    -   @Metke-Jimenez_Hansen_2019
+-   Reviews of studies that use FHIR
+    -   @duda2022
+    -   @Vorisek_Lehne_Klopfenstein_Mayer_Bartschke_Haese_Thun_2022
+    -   @Griffin_2022
+-   SMART on FHIR
+    -   The [SMART on FHIR Introduction page](smart-on-fhir-intro.qmd#research-use-cases)
+    -   @Mandel_Kreda_Mandl_Kohane_Ramoni_2016
+    -   @Bloomfield_Polo-Wood_Mandel_Mandl_2017
+    -   @Jones_Gottlieb_Mandel_Ignatov_Ellis_Kubick_Mandl_2021
+    -   @Wesley_2021
+    -   @Sayeed_Gottlieb_Mandl_2020
+    -   @Wagholikar_2017
+-   Social determinants of health
+    -   @Watkins_Viernes_Nguyen_Rojas_Mezarina_Silva_Valencia_Borbolla_2020

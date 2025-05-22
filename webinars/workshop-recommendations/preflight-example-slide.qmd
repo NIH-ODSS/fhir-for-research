@@ -1,0 +1,27 @@
+---
+format:
+  revealjs:
+    theme: [default, ../../slides.scss]
+    preview-links: true
+    slide-number: c/t
+    footer: "© 2023 The MITRE Corporation / Approved for Public Release / Case #23-0966"
+editor: visual
+---
+
+## SMART on FHIR<sup>®</sup> Workshop Preflight
+
+::: r-fit-text
+Welcome! The workshop will begin shortly. Slides: <http://purl.org/fhir-for-research/smart-slides>
+
+-   ✋ <strong>If you are <em>participating hands-on</em> during this workshop, please raise your hand in Zoom and keep it up.</strong>
+    -   If you are comfortable with HTML and JavaScript, hands-on participation is recommended
+    -   But hands-on participation is totally optional -- feel free to just listen if you prefer!
+-   To participate hands-on, you will need:
+    1.  Download or clone <https://github.com/mitre/smart-on-fhir-demo>
+    2.  [VSCode](https://code.visualstudio.com) (or your editor of choice)
+    3.  A local web server (e.g. [VSCode Live Preview extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server))
+-   Once you can open `http://localhost:3000/index.html` in your browser, you are ready to go
+    -   See list of options for this at <https://github.com/mitre/smart-on-fhir-demo>
+
+*(Backup if you can't run a local web server: <https://bit.ly/static-sandbox>)*
+:::

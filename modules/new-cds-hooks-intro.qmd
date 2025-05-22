@@ -1,0 +1,150 @@
+---
+title: CDS Hooks
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives:
+  - question: What are CDS Hooks and how do they relate to FHIR?
+    answer: CDS Hooks is a specification for integrating clinical decision support into EHR workflows. It works alongside FHIR, using FHIR resources for data exchange and context, while providing a standardized mechanism for triggering and delivering decision support.
+  - question: How can CDS Hooks be used in clinical workflows?
+    answer: CDS Hooks can be used at specific points in clinical workflows (such as when viewing a patient record or placing an order) to provide real-time decision support, including patient-specific recommendations, alerts, or links to relevant resources.
+  - question: What are the key components of a CDS Hooks implementation?
+    answer: The key components are Hooks (specific points in the EHR workflow), Services (external systems providing decision support), Cards (the format for communicating recommendations), and Prefetch (a mechanism for providing relevant data to the CDS service).
+  - question: What are the main benefits and challenges of implementing CDS Hooks in research and clinical settings?
+    answer: Benefits include seamless integration with clinical workflows, real-time access to patient data, and standardization across EHR systems. Challenges include ensuring recommendation accuracy, managing alert fatigue, addressing privacy concerns, and validating clinical impact.
+
+reading_time: true
+---
+
+## What are CDS Hooks?
+
+[CDS Hooks](https://cds-hooks.org/) are a way to deliver real-time Clinical Decision Support (CDS) within an Electronic Health Record (EHR) system. They allow applications to trigger specific actions or provide guidance to healthcare providers based on patient data and clinical context. CDS Hooks work by “hooking” into various points in a clinician’s workflow, providing relevant decision support at the right time within existing clinical workflows.
+
+CDS Hooks are a feature within the HL7 [FHIR](fhir-from-10000-ft.qmd) standard, and is designed to be easily used with FHIR and [SMART on FHIR](new-smart-on-fhir-intro.qmd).
+
+## How CDS Hooks Work
+
+Think of CDS Hooks as a way to "plug in" external support services into a clinician's EHR system. They are designed to provide real-time assistance to healthcare providers by offering electronic interventions during patient care, such as suggestions or alerts that appear at crucial decision points.
+
+CDS Hooks are event-driven, meaning they are triggered by specific clinical events, such as opening a patient's chart, ordering a lab test, or prescribing medication. When an event occurs, the EHR system sends a request to a CDS service, which processes the relevant patient data and context to generate recommendations. These recommendations are returned as "CDS Cards," which provide information, suggestions, or links to external applications.
+
+## Relationship between CDS Hooks and FHIR
+
+CDS Hooks and FHIR are complementary standards that work together to improve clinical decision-making:
+
+1.  **Data format**: While CDS Hooks defines the mechanism for integrating decision support, FHIR provides the standardized format for exchanging healthcare data.
+2.  **Context**: CDS Hooks can use FHIR resources to provide context about the patient, encounter, or other relevant clinical data.
+3.  **Response format**: CDS services can return FHIR-formatted data as part of their responses.
+4.  **SMART on FHIR**: CDS Hooks can launch [SMART on FHIR](https://smarthealthit.org/) apps, creating a seamless integration between decision support and detailed clinical applications.
+
+## Value in Research FHIR Applications
+
+CDS Hooks can be implemented in FHIR applications to enhance research capabilities by providing real-time, context-specific decision support within clinical workflow.
+
+### Examples
+
+Here are some examples of how CDS Hooks can be used in research-oriented FHIR applications:
+
+1.  **Patient Enrollment in Clinical Trials**: CDS Hooks can trigger alerts for patient eligibility in clinical trials. For instance, when a clinician opens a patient's record (`patient-view` hook), the CDS service can identify if the patient meets the inclusion criteria for ongoing trials and notify the clinician, facilitating timely patient recruitment. This prompt could include a link to a SMART on FHIR application that handles consent, eligibility screening, and enrollment processes.
+
+2.  **Protocol Management and Adherence**: Research-focused FHIR applications can leverage CDS Hooks to provide context-specific guidance to clinicians. For example, if a CDS Hook identifies that a patient is a potential candidate for a research study based on their clinical data, the associated SMART on FHIR application can provide detailed study information, consent forms, and data collection tools tailored to that specific scenario.
+
+3.  **Population Health and Surveillance**: CDS Hooks can be used in public health surveillance by identifying and reporting cases of notifiable diseases. For example, when a clinician orders a diagnostic test for an infectious disease (`order-select` hook), the CDS service can alert the clinician about reporting requirements and facilitate the automatic submission of relevant data to public health databases.
+
+4.  **Enhanced Patient Data Access and Integration:** CDS Hooks facilitate access to real-time clinical data by triggering actions based on specific clinical events. This is particularly valuable in research settings where up-to-date data is crucial. For example, a research FHIR application could use CDS Hooks to automatically collect and analyze data from pregnant diabetic patients, as soon as their condition is recorded in the EHR.
+
+An example of a research-focused application leveraging CDS Hooks can be found here: [Automated Clinical Trial Cohort Definition and Evaluation with CQL and CDS-Hooks](https://doi.org/10.3233/shti240028) \[*sic*\].
+
+By integrating CDS Hooks into FHIR applications, researchers can create tools that not only enhance data collection and analysis but also improve patient engagement and streamline research workflows. This integration is particularly valuable in clinical research, where timely and accurate data are essential for producing high-quality evidence.
+
+### CDS Hooks Key Features
+
+CDS Hooks offer a powerful framework for integrating CDS into healthcare workflows through FHIR-based applications. They provide a flexible and standardized approach for delivering context-specific guidance, information, and actions directly within EHRs and other clinical systems.
+
+The following diagram illustrates the basic workflow of CDS Hooks:
+
+::: {#mermaidCDSDiagram .mermaid-lightbox data-caption="Diagram showing the workflow for CDS Hooks"}
+```{mermaid}
+sequenceDiagram
+    accTitle: Diagram showing the workflow for CDS Hooks
+    participant EHR
+    participant CDS Service
+    participant FHIR Server
+
+    EHR->>CDS Service: Hook (e.g., patient-view)
+    CDS Service->>FHIR Server: Request patient data
+    FHIR Server-->>CDS Service: Return FHIR resources
+    CDS Service->>CDS Service: Process data and generate recommendations
+    CDS Service-->>EHR: Return CDS Cards
+    EHR->>EHR: Display Cards to user
+```
+:::
+
+1.  The EHR triggers a hook (e.g., when opening a patient's record).
+2.  The CDS Service receives the hook and requests relevant patient data from the FHIR Server.
+3.  The FHIR Server returns the requested data as FHIR resources.
+4.  The CDS Service processes the data and generates recommendations.
+5.  The CDS Service returns CDS Cards to the EHR.
+6.  The EHR displays the Cards to the user.
+
+Below are key features and functions of CDS Hooks that enable key capabilities such as event-driven triggers, contextual awareness, and actionable recommendations.
+
+#### 1. **CDS Hooks**
+
+-   **Definition**: The idea behind CDS Hooks is to "hook into" specific moments in the clinician's workflow (called **hooks**) and trigger decision support services that can provide actionable insights, recommendations, or alerts. Hooks can be triggered by when a user opens a patient's electronic health record (`patient-view` hook), when an order is selected (`order-select` hook), when an order is signed (`order-sign` hook), when a patient encounter or visit begins (`encounter-start` hook), etc.
+
+-   **Further information**: A more detailed overview on hooks and examples of hook types can be found at the section on [Types of CDS Hooks](new-cds-hooks-types.qmd).
+
+#### 2. **CDS Services**
+
+-   **Definition**: A CDS Service is a web service that is triggered by a specific CDS Hook and provides decision support in response. It processes the clinical context provided by the EHR (or "CDS Client") and returns actionable information in the form of CDS Cards.
+
+-   **Role**: CDS Services act as the "brains" behind the decision support, analyzing clinical data and applying rules, guidelines, or algorithms to generate relevant recommendations or insights.
+
+-   **Workflow**:
+
+    1.  **Hook Trigger**: The EHR triggers a hook event and sends a request to the CDS Service with relevant patient context.
+    2.  **Processing**: The CDS Service processes the request, potentially querying additional data, and applies clinical logic.
+    3.  **Response**: The CDS Service returns CDS Cards containing recommendations, information, or links to further resources.
+
+#### 3. **CDS Cards**
+
+-   **Definition**: CDS Cards are the user interface components presented to clinicians within the EHR. They deliver the decision support recommendations generated by the CDS Service in a format that is easy for clinicians to review and act upon. A CDS service can return any combination of CDS Cards in response to a hook, enabling a user to see content integrated into clinical workflows that provides decision support at point-of-care.
+
+-   **Types of Cards**:
+
+    -   **Information Cards**: Provide general information related to the patient or clinical scenario, such as educational content or guidelines.
+    -   **Suggestion Cards**: Offer actionable recommendations, such as changing a medication, ordering a test, or following a care pathway. These cards often include buttons for quick actions.
+    -   **App Link Cards**: Include links to reference materials or for launching additional applications or tools that provide deeper analysis or further decision support.
+
+#### 4. **CDS Prefetch**
+
+-   **Definition:** Prefetch is a mechanism that allows the EHR to pre-load specific FHIR resources and send them to the CDS service when triggering a hook. This optimizes performance by reducing the need for the CDS service to query the EHR for data during the execution of the hook, enabling quicker decision support.
+
+### CDS Hooks Framework Overview & Capabilities
+
+To recap, the CDS Hooks framework enables the integration of clinical decision support (CDS) into a clinician’s workflow by "hooking into" specific moments during patient care. When a clinical event, known as a **hook** (e.g., opening a patient’s chart or prescribing medication), occurs within an Electronic Health Record (EHR) system, the CDS Hooks framework triggers a **CDS Service**. This service analyzes the context of the event, applies relevant clinical rules or guidelines, and responds with **CDS Cards** that provide actionable insights, recommendations, or educational content directly within the EHR.
+
+## Key Features and Capabilities
+
+-   **Contextual and Real-Time Support**: CDS Hooks delivers decision support at precisely the right moment in the clinical workflow, ensuring that recommendations are relevant and timely without disrupting care.
+
+-   **Interoperability and Standards-Based**: Built on open standards like RESTful APIs and FHIR, CDS Hooks allow ofr broad compatibility across different EHR systems, promoting interoperability and ease of implementation in diverse healthcare settings.
+
+-   **Customizability and Scalability**: The framework allows developers to create custom CDS Services tailored to specific clinical needs, from simple reminders to complex, data-driven decision support. This scalability makes it applicable across various clinical scenarios and healthcare environments.
+
+-   **Actionable and Interactive Decision Support**: CDS Cards presented to clinicians are designed to be concise and actionable, with interactive elements like buttons and links that enable quick decisions or further exploration of the provided information.
+
+While the CDS Hooks frameworks provides considerable capabilities to enhance clinical decision support in applications, poor design can lead to alert fatigue and other drawbacks that may detract from the intended impacts of an application. Therefore, following best practices in user-centered design is important when using CDS Hooks. Key considerations include:
+
+-   Ensuring the reliability and accuracy of CDS recommendations
+-   Managing the risk of alert fatigue by carefully curating the frequency and relevance of alerts
+-   Addressing privacy and security concerns when sharing data with external services
+-   Validating the clinical impact of CDS interventions to ensure they positively influence patient outcomes
+
+In summary, CDS Hooks provide a robust framework for integrating clinical decision support into healthcare workflows, offering event-driven, contextually aware, actionable recommendations. Their integration with SMART on FHIR applications and their scalability and customization make them a valuable tool for both clinical and research applications.

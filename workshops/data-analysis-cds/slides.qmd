@@ -1,0 +1,402 @@
+---
+format:
+  revealjs:
+    theme: [default, ../../slides.scss]
+    slide-number: true
+    preview-links: true
+    footer: "&#169; 2025 The MITRE Corporation / Approved for Public Release / Case #24-3701"
+    highlight-style: github
+---
+
+# FHIR&#174; for Research Workshop{background-image="../../images/nih_slide_background.png" background-size="100vw 100vh" background-color="#20558A"}
+
+National Institutes of Health (NIH), Office of the Director (OD), Office of Data Science Strategy (ODSS)
+<br>
+<div style="text-align: center;">
+March - April, 2025
+</div>
+
+::: footer
+<div style="color:white">Use of the FHIR&#174; trademark does not constitute an HL7&#174; endorsement of this workshop.</div>
+:::
+
+## Slides, links, and all the materials are available at 
+[https://nih-odss.github.io/fhir-for-research/](https://nih-odss.github.io/fhir-for-research/)
+
+## NIH ODSS FHIR for Research Effort {.center}
+
+:::: {.columns }
+
+::: {.column width="40%"}
+Goal
+:::
+
+::: {.column width="60%"}
+Support the use of Fast Healthcare Interoperability Resources (FHIR) by the health research community
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="40%"}
+Approach
+:::
+
+::: {.column width="60%"}
+1. Introductory webinar on FHIR for Research
+
+2. Online documentation ([https://nih-odss.github.io/fhir-for-research/](https://nih-odss.github.io/fhir-for-research/)) for greater depth on demand
+
+3. Hands-on workshop
+:::
+
+::::
+
+:::: {.columns}
+
+::: {.column width="40%"}
+Questions
+:::
+
+::: {.column width="60%"}
+[clinical-informatics@od.nih.gov](mailto:clinical-informatics@od.nih.gov)
+:::
+::::
+
+## Schedule for Today's Workshop{.smaller}
+:::: {.columns}
+
+::: {.column width="33%"}
+**Introduction (2:00 PM EST)**
+
+- Welcome
+- Workshop overview
+- Environment setup
+
+**Foundations (2:15 PM)**
+
+- What is FHIR?
+- FHIR basics
+- Research relevance
+- Setup verification
+:::
+
+::: {.column width="33%"}
+**Part 1: FHIR Data Analysis (2:35 PM)**
+
+- Connecting to FHIR
+- Resource navigation
+- Search operations
+- FHIR to Pandas
+- Common operations
+
+**Break + Q&A (3:25 PM)**
+:::
+
+::: {.column width="33%"}
+**Part 2: CDS & Genomics (3:35 PM)**
+
+- CDS Hooks overview
+- Genomics use case
+- Implementation
+- Hands-on exercise
+
+**Wrap Up (4:25 PM)**
+
+- Key takeaways
+- Resources
+- Q&A
+:::
+
+::::
+
+::: {.notes}
+- Welcome everyone to the workshop
+- We'll be covering two main parts today
+- The format will be interactive with hands-on exercises
+- Feel free to ask questions throughout in the chat, and we will have dedicated Q&A slots
+:::
+
+## Learning Objectives
+
+- Access and analyze FHIR data programmatically
+- Convert FHIR resources to analysis-ready formats 
+- Implement clinical decision support using FHIR
+- Work with genomics data in FHIR
+
+::: {.notes}
+- These objectives build on each other
+- By the end, you'll be able to work with FHIR data and implement basic CDS
+- Focus is on practical, real-world applications
+:::
+
+# Technical Setup {background-color="#40666e"}
+
+## Prerequisites {.smaller}
+
+- Basic familiarity with Python and JavaScript
+- Web browser (Chrome recommended)
+- Google account for Colab (optional)
+
+::: {.notes}
+- Minimal requirements to get started
+- Options available for different skill levels
+- Can help with setup during breaks
+:::
+
+## Environment Options {.smaller}
+
+::: {.columns}
+::: {.column width="50%"}
+### Google Colab
+- Zero setup required
+- Click and start coding
+- Great for workshops
+:::
+
+::: {.column width="50%"}
+### Local Installation
+- JupyterLab Desktop
+- Command line setup
+- Better for sensitive data
+:::
+:::
+
+::: {.notes}
+- Recommend Colab for consistency
+- Local setup for production use
+- Important security considerations
+:::
+
+## FHIR Overview
+
+:::: {.columns}
+
+::: {.column width="50%"}
+**FHIR = Fast Healthcare Interoperability Resources**
+
+- <span style="color: red">**F**</span>ast (to design & implement)
+- <span style="color: red">**H**</span>ealthcare 
+- <span style="color: red">**I**</span>nteroperability
+- <span style="color: red">**R**</span>esources (building blocks)
+:::
+
+::: {.column width="50%"}
+**Key Benefits**
+
+- **Standard Exchange**: Common language for health information systems
+- **Open Source**: Free-to-use standard
+- **Modular Design**: Built with reusable "Resources"
+- **Flexible**: Customizable through extensions and profiling
+:::
+
+::::
+
+::: {.notes}
+At its heart, FHIR is a standard for exchanging health information. Standards like FHIR help to establish a common language and a common process for health IT to share information more seamlessly and more efficiently.
+
+The moniker—FHIR— stands for Fast Healthcare Interoperability Resources. "Fast" refers to the design and implementation of the standard—it was designed to be easier for developers to work with than the prevailing health IT standards of a decade ago—and "resources" refers to the building blocks of FHIR. More on that later.
+
+FHIR is open-source, so it's free to use, and it is modular. Resources and other constructs in FHIR allow people to assemble solutions that meet their needs in a specific use case, and customizability is built into FHIR throughout its design, including through FHIR features like extensions and profiling, which we'll talk about more later on.
+:::
+
+# FHIR Foundations {background-color="#40666e"}
+
+## What is FHIR? {.smaller}
+
+- Healthcare interoperability standard
+- RESTful API approach
+- JSON-based resources
+- Modern web technologies
+
+::: {.notes}
+- FHIR = Fast Healthcare Interoperability Resources
+- Emphasize modern, web-based approach
+:::
+
+## Key FHIR Concepts {.smaller}
+
+::: {.columns}
+::: {.column width="50%"}
+### Resources
+- Patient
+- Observation
+- DiagnosticReport
+:::
+
+::: {.column width="50%"}
+### Operations
+- Search
+- Read
+- References
+:::
+:::
+
+::: {.notes}
+- Resources are the building blocks
+- Everything in FHIR is a resource
+- They connect through references
+:::
+
+## FHIR Information Flow
+
+![FHIR information flow diagram showing client, API, and server interactions](../../modules/images/fhir-info-flow.png){.r-stretch}
+
+::: {.notes}
+Now that we've introduced the kinds of data FHIR can represent, we'll talk about how these data can be moved around using FHIR. The key phrase here is APIs, or application programming interfaces. This diagram shows a standard FHIR-facilitated flow of information. Typically, when systems use FHIR, there's a FHIR client, which is over on the left on the slide. That client could be an app, or it could be a user interface on a computer, or it could be the back-end of a research server. That client, such as a patient's iPhone app, uses the FHIR API to connect to a patient's provider's EHR and pull down the data. The client could also be a research application, or something like a clinical decision support system that is integrated into an EHR.
+
+All these use the same underlying approach for asking for data from the FHIR server, which is requests being sent via an HTTP RESTful API. RESTful APIs are a common web technology, used by many different tools, not just FHIR, and the fact they're common outside of health care is one reason developers find them easier to work with.
+
+The FHIR web server it is querying could be part of an EHR, or it could be a standalone server, and the FHIR web server can communicate with underlying data systems that store the data and then convert those data into FHIR format like what we just saw and send them back to the client.
+:::
+
+# Part 1: Data Analysis {background-color="#40666e"}
+
+## Accessing FHIR Server {.smaller}
+
+```{.python code-line-numbers="5-7|11"}
+# Load dependencies
+from fhir_pyrate import Pirate
+import requests
+
+# Get token from OAuth endpoint
+token_response = requests.post("https://fhirforge.azure-api.net/oauth/token")
+token = token_response.json()["access_token"]
+
+# Create a session with auth headers
+session = requests.Session()
+session.headers.update({"Authorization": f"Bearer {token}"})
+
+# Instantiate a Pirate object using the FHIR-PYrate library to query the server
+search = Pirate(
+    auth=session,  # Pass the configured session
+    base_url="https://fhirforge.azure-api.net",
+    print_request_url=True,
+)
+```
+
+::: {.notes}
+- We'll use FHIR-PYrate library
+- Handles authentication and requests
+- Makes FHIR data access pythonic
+:::
+
+## Working with Resources {.smaller}
+
+```{.python}
+# Search for patients
+patients = search.steal_bundles_to_dataframe(
+    resource_type="Patient",
+    request_params={"_count": 10}
+)
+```
+
+::: {.notes}
+- Explain the search parameters
+- Show how to modify the query
+- Mention pagination
+:::
+
+# Break + Q&A {background-color="#394a6d"}
+
+::: {.notes}
+- Take questions
+- Help with setup issues
+- Preview next section
+:::
+
+# Part 2: CDS & Genomics {background-color="#40666e"}
+
+## CDS Hooks Overview {.smaller}
+
+- Standard for CDS integration
+- FHIR-based context
+- Real-time recommendations
+- Service architecture
+
+::: {.notes}
+- CDS Hooks works with FHIR
+- Designed for modern healthcare apps
+- Focus on integration points
+:::
+
+## Genomics in FHIR {.smaller}
+
+::: {.columns}
+::: {.column width="50%"}
+### Resources
+- Observation-genetics
+- DiagnosticReport
+- Sequence
+:::
+
+::: {.column width="50%"}
+### Data Flow
+- Lab results
+- Variant interpretation
+- Clinical significance
+:::
+:::
+
+::: {.notes}
+- FHIR has specific genetics resources
+- Complex but well-structured
+- Focus on clinical relevance
+:::
+
+## Demo: CDS Implementation {.smaller}
+
+```javascript
+{
+  "hook": "patient-view",
+  "context": {
+    "patientId": "123"
+  }
+}
+```
+
+::: {.notes}
+- Show live demo if time permits
+- Explain each part of the request
+- Highlight FHIR integration points
+:::
+
+# Hands-on Exercise {background-color="#40666e"}
+
+## Building a Genomics CDS Service {.smaller}
+
+1. Process genetic results
+2. Generate recommendations
+3. Display in EHR context
+
+::: {.notes}
+- Walk through exercise steps
+- Help with common issues
+- Encourage exploration
+:::
+
+# Resources {background-color="#394a6d"}
+
+## Additional Resources {.smaller}
+
+- [FHIR Documentation](https://hl7.org/fhir/)
+- [CDS Hooks Specification](https://cds-hooks.org/)
+- [SMART on FHIR](https://docs.smarthealthit.org/)
+- [Synthea Documentation](https://github.com/synthetichealth/synthea)
+
+::: {.notes}
+- These resources are essential
+- Active community
+- Regular events and updates
+:::
+
+# Thank You! {background-color="#40666e"}
+
+## Questions?
+
+::: {.notes}
+- Final Q&A
+- Share contact info
+- Mention follow-up resources
+:::

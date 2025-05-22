@@ -1,0 +1,130 @@
+---
+title: Running Synthea
+area:
+  name: Advanced Topics
+topic:
+  name: Custom Synthea Data & FHIR Testing Servers
+
+roles:
+  - Investigator
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives:
+  - question: How can I use Synthea to generate synthetic data?
+    answer: Synthetic Synthea data can be generated locally by downloading and configuring the software from https://github.com/synthetichealth/synthea .
+
+reading_time: true
+---
+
+There are a few ways to run Synthea: a basic setup using a prepackaged JAR file and a developer setup, or either way may be packaged and run in Docker. The [Basic setup](#basic-setup) is recommended for users who want to get started quickly and do not anticipate making significant changes or customizations to Synthea. The [Developer setup](#developer-setup) is recommended for users who want the ability to fully modify and customize all aspects of Synthea. This page describes both approaches and the configuration options available to them, or if you prefer a more guided approach, the [Synthea Toolkit](https://synthetichealth.github.io/spt/#/customizer) will ask questions about your use case and help you choose the right settings to setup, configure, and run Synthea appropriately.
+
+## Prerequisites
+
+Synthea requires a recent version of Java™ JDK to be installed. Please refer to the [Basic Setup and Running](https://github.com/synthetichealth/synthea/wiki/Basic-Setup-and-Running) directions in the GitHub documentation for Synthea for the minimal compatible version. We recommend the prebuilt OpenJDK binaries available from <https://adoptium.net/> (make sure to select the JDK, not the JRE install).
+
+## Basic Setup
+For users who just want to run Synthea, and not make detailed changes to the internal models, the basic setup is recommended. However, the number of customizations available in this setup is limited. See the Developer Setup instructions below for instructions if you want to make changes to Synthea.
+
+Follow the instructions for [Installation](https://github.com/synthetichealth/synthea/wiki/Basic-Setup-and-Running#installation) and [Running Synthea](https://github.com/synthetichealth/synthea/wiki/Basic-Setup-and-Running#running-syntheatm).
+
+After completeing the setup instructions, you will see an `output` folder alongside the `synthea-with-dependencies.jar`, and a `fhir` folder inside the `output` folder. Inside that `fhir` folder are the FHIR Bundle JSON files that were produced by Synthea. Each Bundle will contain a single Patient resource as the first entry, followed by resources roughly ordered by time.
+
+You can review these files in your text editor of choice, or the Synthea team has made an online tool for quickly reviewing the content of a Synthea-generated Bundle. Simply visit the Synthea Toolkit at <https://synthetichealth.github.io/spt/#/record_viewer> and drag & drop a patient file onto the page to load it.
+
+## Developer Setup
+The [Developer Setup Synthea](https://github.com/synthetichealth/synthea/wiki/Developer-Setup-and-Running#developer-setup-syntheatm) instructions are intended for those wishing to examine the Synthea source code, extend it or build the code locally. The developer setup is not necessary for all customizations, but using this setup enables many which cannot be used via the basic setup described earlier.
+
+[Git](https://git-scm.com/) is required for the developer setup. Please refer to [Prerequisites](https://github.com/synthetichealth/synthea/wiki/Developer-Setup-and-Running#prerequisites) and [Running Synthea](https://github.com/synthetichealth/synthea/wiki/Developer-Setup-and-Running#running-syntheatm) to copy the repository locally, install the necessary dependencies, and run the full test suite.
+
+After following the instructions, you will see a new `output` folder, and a `fhir` folder inside the `output` folder. Inside that `fhir` folder are the FHIR Bundle JSON files that were produced by Synthea. You can review these in your text editor of choice, or the Synthea team has made an online tool for quickly reviewing the content of a Synthea-generated Bundle. Simply visit [https://synthetichealth.github.io/spt/#/record_viewer](https://synthetichealth.github.io/spt/#/record_viewer) and drag & drop a patient file onto the page to load it.
+
+
+## Configuration
+
+Synthea includes a variety of command-line arguments and configuration options to enable or disable common settings, or change certain aspects of the output data. A small subset of the common options are listed below; more complete documentation is available [on the Synthea wiki](https://github.com/synthetichealth/synthea/wiki/Common-Configuration).
+
+### Command line arguments
+
+Synthea includes a number of settings that can be toggled from the command line. All command line arguments are optional, and if not specified the settings have sensible defaults. Most arguments start with a hyphen and a letter, usually followed by a space and then the desired value for that setting. The first argument that does not start with a hyphen is selected as the US state to generate a population for. The last argument that does not start with a hyphen is selected as the city within the selected state to generate the popualtion for.
+
+The most common command line arguments are:
+
+```         
+run_synthea [options] [state [city]]
+[-p populationSize] (number of living patients to produce)
+[-a minAge-MaxAge] (age range of patients to export)
+[-g gender]
+[-s seed] (for randomness / reproducibility -- runs with the same seed should produce the same results)
+[-h] (print usage)
+[--config=option ...] (any configuration option, see "Configuration Options" below)
+
+Examples:
+run_synthea Massachusetts
+run_synthea Alaska Juneau
+run_synthea -s 12345
+run_synthea -p 1000
+run_synthea -s 987 Washington Seattle
+run_synthea -s 21 -p 100 Utah "Salt Lake City"
+run_synthea -g M -a 60-65
+run_synthea -p 10 --exporter.fhir.export=true
+run_synthea --exporter.baseDirectory="./output_tx/" Texas
+```
+
+**Note:** these examples use `run_synthea` for brevity. If using the Basic setup, use `java -jar synthea-with-dependencies.jar` instead.
+
+***Annotated Example***:
+
+```         
+run_synthea -s 21 -p 100 Utah "Salt Lake City"
+```
+
+-   `-s 21` means "seed the random number generator with the number 21". Runs with the same seed will generate the same population.
+-   `-p 100` means "generate 100 living patients". (Note the total generated population may exceed 100 if patients die during the simulation before reaching the present day.)
+-   `Utah` means generate patients only within the state of Utah.
+-   `"Salt Lake City"` means generate patients only within Salt Lake City. (Quotes are necessary when command line arguments contain spaces, apostrophes, or other special characters.)
+
+### Configuration Options
+
+Many features can be configured using a properties file. The properties file syntax is one setting per line, with format `key = value`. Some of the most commonly modified settings are shown below.
+
+<!--# This is not actually ruby, but there's no syntax highlighter for properties files and this seems to be the closest -->
+
+``` ruby
+# Set the folder where exported records will be created.
+# Each export type (e.g., FHIR, CCDA, CSV) will be a subfolder under this:
+exporter.baseDirectory = ./output/
+
+# Set to true to enable the FHIR R4 exporter:
+exporter.fhir.export = true
+
+# Set the number of years of active history to keep from each patient. Default: 10
+# Set to 0 to keep all history from every patient, note this will increase file size significantly.
+exporter.years_of_history = 10
+
+# Set this to only include selected resource types: (e.g. Patient,Condition,Encounter)
+exporter.fhir.included_resources =
+# Set this to exclude certain resource types from export: (e.g. Observation)
+exporter.fhir.excluded_resources =
+
+# Set to false to enable adding numbers to synthetic patient names, to make it more obvious they are not real data.
+generate.append_numbers_to_person_names = true
+```
+
+Synthea includes a default configuration file (if using the Developer setup, this file is at `./src/main/resources/synthea.properties`). Each default setting can be individually overridden using a local settings file that is passed to Synthea when it is run with the `-c` flag:
+
+``` sh
+java -jar synthea-with-dependencies.jar -c path/to/settings/file
+```
+Alternatively, individual configuration settings may be modified by a command-line flag. Any command-line argument starting with `--` will set the value of a configuration setting, for example (note that when using this approach there should be no spaces between the setting name, equals sign, and setting value):
+
+```sh
+java -jar synthea-with-dependencies.jar --generate.append_numbers_to_person_names=false
+```
+
+Additional information on configuration options can be found [on the Synthea wiki](https://github.com/synthetichealth/synthea/wiki/Common-Configuration).
+
+------------------------------------------------------------------------
+
+You should now feel comfortable with the basics of how to run Synthea to generate synthetic health records. The [next section](synthea-customizing.qmd) will describe some options for customizing the patients that Synthea produces.

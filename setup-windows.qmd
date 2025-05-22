@@ -1,0 +1,27 @@
+---
+title: Setup Instructions - Windows
+
+toc: false
+number-sections: false
+---
+
+If you want to [edit this website](../contribute.qmd) locally on your Mac, here are the setup instructions:
+
+1.  Create a free [GitHub](https://github.com) if you don't have one already. Enabling [2fa](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa) is recommended (and may be required by your organization.)
+2.  Follow the [Quarto "Get Started" instructions](https://quarto.org/docs/get-started/) to install Quarto on your system.
+3.  [Install R](https://cran.r-project.org/bin/macosx/)
+4.  [Install RStudio](https://posit.co/download/rstudio-desktop/)
+5.  [Install RTools](https://cran.r-project.org/bin/windows/Rtools/)
+6.  [Install Git](https://git-scm.com/download/mac)
+    -   Verify install worked with `git --version` in your command prompt, which should produce a version number
+7.  [Install uv](https://docs.astral.sh/uv/getting-started/installation/)
+8.  [Clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) the relevant GitHub repository to your local computer
+    -   If you have write access to <https://github.com/NIH-ODSS/fhir-for-research>, use this repo
+    -   Otherwise, [create a fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo)
+9.  Install Python3 and Python environment:
+    -   In Command Prompt, run `uv sync`
+    -   Alternatively: you can run `uv export --format requirements.txt` to generate a requirements.txt file and use your own Python tooling. This way is not recommended.
+10. Open RStudio, go to "File \> Open Project...", and navigate to the folder of your cloned repo. You should see a `fhir-for-research.Rproj` file in this folder -- if you do, that's the right folder.
+11. Run `renv::restore()` in the R Console to load all the R dependencies
+
+Note: Running `quarto check` in your command prompt will return what components of Quarto have been installed properly and where there might be issues.

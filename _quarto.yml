@@ -1,0 +1,190 @@
+project:
+  type: website
+  output-dir: public
+  pre-render: sh pre-render.sh # this script only runs on full rendering and not development mode
+  render:
+    - "*.qmd"
+    - "workshops/bulk-data/notebook.ipynb"
+    - "!cache/" # naming this _cache should work instead, but did not in testing https://community.rstudio.com/t/quarto-equivalent-to-exclude-yaml-command-in-distill/148758/2
+    - "!README.md"
+    - "!script/"
+
+website:
+  title: "FHIR® for Research"
+  site-url: https://nih-odss.github.io/fhir-for-research/
+  repo-url: https://github.com/nih-odss/fhir-for-research/
+  repo-actions: [issue]
+  open-graph: true
+  search:
+    location: navbar
+    type: textbox
+  navbar:
+    left:
+      - text: Introduction
+        file: sections/introduction.qmd
+      - text: Advanced Topics
+        file: sections/advanced-topics.qmd
+      - text: Hands-on Practice
+        file: sections/hands-on-practice.qmd
+      - text: Hosting Your Own Workshop
+        file: sections/hosting-your-own-workshop.qmd
+
+
+    right:
+      - href: contribute.qmd
+        text: Questions & Contributions
+      - icon: github
+        href: https://github.com/NIH-ODSS/fhir-for-research
+        aria-label: View the GitHub repository for this site
+
+
+  sidebar:
+    - id: Introduction
+      title: Overview
+      style: floating
+      search: false
+      align: left
+      collapse-level: 3
+      contents:
+        - file: sections/introduction.qmd
+          text: "Introduction"
+        - section: "FHIR for Research"
+          contents:
+            - section: "What is FHIR"
+              contents:
+                - modules/fhir-from-10000-ft.qmd
+                - modules/fhir-from-1000-ft.qmd
+                - modules/fhir-history.qmd
+            - section: "What does FHIR look like"
+              contents:
+                - file: modules/key-fhir-resources.qmd
+                  text: Key FHIR Resources
+                - modules/terminology.qmd
+                - file: modules/fhir-community.qmd
+                  text: FHIR Community & Documentation
+                - modules/cdms.qmd
+                - modules/fhir-versions.qmd
+            - section: "FHIR Implementation Guides"
+              contents:
+                - file: modules/data-modeling-reading-igs.qmd
+                  text: Reading IGs
+                - file: modules/data-modeling-real-world-igs.qmd
+                  text: Real World IGs
+                - file: modules/data-modeling-writing-igs.qmd
+                  text: Writing IGs
+            - section: "How to use FHIR"
+              contents:
+                - file: modules/fhir-accessing-data.qmd
+                  text: Using the FHIR API to access data
+                - file: webinars/intro/index.qmd
+                  text: Introductory Webinar
+    - id: advanced-topics
+      title: Advanced Topics
+      style: floating
+      search: false
+      align: left
+      collapse-level: 2
+      contents:
+        - file: sections/advanced-topics.qmd
+          text: Advanced Topics
+        - section: "SMART on FHIR"
+          contents:
+            - file: modules/new-smart-on-fhir-intro.qmd
+              text: "Introduction"
+            - file: modules/new-smart-on-fhir-tech.qmd
+              text: "Technical Details"
+        - section: "CDS Hooks"
+          contents:
+            - file: modules/new-cds-hooks-intro.qmd
+              text: "Introduction"
+            - file: modules/new-cds-hooks-types.qmd
+              text: "Types of CDS Hooks"
+            - file: modules/new-cds-hooks-tech.qmd
+              text: "Technical Example"
+        - section: "REDCap"
+          contents:
+            - file: modules/redcap-intro.qmd
+              text: Introduction
+            - file: modules/redcap-fhir.qmd
+              text: REDCap on FHIR
+        - section: "Synthea"
+          contents:
+            - file: modules/synthea-overview.qmd
+              text: "Synthea Overview"
+            - file: modules/synthea-running.qmd
+              text: Running Synthea
+            - file: modules/synthea-customizing.qmd
+              text: Customizing Synthea
+        - section: "Bulk Data"
+          contents:
+            - file: modules/new-bulk-fhir.qmd
+              text: "Bulk Data Access"
+            - file: webinars/bulk-data/index.qmd
+              text: Webinar
+        - section: "Emerging Topics"
+          contents:
+            - file: modules/fhir-emerging-innovations.qmd
+              text: Emerging Use Cases
+            - file: modules/fhir-research.qmd
+              text: "Real World Research"
+            - file: modules/genomics.qmd
+              text: Genomics Data Standardization
+    - id: hands-on-practice
+      title: "Hands-on Practice"
+      style: floating
+      search: false
+      align: left
+      collapse-level: 2
+      contents:
+        - section: "FHIR Analysis, CDS and Genomics Workshop"
+          contents:
+            - file: workshops/data-analysis-cds/index.qmd
+              text: Introduction
+            - file: workshops/data-analysis-cds/01-fhir-analysis.qmd
+              text: "Part 1: FHIR Data Analysis"
+            - file: workshops/data-analysis-cds/02-genomics-cds.qmd
+              text: "Part 2: Genomics CDS"
+        - text: "---"
+        - section: "SMART on FHIR"
+          contents:
+            - file: workshops/smart-on-fhir/index.qmd
+              text: Workshop
+        - text: "---"
+        - section: "FHIR Bulk Data"
+          contents:
+            - file: workshops/bulk-data/index.qmd
+              text: Workshop
+    - id: hosting-your-own-workshop
+      title: "Hosting Your Own Workshop"
+      style: floating
+      search: false
+      align: left
+      collapse-level: 2
+      contents:
+        - section: Hosting Your Own Workshop
+          contents:
+          - file: webinars/workshop-recommendations/index.qmd
+            text: "Recommendations for Conducting Workshops"
+          - file: modules/synthea-test-server.qmd
+            text: "FHIR Server Setup"
+          - file: modules/synthetic-data.qmd
+            text: "Synthetic Data"
+
+  page-footer: |
+    &copy; <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/README.md">License information</a><br>Approved for Public Release / Case #24-3701<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.
+
+  page-navigation: true
+
+
+format:
+  html:
+    theme:
+      light: [cosmo, custom.scss]
+      dark: [darkly, custom.scss]      
+    highlight-style: a11y
+    css: styles.css
+    toc: true
+    include-in-header: head.html
+    include-after-body: scripts.html
+    template-partials:
+      - title-block.html

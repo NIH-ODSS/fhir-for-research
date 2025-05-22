@@ -1,0 +1,234 @@
+---
+title: FHIR Community & Resources
+
+area:
+  name: Overview
+topic:
+  name: FHIR for Research
+
+roles:
+  - Investigator
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives:
+  - question: Describe how to get involved or seek assistance from the FHIR community.
+    answer: Options for engaging with the FHIR community include [HL7 Work Groups](https://confluence.hl7.org/pages/viewpage.action?pageId=4489802), Zulip (<https://chat.fhir.org>), and [HL7 Connectathons](https://confluence.hl7.org/display/FHIR/Connectathons).
+
+reading_time: true
+---
+
+## Introduction
+
+FHIR has an active community of users who engage in discussions and offer advice. This module will introduce you to the HL7® and FHIR community, offer suggestions on where to ask questions, and clarify the various touchpoints and engagement opportunities.
+
+## The HL7 FHIR community
+
+The [HL7](https://hl7.org) FHIR community consists of developers, maintainers, and implementers who engage with the [FHIR specification](https://hl7.org/fhir/). Community-members work in many environments including:
+
+-   Clinical settings
+-   Health-focused companies and non-profits
+-   Local, state, and federal health agencies
+
+Because [FHIR](https://hl7.org/fhir/) is an open-source specification, most of HL7's FHIR work is done publicly, and anyone may [participate](https://confluence.hl7.org/display/HL7/Participating+in+HL7). The FHIR community also develops many [Implementation Guides (IGs)](data-modeling-reading-igs.qmd) that may be found at the [FHIR Implementation Guide Registry](http://fhir.org/guides/registry/) with the same public approach.
+
+This openness makes members of the community accessible to implementers and developers who want to:
+
+-   Ask questions.
+-   Follow the progress of work.
+-   Contribute to the work through the channels described below.
+
+### HL7 Work Groups
+
+HL7 specifications and many FHIR Implementation Guides are developed as [**HL7 Projects**](http://www.hl7.org/special/Committees/projman/searchableProjectIndex.cfm?action=list). HL7 Projects are efforts that are developed under the guidance of one or more [HL7 Work Groups](https://confluence.hl7.org/pages/viewpage.action?pageId=4489802).
+
+[Work Groups](https://confluence.hl7.org/pages/viewpage.action?pageId=4489802) are:
+
+> ...the bodies within HL7 that take on responsibility for developing and maintaining standards. They are where the "work" of HL7 gets done. HL7 has many work groups covering the spectrum of the healthcare space. All work groups are open to participation by anyone with an interest in their content.
+
+HL7 Work Groups consist of subject matter experts and other stakeholders. Each Work Group has a [mailing list](https://confluence.hl7.org/display/FHIR/Mailing+List+Instructions) that may be joined to communicate with the Work Group, including asking for time on an upcoming conference call. Work Groups also post conference call agendas on their Confluence sites (see the [Work Group directory](https://confluence.hl7.org/pages/viewpage.action?pageId=4489802) for Confluence links).
+
+Each Work Group lists their [associated projects](http://www.hl7.org/Special/committees/index.cfm?ref=nav). Work Groups typically meet on a weekly basis for a [conference call](http://www.hl7.org/concalls/CallDirectory.aspx). There is a core leadership team for each Work Group that facilitates meetings. Attendees vary depending on agenda content.
+
+Work Groups also meet in-person or hybrid at [HL7 Working Group Meetings](https://www.hl7.org/events/workgroupmeetings.cfm?ref=nav), which are held three times per year.
+
+#### Getting started with Work Groups {#work-group-meetings}
+
+The fastest way to get started in a Work Group is to join its [conference call](http://www.hl7.org/concalls/CallDirectory.aspx) and ask to introduce yourself.
+
+Alternatively (or additionally), join the Work Group's [mailing list](https://confluence.hl7.org/display/FHIR/Mailing+List+Instructions) and reach out to the group's leadership to introduce yourself. You may also use the mailing list to request future agenda items.
+
+#### Tips for attending Work Group meetings:
+
+-   Ask to be on the agenda ahead of the meeting to get specific questions addressed.
+
+-   Be prepared to discuss your agenda item(s). Agendas are available ahead of the meeting on the Work Group's Confluence page.
+
+-   Share your expertise. To ensure that new projects and specifications may be used by the community, Work Groups require input from a variety of stakeholders.
+
+### Zulip (chat.fhir.org) {#chat-fhir-org}
+
+Zulip ([chat.fhir.org](https://chat.fhir.org)) is an asynchronous communication platform like Slack or Teams messaging. Anyone may join. The platform is a valuable resource for asking questions and connecting with others with similar projects or objectives.
+
+Zulip has "streams" (like "channels" on Slack) for general topics like [Implementation Guide development](https://chat.fhir.org/#narrow/stream/179252-IG-creation) and [Terminology](https://chat.fhir.org/#narrow/stream/179202-terminology), as well as domain-specific topics like [Cancer Interoperability](https://chat.fhir.org/#narrow/stream/179234-Cancer-Interoperability). Users post comments or questions inside a stream, and others respond. You may find applicable streams by searching for a topic or browsing through the stream list.
+
+#### Getting started with Zulip
+
+Before using Zulip, review HL7's [community expectations](https://confluence.hl7.org/display/FHIR/Chat.fhir.org+Community+Expectations).
+
+If you have a question and don't know which stream to post it in, the [#implementers](https://chat.fhir.org/#narrow/stream/179166-implementers) stream is a good place to start.
+
+Other useful streams to subscribe to include:
+
+-   [#Announcements](https://chat.fhir.org/#narrow/stream/179240-Announcements): posts with new streams, releases of new versions of specifications, and ballot updates
+
+-   [#implementers](https://chat.fhir.org/#narrow/stream/179166-implementers): discussion about implementing FHIR resources
+
+-   [#analytics on FHIR](https://chat.fhir.org/#narrow/stream/179219-analytics-on-FHIR): useful for those using FHIR interfaces and APIs for data analytics
+
+-   [#social](https://chat.fhir.org/#narrow/stream/179160-social): general discussion about the FHIR community with the occasional fun update from a community member
+
+### HL7 FHIR Connectathons
+
+[HL7 FHIR Connectathons](https://confluence.hl7.org/display/FHIR/Connectathons) are events that connect contributors and community members to test FHIR technology. HL7 describes a [Connectathon](https://confluence.hl7.org/display/FHIR/Connectathons) as:
+
+> ...an event that is centered on developing the HL7 FHIR Specification including resources, profiles and implementation guides. The purpose of a Connectathon is to prove that the specification is complete and facilitate FHIR implementation guide maturity.
+
+Three Connectathons are held each year, either as in-person events or as virtual meetings. Anyone may [attend as a participant](https://confluence.hl7.org/display/FHIR/Connectathons) or submit a proposal to be a [Track Lead](https://confluence.hl7.org/display/FHIR/Connectathon+Track+Lead+Responsibilities). Connectathon Track Leads share their specification or resource for implementers to test and offer feedback. A complete list of the Tracks is posted before the Connectathon. You may also view offerings from [previous Connectathons](https://confluence.hl7.org/display/FHIR/Previous+Connectathons).
+
+#### Getting started
+
+Find information about upcoming Connectathons on [HL7's Connectathon events page](https://www.hl7.org/events/fhir-connectathon/) or the [Connectathon Confluence page](https://confluence.hl7.org/display/FHIR/Connectathons).
+
+The [Connectathon FAQs](https://confluence.hl7.org/display/FHIR/HL7+FHIR+Connectathon+FAQs) provide information on requirements to participate.
+
+First time attendees must watch the [FHIR Training for Beginners Newcomer Orientation](https://vimeo.com/542197402/8fb80fea04).
+
+Each Connectathon hosts a virtual Participant Information Session several weeks before the event. The Participant Information Session includes information about which Tracks are available, how to connect with Track Leads, and how to prepare your sandbox environment for testing. For an example of what to expect, a recording of the [January 2023 Connectathon Participant Information Session](https://www.youtube.com/watch?v=hA_cW2gG7wE) is available, as well as the [check lists](https://confluence.hl7.org/display/FHIR/2023+-+01+Connectathon+32) for attendees and Track Leads.
+
+### FHIR Accelerators
+
+In addition to developing the FHIR standard, [HL7](https://hl7.org) has a [FHIR Accelerator](https://www.hl7.org/about/fhir-accelerator/) program to "assist communities and collaborative groups across the global health care spectrum in the creation and adoption of high quality FHIR Implementation Guides or other standard artifacts to move toward the realization of global health data interoperability."
+
+FHIR Accelerators drive adoption of FHIR for specific use cases, including:
+
+-   [CodeX](https://www.hl7.org/codex/): Standardizing cancer data
+
+-   [Da Vinci](https://www.hl7.org/about/davinci/): Establishing a process for addressing value-based care delivery
+
+-   [Gravity](https://www.hl7.org/gravity/): Standardizing social determinants of health
+
+-   [Helios](https://www.hl7.org/helios/): Obtaining data for public health via FHIR
+
+-   [Vulcan](https://www.hl7.org/vulcan/): Obtaining data for research via FHIR
+
+Researchers may be especially interested in [Vulcan](https://www.hl7.org/vulcan/). This presentation from [FHIR DevDays 2022](https://www.devdays.com/devdays-international-hybrid-edition-2022/presentations/) provides an overview of Vulcan's current activity ([PDF slides](https://www.devdays.com/wp-content/uploads/2022/08/220608-HughGlover-VulcanBoldlyGoing-Hugh-Glover.pdf)):
+
+{{< video https://www.youtube.com/embed/-rVop9vw608 >}}
+
+More information on the [FHIR to OMOP project that is part of Vulcan can be found here](https://confluence.hl7.org/display/VA/FHIR+to+OMOP).
+
+## HL7 FHIR resources
+
+### HL7 Confluence
+
+Documentation on HL7 processes and general information is typically found in the [HL7 Confluence](https://confluence.hl7.org) site. Confluence is a Wikipedia-like documentation website for HL7. Many of the links throughout this module go to HL7 Confluence pages. The site is useful for finding:
+
+-   HL7 projects in development
+-   Schedules and information for HL7 Work Groups
+-   Processes and documentation for HL7 and FHIR infrastructure
+
+The Confluence site also includes tips on [getting involved](https://confluence.hl7.org/display/FHIR/Getting+Involved) and [implementer support](https://confluence.hl7.org/display/FHIR/Implementer+Support).
+
+### HL7 Jira
+
+Project work and specification development primarily occurs in [HL7 Jira](https://jira.hl7.org/secure/Dashboard.jspa). The site is an issue-tracking resource used for managing comments and suggestions on HL7 specifications and terminologies. This includes the core FHIR specification and FHIR IGs developed with HL7 Work Group oversight.
+
+### FHIR Community Forum
+
+While the [FHIR Community Forum](http://community.fhir.org/) is no longer active as a discussion platform, the posts have been archived for historical reference. You will find posts to previous questions like:
+
+> -   How do I do \[x\]? where \[x\] is any kind of use of FHIR at all
+> -   Has anyone solved \[my problem\] with the specification? (Or is anyone interested in this?)
+> -   Why does FHIR work like it does?
+> -   What does everyone think about \[making some change to the FHIR specification\]?
+
+The FHIR Community Forum is no longer used or monitored. All discussion has transitioned to Zulip ([chat.fhir.org](https://chat.fhir.org)).
+
+### StackOverflow on FHIR
+
+[StackOverflow](https://stackoverflow.com/) is a third-party forum for asking and answering technical questions. HL7 FHIR is one of the topics discussed on StackOverflow, in addition to many other technologies unrelated to health. Use the [hl7-fhir tag](https://stackoverflow.com/questions/tagged/hl7_fhir) for developer and programming questions about reference FHIR implementations.
+
+## Navigating the HL7 standards development process
+
+The standards development process requires walking a fine line between adoptability and thoroughness. HL7 describes the balance of the [standards process](https://confluence.hl7.org/display/HL7/Understanding+the+Standards+Process#:~:text=HL7%20ensures%20that%20all%20content,help%20to%20retain%20institutional%20knowledge):
+
+> Spend too little time and energy and the standard is unlikely to be fit for purpose or see much adoption. Take too long or require too much investment and the community will move on before the specification is declared “fit for use”.
+
+### HL7 balloting in the standards development process
+
+[HL7 balloting](https://confluence.hl7.org/display/HL7/HL7+Balloting) is defined as:
+
+> ...the formal process that HL7 uses to get feedback and comments on specifications prior to publication. Rules governing balloting are defined in both [HL7's Governance and Operations Manual](http://www.hl7.org/documentcenter/public./membership/HL7_Governance_and_Operations_Manual.pdf) and in the [HL7 Essential Requirements](http://www.hl7.org/documentcenter/public/procedures/HL7_Essential_Requirements.pdf). These, in turn, are governed by the expectations of the American National Standards Institute (ANSI) which accredits HL7 as a standards development organization and enforces rules around the openness and fairness of approval processes. The objective of balloting is to actively seek feedback on a proposed standard and to ensure that the community that will be governed by that standard is in agreement with the expectations set by the standard.
+
+### HL7 ballot process and levels {#ballot-levels}
+
+For a project that wants to pursue the HL7 balloting process, the first step is to [create an HL7 Project Proposal](https://confluence.hl7.org/display/HL7/How+to+Create+and+Review+a+Project+Proposal). Project Proposals are reviewed by HL7 co-chairs and approved by a sponsoring Work Group that fits with the content or subject matter for the proposal. After the Project Proposal is approved by the sponsoring Work Group, a [Project Scope Statement](https://confluence.hl7.org/display/HL7/How+to+Create+a+Project+Scope+Statement+in+JIRA), which includes more detailed information about the proposed project, must be submitted and reviewed.
+
+The next step in the [balloting process](https://confluence.hl7.org/display/HL7/HL7+Balloting) is to begin IG development. There are four levels of ballots:
+
+1.  **For Comment**: opportunity for developers to solicit feedback early in the development process
+2.  **Informative**: used to vet content that is non-binding, like recommendations and guidance for implementers
+3.  **Standard for Trial Use (STU)**: for vetting content that will be binding on implementers. IGs in this ballot period are ready to be used but have not been widely implemented.
+4.  **Normative**: this stage is the final ballot level and once the requirements are meant, IGs at this level are authoritative. A high level of consensus is required to meet the normative status since any changes are binding.
+
+During a ballot, a specification is "frozen" for a specified period of time to give balloters time to submit comments to raise issues or propose changes. Balloters may cast votes to publish the specification. The sponsoring Work Group will review the comments to resolve issues raised during a ballot.
+
+The significance of the balloting process and ballot levels for researchers is discussed more in [balloting implications for researchers](#balloting-and-research).
+
+### HL7 ballot examples
+
+Balloting is managed through two tools:
+
+-   [HL7 Ballot Desktop](https://confluence.hl7.org/display/HL7/HL7+Ballot+Desktop): manages ballot announcements and captures the formal record of ballot submissions.
+-   [Jira Ballot Process](https://confluence.hl7.org/display/HL7/Jira+Ballot+Process): manages comments and records the votes of balloters.
+
+Two research related IGs undergoing the HL7 balloting process are the following:
+
+1.  The [Longitudinal Maternal & Infant Health information for Research](http://hl7.org/fhir/us/mihr/index.html) IG supports maternal health researchers by defining a standard for aggregating and analyzing clinical information for birthing people and their infants. Researchers with the Eunice Kennedy Shriver National Institute of Child Health and Human Development (NICHD), part of the National Institutes of Health (NIH), co-authored the specification.
+
+2.  The [Single Institutional Review Board (sIRB)](http://hl7.org/fhir/us/sirb/) IG aims to facilitate multi-site research by combining individual IRB requirements into a single application process, lowering administrative burdens and expediting the research process.
+
+### Pros of balloting through HL7
+
+There are several benefits of balloting an IG through HL7, including **visibility, implementation, and reusability**:
+
+-   **Visibility**: developing projects are socialized early and often throughout the balloting process, so many stakeholders within the HL7 community are aware of them
+-   **Implementation**: greater visibility prevents standards from being developed in isolation. Successful implementation is more likely since there are many opportunities for the potential future implementers to offer input throughout the balloting process
+-   **Reusability**: the combination of visibility and successful implementation supports reusability of the profiles within an IG, which is beneficial for the standards development process. Reusing existing IG content is conducive to interoperability.
+
+### Cons of balloting through HL7
+
+Balloting through HL7 is not necessarily a requirement though and some use cases may find the significant time and effort required to complete the process too cumbersome. Reaching the Standards for Trial Use (STU) phase, where an IG can officially be trialed in a pilot-like environment, can take 1-2 years and then an additional 3 years before reaching the normative stage, where a standard is widely accepted and implemented. HL7 has some guidance on [publishing IGs outside of HL7](https://confluence.hl7.org/pages/viewpage.action?pageId=104580055)
+
+Two IGs that were not balloted through HL7:
+
+1.  The [NIH Cloud Platform Interoperability Effort (NCPI) FHIR Implementation Guide](https://nih-ncpi.github.io/ncpi-fhir-ig/index.html) (NCPI FHIR IG) is a relatively newer IG that is still under development. The IG aims to support data and knowledge-sharing among researchers by using FHIR as a standard, common model for representing data.
+
+2.  The [OHSU Hypertension Implementation Guide](https://build.fhir.org/ig/OHSUCMP/htnu18ig/index.html) is a patient-facing support tool for hypertension management. Funded by AHRQ, the IG uses [CDS Hooks](smart-on-fhir-intro.qmd#cds-hooks) to support the clinical decision support logic.
+
+### Balloting implications for researchers {#balloting-and-research}
+
+There are implications and considerations for researchers that may want to use an existing specification that is moving through the balloting process or ballot their own specification.
+
+-   **Consider the ballot level.** Specifications that are earlier in the [balloting stages](#ballot-levels) are more likely to change as they mature. It would be riskier to base a research project on the assumption that the IG will remain as it's written.\
+-   **Is community consensus important?** If garnering a strong community and consensus among the group is important to the success of a research effort, then balloting would likely help. Generally, adoption and implementation are more likely for IG's that go through the balloting process. Particularly if industry support is desired, balloting is a great way to socialize an idea and unite interested stakeholders.
+
+### More information on balloting
+
+The balloting process can be daunting and confusing after the first introduction. The following steps may help to clarify the process:
+
+-   Join a [Work Group meeting](#work-group-meetings).
+-   Join the [chat.fhir.org](#chat-fhir-org) workspace, and particularly the [#Ballot-QA](https://chat.fhir.org/#narrow/stream/179257-Ballot-QA) stream to read previous questions and answers or ask new questions.
+-   Connect with others in the HL7 community that have worked on balloted specifications, either through [chat.fhir.org](https://chat.fhir.org) or through the Confluence work space. The community is vast and friendly; asking someone for advice may save you from sifting through Confluence to find the answer.

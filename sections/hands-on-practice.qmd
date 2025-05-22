@@ -1,0 +1,20 @@
+---
+title: Hands-on Practice
+sidebar: false
+---
+
+Get some **Hands-on Practice** by following along with our workshops.
+
+*Recommended: complete the workshops relevant to your interests and work after reviewing its corresponding guide in [advanced topics](/sections/advanced-topics).*
+
+## FHIR Analysis, CDS and Genomics Workshop
+
+-   [FHIR Analysis, CDS and Genomics Workshop](/workshops/data-analysis-cds/index.qmd)
+
+## SMART on FHIR Workshop
+
+-   [SMART on FHIR Workshop](/workshops/smart-on-fhir/index.qmd)
+
+## FHIR Bulk Data Workshop
+
+-   [FHIR Bulk Data Workshop](/workshops/bulk-data/index.qmd)

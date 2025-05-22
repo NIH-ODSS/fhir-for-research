@@ -1,0 +1,16 @@
+services:
+  fhir-server:
+    container_name: fhir-server
+    image: "hapiproject/hapi:v8.0.0-1"
+    ports:
+      - "8080:8080"
+    configs:
+      - source: hapi
+        target: /app/config/application.yaml
+    volumes:
+      - ./db:/app/target/database
+      - ./custom:/app/custom
+
+configs:
+  hapi:
+    file: ./hapi.application.yaml

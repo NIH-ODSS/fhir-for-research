@@ -1,0 +1,9 @@
+Type: project
+Description: FHIR for Research
+Depends:
+    renv,
+    yaml,
+    fhircrackr,
+    tidyverse,
+    rmarkdown
+

@@ -1,0 +1,113 @@
+---
+title: Introduction
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives:
+  - question: Explain how SMART on FHIR supports research with data in EHRs.
+    answer: SMART on FHIR allows for a single application to integrate with multiple institutions' EHRs with minimal institution-specific customization. Without SMART on FHIR, substantial institution-specific development work would be needed.
+  - question: Give an example of how SMART on FHIR has been used in published research.
+    answer: SMART on FHIR has been used to integrate new CDS systems into EHRs and integrate additional data sources like patient-reported outcomes into EHRs.
+
+reading_time: true
+---
+
+[SMART on FHIR](https://smarthealthit.org)[^1] was introduced in 2016 "to enable medical applications to be written once and run unmodified across different healthcare IT systems." [@Mandel_Kreda_Mandl_Kohane_Ramoni_2016]
+
+[^1]: SMART stands for Substitutable Medical Applications and Reusable Technologies.
+
+To enable "write once, run anywhere" applications, [SMART on FHIR](http://docs.smarthealthit.org) uses FHIR along with common web technologies, such as [OAuth 2](https://oauth.net/2/) and [OpenID Connect](https://openid.net/connect/). Many EHRs--including those from [Cerner](https://fhir.cerner.com), [Epic](https://fhir.epic.com), and [MEDITECH](https://ehr.meditech.com/ehr-solutions/greenfield-workspace)--support SMART on FHIR applications. Researchers have successfully used SMART on FHIR applications across multiple EHRs [@Wesley_2021], though implementation differences may require additional work to resolve.
+
+## Research use cases
+
+### Integrating with an EHR
+
+Researchers primarily use SMART on FHIR to integrate with an EHR. For example, several researchers have trialed new clinical decision support (CDS) systems using SMART on FHIR. They use SMART on FHIR to integrate their CDS tool into EHRs without modifying the EHRs and without creating unique versions for each EHR vendor.
+
+@tarumi2021 used this approach to show that an AI-driven CDS could integrate with Epic via SMART on FHIR, and @curran2020 used this approach to prototype a CDS system for chronic disease management.
+
+### Adding data to an EHR workflow
+
+Researchers also use SMART on FHIR to add data to EHR workflows. For example, a patient may use a web or smartphone app to report their outcomes data. A SMART on FHIR application can make this data accessible from an EHR [@Wesley_2021].
+
+SMART on FHIR can also help researchers integrate data into an EHR that the EHR does not natively support. For example, @watkins2020 discuss how genetic testing could be better-integrated with EHRs using SMART on FHIR and CDS Hooks ([see below](#cds-hooks)).
+
+### Accessing bulk data
+
+SMART on FHIR facilitated [Bulk Data Access](http://hl7.org/fhir/uv/bulkdata/) ([see below](#bulk-data-access)) may provide a new way for researchers to access population-level data. A researcher may want to gather population data from multiple institutions that do not store their data using a shared [common data model](cdms.qmd). However, if these EHRs use FHIR, they likely use the widely implemented [US Core FHIR Implementation Guide](https://www.hl7.org/fhir/us/core/). SMART on FHIR with Bulk Data Access would enable researchers to access the data as US Core-conforming FHIR resource instances across these institutions.
+
+Note, SMART on FHIR used for Bulk Data Access is relatively new and has not yet appeared in peer-reviewed research publications.
+
+### SMART on FHIR app gallary
+
+The [SMART App Gallery](https://apps.smarthealthit.org/apps) lists a number of SMART on FHIR applications, which may provide additional ideas on how SMART on FHIR could be used for research.
+
+## Capabilities
+
+SMART on FHIR pulls together existing standards to enable third-party applications to integrate with EHRs. These include:
+
+| Capability | Approach |
+|:----------------|:------------------------------------------------------|
+| Authorization | The [OAuth 2](https://oauth.net/2/) web standard enables third-party SMART on FHIR applications to access specific sets of data from an EHR. |
+| Authentication | The [OpenID Connect](https://openid.net/connect/) web standard allows a SMART on FHIR application to tell the EHR who is using it (e.g., to allow a patient to access their own health data via SMART on FHIR). |
+| Data models | The standard set of [FHIR resources](https://www.hl7.org/fhir/resourcelist.html) are used to represent data. Additional customization can occur via FHIR profiles. |
+| Profiles | [US Core Data Profiles](https://www.hl7.org/fhir/us/core/) or other FHIR Implementation Guides can be used to provide additional customization on top of the standard FHIR resources. |
+| Data access | Once a third-party application is authenticated and authorized, the standard [FHIR REST API](https://www.hl7.org/fhir/http.html) is used to exchange data. |
+| Data format | Data are formatted using the standard FHIR [JSON](https://www.hl7.org/fhir/json.html) or [XML](https://www.hl7.org/fhir/xml.html) formats. |
+| EHR UI integration | third-party applications can be launched from within an EHR using [SMART App Launch](http://hl7.org/fhir/smart-app-launch/index.html). |
+| EHR backend integration | third-party applications can launch in an EHR without an EHR user interacting directly with it using [SMART Backend Services](https://hl7.org/fhir/uv/bulkdata/authorization/index.html). |
+
+: SMART on FHIR capabilities, adapted from @Mandel_Kreda_Mandl_Kohane_Ramoni_2016. {tbl-colwidths="\[25,75\]"}
+
+## Related technologies
+
+### Bulk Data Access {#bulk-data-access}
+
+The [Bulk Data Access standard](http://hl7.org/fhir/uv/bulkdata/) enables researchers to retrieve large volumes of data from a patient population in an EHR. For example, "a health system may want to periodically retrieve updated clinical data from an EHR to a research database."
+
+HL7® first released the Bulk Data Access standard in 2019 and released v2 in November 2022.
+
+Many EHR vendors, including Allscripts, Athena Health, Cerner, and Epic, have [adopted](https://docs.google.com/presentation/d/14ZHmam9hwz6-SsCG1YqUIQnJ56bvSqEatebltgEVR6c/edit#slide=id.g8c17644f87_23_1146) this standard. In January 2023, [ONC announced its support for this standard](https://www.healthit.gov/buzz-blog/health-it/onc-supports-adoption-and-implementation-of-bulk-data-apis).
+
+The Bulk Data Access standard is part of the [SMART ecosystem](https://smarthealthit.org/), and SMART on FHIR can be used to authenticate and authorize applications that retrieve bulk data automatically.
+
+::: {.callout-tip appearance="simple"}
+For more information, see [this overview presentation](https://docs.google.com/presentation/d/14ZHmam9hwz6-SsCG1YqUIQnJ56bvSqEatebltgEVR6c/edit?usp=sharing) and the [HL7 specification](http://hl7.org/fhir/uv/bulkdata/).
+:::
+
+### CDS Hooks {#cds-hooks}
+
+[CDS Hooks](https://cds-hooks.org) is an [HL7 standard](https://cds-hooks.hl7.org/) that can support SMART on FHIR application integration with EHRs. HL7 released [CDS Hooks v2](https://cds-hooks.hl7.org/2.0/) in August 2022.
+
+CDS Hooks allows an action in an EHR to trigger an action in a third-party application. @thiess2022 writes:
+
+> To make CDS accessible when it is needed, the standard defines several hooks that occur through clinicians interacting with the EHR. For example, the *patient-view* hook is triggered when the patient record is opened, or the *order-select* hook is triggered when the prescriber selects an order (e.g., medication or procedure).
+
+The standard includes ways for the third-party application to get contextual information related to the hook, like the patient data being viewed. The application can then send information back to the EHR. @thiess2022 continues:
+
+> The CDS Hooks service provides a response in the form of a "Card" that is displayed inside the EHR. There are three types of cards: (i) information cards provide patient-specific information, such as an assessment or reference information; (ii) suggestion cards provide a recommended action (e.g., an order) in a FHIR resource; and (iii) app cards provide a link to launch a SMART on FHIR app.
+
+#### Further reading
+
+-   @morgan2022 demonstrate that CDS Hooks can increase utilization of SMART on FHIR applications.
+
+-   @strasberg2021 describes additional background information on how CDS Hooks function.
+
+-   @thiess2022 provides more details on how CDS Hooks can be integrated with an EHR and a SMART on FHIR application.
+
+## Implementation considerations
+
+If you have a research use case that is a good fit with SMART on FHIR, you will likely work with a software engineer and your institution's IT experts to investigate integrating with the relevant EHR(s). If your institution has staff with experience integrating SMART on FHIR applications, consult with them early when developing your research approach.
+
+SMART on FHIR applications that integrate with an EHR's user interface via SMART App Launch are often *web applications*. SMART on FHIR applications that run without being triggered by user input in an EHR, including applications that use Bulk Data Access, are often *backend services*.
+
+Integrating SMART on FHIR backend applications with EHRs is often less complex than integrating SMART on FHIR web applications. However, in both cases, there may be EHR-specific requirements including administrative approval.
+
+Also, consider security and privacy early when developing your research approach. Take steps to ensure proper data storage and access as you would with any software that handles sensitive data. In addition to [IRB](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4631034/) approval, you may need approval related to privacy and information security. If your institution has not worked with SMART on FHIR before, it may not have a well-defined process for getting the appropriate approvals. In this case, it may be helpful to identify researchers from other institutions who have used SMART on FHIR in a similar context, and cite their work to demonstrate prior successful use of this technology when discussing with the IRB and decision-makers at your institution.
+
+Please see [SMART on FHIR Technical Details](smart-on-fhir-tech.qmd) for more technical implementation on using SMART on FHIR and related standards.

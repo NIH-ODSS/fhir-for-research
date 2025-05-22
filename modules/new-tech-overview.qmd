@@ -1,0 +1,26 @@
+---
+title: Technologies Supporting Application Development
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+reading_time: true
+---
+
+FHIR's modular and extensible nature allows developers to create powerful applications that are both scalable and adaptable to the evolving needs of the healthcare sector. This is particularly beneficial for researchers who need to build applications capable of handling diverse and complex data sets, or want to deploy their applications across multiple organizations with different EHR installations.
+
+Developing applications using FHIR involves leveraging its robust set of resources that represent granular clinical concepts, such as patients, admissions, diagnostic reports, and medications. These resources can be combined in various ways to support a wide range of healthcare-related scenarios.
+
+The process of FHIR application development often includes utilizing complementary technologies such as SMART on FHIR, CDS Hooks, and Bulk FHIR.
+
+-   [SMART on FHIR](/modules/new-smart-on-fhir-intro.qmd) provides a framework that allows developers to create secure healthcare applications that can run on any EHR system supporting the FHIR standard.
+
+-   [CDS Hooks](/modules/new-cds-hooks-intro.qmd) is a standard for integrating clinical decision support (CDS) into EHR workflows, offering real-time, context-sensitive guidance. CDS Hooks can be leveraged to enable clinical EHR workflow triggers to launch SMART on FHIR applications.
+
+-   [Bulk Data Access](/modules/new-bulk-fhir.qmd) enables efficient extraction of large datasets for research purposes.
+
+Together, these technologies empower developers to create innovative, interoperable applications that enhance healthcare delivery and research capabilities.

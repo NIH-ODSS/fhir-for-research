@@ -1,0 +1,318 @@
+---
+format:
+  revealjs:
+    theme: [default, ../../slides.scss]
+    preview-links: true
+    slide-number: c/t
+    # scrollable: true
+    footer: "© 2023 The MITRE Corporation / Approved for Public Release / Case #23-0966"
+editor: visual
+---
+
+# Workshop Recommendations {background-image="../../images/nih_slide_background.png" background-size="100vw 100vh" background-color="#20558A"}
+
+National Institutes of Health (NIH), Office of the Director (OD), Office of Data Science Strategy (ODSS)
+
+July 2023 <br><br><br>
+
+::: {style="padding-left: 5em;"}
+<small>FHIR® is the registered trademark of Health Level Seven International (HL7). Use of the FHIR trademark does not constitute an HL7 endorsement of this workshop.</small>
+:::
+
+::: footer
+:::
+
+------------------------------------------------------------------------
+
+## Overview
+
+::: r-fit-text
+**Intended audience:**
+
+-   Instructors involved with the design and implementation of FHIR for research-related training.
+
+**Learning objectives:**
+
+1.  Identify existing FHIR for research capacity-building resources
+
+2.  Understand the process for re-using existing resources for future capacity-building activities
+
+3.  Apply recommendations and best practices from past NIH workshops to future workshops
+:::
+
+## Topics
+
+1.  Existing capacity-building resources
+2.  Working with the FHIR for Research documentation website
+3.  Recommendations for live workshops
+    -   Compute environment
+    -   Synthetic data
+    -   Other recommendations
+
+## Existing Resources
+
+::: r-fit-text
+1.  FHIR for Research documentation website
+
+    -   Website: <https://purl.org/fhir-for-research/web>
+
+    -   GitHub: <https://purl.org/fhir-for-research/github>
+
+2.  Webinars
+
+    -   Introduction to FHIR for Research: <https://purl.org/fhir-for-research/webinars/intro>
+
+    -   FHIR Bulk Data Introduction: <https://purl.org/fhir-for-research/webinars/bulk-data>
+
+3.  Hands-on workshops
+
+    -   FHIR Bulk Data: <https://purl.org/fhir-for-research/workshops/bulk-data>
+
+    -   SMART on FHIR: <https://purl.org/fhir-for-research/workshops/smart-on-fhir>
+
+    -   More on FHIR API programming: <https://datascience.nih.gov/fhir-initiatives/researchers-training>
+
+<small>**Note:** purl.org is a service provided by the Internet Archive for persistent URLs that can be updated if the actual URL changes. This is helpful to avoid dead links in webinar videos.</small>
+:::
+
+# Documentation Website
+
+## [Documentation Website /]{style="font-weight: normal; font-size: 50%;"}<br>Overview
+
+-   Website (<https://purl.org/fhir-for-research/web>) is generated from source code (<https://purl.org/fhir-for-research/github>) using Quarto (<https://quarto.org>)
+
+    -   Quarto is a tool for generating static documentation websites that include R or Python code
+    -   It's made by Posit (the company that makes RStudio)
+    -   Narrative content is written in Markdown
+
+## [Documentation Website /]{style="font-weight: normal; font-size: 50%;"}<br>Structure
+
+::: {style="font-size: 60%;"}
+-   Written documentation is broken up into self-contained "modules"
+
+-   Modules are organized into [sections](https://purl.org/fhir-for-research/web):
+
+    1.  Overview
+        1.  FHIR for Research
+        2.  SMART on FHIR
+        3.  Data Modeling in FHIR
+    2.  Working with FHIR Data
+        1.  Tabular Analysis
+        2.  REDCap
+        3.  FHIR Bulk Data
+    3.  Advanced Topics
+        1.  Synthetic Data & FHIR Testing Servers
+        2.  Other Topics
+:::
+
+## [Documentation Website /]{style="font-weight: normal; font-size: 50%;"}<br>Live Walk-Through
+
+-   <https://purl.org/fhir-for-research/web>
+
+-   <https://purl.org/fhir-for-research/github>
+
+## [Documentation Website /]{style="font-weight: normal; font-size: 50%;"}<br>Setup
+
+1.  Install dependencies (R, Python, RStudio, Quarto)
+2.  Clone <https://purl.org/fhir-for-research/github>
+3.  Open as a project in RStudio (or another editor)
+
+Detailed setup instructions are found at <https://purl.org/fhir-for-research/web/setup>
+
+## [Documentation Website /]{style="font-weight: normal; font-size: 50%;"}<br>Editing
+
+::: r-fit-text
+-   Narrative content can be edited as plain text Markdown, or using the WYSIWYG "Visual" mode in RStudio
+    -   More on Markdown: <https://quarto.org/docs/authoring/markdown-basics.html>
+-   Preview locally in a web browser via "Render" in RStudio, or running quarto preview from the command line
+-   Publish publicly via [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)
+    -   More: <https://quarto.org/docs/publishing/github-pages.html>
+:::
+
+## [Documentation Website /]{style="font-weight: normal; font-size: 50%;"}<br>Contributing
+
+::: r-fit-text
+-   Customization via "forking" (<https://docs.github.com/en/get-started/quickstart/fork-a-repo>)
+
+-   You can contribute ("upstream") your changes from your fork to the NIH/ODSS-managed open source GitHub repository
+
+    -   Submit a pull request: <https://docs.github.com/articles/using-pull-requests>
+
+    -   NIH/ODSS will review to intergrate into the main repository
+:::
+
+# Workshop Best Practices
+
+## [Workshop Best Practices /]{style="font-weight: normal; font-size: 50%;"}<br>Introduction
+
+::: r-fit-text
+-   Workshops are a useful approach to help attendees quickly climb the learning curve for a technical topic
+
+    -   Include a combination of lecture and hands-on participation
+
+    -   Pair with written documentation that participants can refer to later
+:::
+
+## [Workshop Best Practices /]{style="font-weight: normal; font-size: 50%;"}<br>Workshop Design
+
+::: r-fit-text
+-   Consider a brief pre-survey or lightweight capability assessment
+    -   <https://purl.org/fhir-for-research/workshop-recommendations> has more information
+-   Tailor technical prerequisites to the anticipated audience
+    -   For example, our SMART on FHIR workshop requires basic HTML and JavaScript experience for hands-on participation
+    -   Use the pre-survey to verify audience technical skills
+-   Provide learning objectives
+    -   <https://tips.uark.edu/using-blooms-taxonomy> is helpful
+:::
+
+## [Workshop Best Practices /]{style="font-weight: normal; font-size: 50%;"}<br>Structure
+
+::: r-fit-text
+-   Provide an "on ramp" introducing the topic at the beginning so less technical participants can still get value from the beginning
+
+    -   In general, order content from least to most technical
+
+    -   Consider a mini-webinar introduction
+
+    -   Verbally identify the "drop points" where people who are not interested in the technical content can safely leave
+
+-   Provide a walk-through to introduce hands-on participation
+
+    -   Provide sample code/template that participants can run themselves
+
+    -   Consider having the presenter fill in the sample code/template live, or give participants time to work themselves and ask questions
+
+-   Keep the total length under 3 hours
+
+    -   Consider 1-2 hours of content, and an optional "lab" hour if there is substantial hands-on content to allow participants to work independently and ask questions
+    -   Include 5 minute breaks every hour
+:::
+
+## [Workshop Best Practices /]{style="font-weight: normal; font-size: 50%;"}<br>Running a Workshop
+
+::: r-fit-text
+-   Plan for "preflight" if technical setup is necessary
+
+    -   Strategize to reduce setup as much as possible (e.g., use cloud Jupyter environment rather than requiring participants to run it locally -- more on this below)
+
+-   Include at least one TA to help with technical issues and questions during the workshop
+
+    -   For virtual workshops, use breakout rooms if participants need 1:1 help
+:::
+
+## [Workshop Best Practices /]{style="font-weight: normal; font-size: 50%;"}<br>Promotion & Registration
+
+::: r-fit-text
+-   Require registration to attend
+
+    -   Allows for monitoring and adjustment of outreach strategy if the desired mix of people don't initially sign up
+
+-   Start registration at least 2 weeks ahead of the event
+
+-   Include learning objectives and prerequisites in registration promotional materials
+
+    -   Consider the Introduction to FHIR for Reserach webinar as a prerequisite if your potential audience doesn't have prior FHIR experience (<https://purl.org/fhir-for-research/webinars/intro>)
+
+    -   Identify any technical skills are required for some/all of the workshop
+:::
+
+## [Workshop Best Practices /]{style="font-weight: normal; font-size: 50%;"}<br>Recording & Accessibility
+
+::: r-fit-text
+-   Use Zoom local recording (or similar) to record screen and audio
+
+-   Share recording with subtitles for accessibility
+
+    -   Modern transcription applications like [MacWhisper](https://goodsnooze.gumroad.com/l/macwhisper) can generate subtitles that are quite accurate, requiring fairly minimal manual editing
+    -   Subtitles can be in a .srt "sidecar" file -- this is a plain text file that can be easily edited by hand
+
+-   Provide slides and other materials on a single webpage at the time of the event
+
+    -   e.g., <https://purl.org/fhir-for-research/workshops/bulk-data>
+    -   Consider "upstreaming" any materials to the main open source GitHub repository
+
+-   Use URLs in slides that can be updated later if the destination URL changes (e.g. from <https://purl.org>) to avoid broken links in video recordings
+:::
+
+# Environment & Data
+
+## [Environment & Data /]{style="font-weight: normal; font-size: 50%;"}<br>Compute
+
+::: r-fit-text
+-   If possible, provide a cloud compute environment with dependencies pre-installed
+
+    -   This will save on setup time and avoid participants getting stuck on technical issues during the workshop
+
+-   Run on your own server:
+
+    -   **Python/Jupyter:** <https://tljh.jupyter.org> for up to 100 users
+
+    -   **R/RStudio Server:** <https://posit.co/download/rstudio-server/>
+
+-   No server required:
+
+    -   Free, some additional complexity: <https://mybinder.org>
+
+    -   \$15/month, more reliable:\
+        <https://posit.cloud/plans/instructor?option=instructor>
+:::
+
+## [Environment & Data /]{style="font-weight: normal; font-size: 50%;"}<br>Running a Server
+
+::: r-fit-text
+-   Typically memory is the main constraint, which scales linearly with the number of simultaneous users
+
+    -   Our FHIR Bulk Data workshop using JupyterHub (via TLJH) required around 600MB/user minimum
+
+    -   Run your code ahead of time to estimate memory needs
+
+-   CPU usage will likely be low unless your workshop includes a lot of CPU-constrained code (e.g., training machine learning models)
+
+-   TLJH: <https://tljh.jupyter.org/en/latest/howto/admin/resource-estimation.html>
+
+-   NIH-funded researchers may take advantage of the STRIDES Initiative for cloud computing. For more information, visit https://datascience.nih.gov/strides
+:::
+
+## [Environment & Data /]{style="font-weight: normal; font-size: 50%;"}<br>Synthetic Data
+
+-   Using synthetic data avoids privacy issues with patient data
+
+-   <https://synthea.mitre.org> provides synthetic data in FHIR format
+
+-   <https://purl.org/fhir-for-research/synthea> provides more information on customizing Synthea for your specific use case
+
+::: notes
+Demo the Synthea customizer tool
+:::
+
+## [Environment & Data /]{style="font-weight: normal; font-size: 50%;"}<br>FHIR Test Server
+
+::: r-fit-text
+-   Workshops that use the FHIR API will need a test server
+
+-   Options for this:
+
+    -   <https://sandbox.logicahealth.org>: free test server with both open and authenticated endpoints, as well as SMART on FHIR and CDS Hooks support
+
+        -   Allows you to bring your own data
+
+    -   <https://launch.smarthealthit.org> for SMART on FHIR testing
+
+    -   <https://bulk-data.smarthealthit.org> for FHIR Bulk Data testing
+
+    -   <https://hapifhir.io> if you want to run your own FHIR server
+
+        -   Or use their public sandbox: <http://hapi.fhir.org>
+:::
+
+::: notes
+Walk through <https://sandbox.logicahealth.org/FHIRResearchSynthea/apps>. Show example GET request from <https://nih-odss.github.io/smart-on-fhir-demo/get_example.html>.
+:::
+
+# Wrap-up
+
+## Wrap-up
+
+-   Materials from this webinar: <https://purl.org/fhir-for-research/workshop-recommendations>
+
+-   ODSS FHIR for Research website: <https://datascience.nih.gov/fhir-initiatives/researchers-training>

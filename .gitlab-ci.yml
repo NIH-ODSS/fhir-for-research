@@ -1,0 +1,115 @@
+image:
+  name: artifacts.mitre.org:8200/gitlab-quarto-mitre:2025-02-04
+  entrypoint: [ '/bin/bash', '-c', 'ln -snf /bin/bash /bin/sh && /bin/bash -c $0' ]
+
+# renv cache: https://rstudio.github.io/renv/articles/ci.html
+variables:
+  RENV_CONFIG_REPOS_OVERRIDE: "http://cran.r-project.org"
+  RENV_PATHS_CACHE: ${CI_PROJECT_DIR}/cache
+  RENV_PATHS_LIBRARY: ${CI_PROJECT_DIR}/renv/library
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PLANTUML_BIN: "${CI_PROJECT_DIR}/plantuml.jar"
+  REQUESTS_CA_BUNDLE: "/etc/ssl/certs/ca-certificates.crt"
+  FHIR_SERVER: "http://fhir-server:8080/fhir"
+  SSL_CERT_FILE: "/etc/ssl/certs/ca-certificates.crt"
+  CI_DEBUG_SERVICES: "false"  # This helps with FHIR service debugging
+  ENVIRONMENT_NAME: "production"
+
+services:
+  - name: hapiproject/hapi:v8.0.0-1
+    alias: fhir-server
+    command: [ "-p","8080:8080"]
+
+cache:
+  key: ${CI_PROJECT_URL}
+  paths:
+    - ${RENV_PATHS_CACHE}
+    - ${RENV_PATHS_LIBRARY}
+    - .cache/pip
+
+before_script:
+  - apt-get update -y
+  - apt-get install -y libharfbuzz-dev libfribidi-dev # For "textshaping" in R
+  # For "ragg" in R
+  - apt-get install -y libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+  - export PKG_CONFIG_PATH=/usr/lib/pkgconfig
+  - export PATH="$PATH:$PKG_CONFIG_PATH"
+
+  # Install json processing for testing
+  - apt-get update && apt-get install -y jq
+  # Dynamically install the Python version from .python-version file
+  - export PYTHON_VERSION=$(cat .python-version)
+  - echo "Installing Python version $PYTHON_VERSION from .python-version file"
+  - apt-get install -y software-properties-common
+  - add-apt-repository -y ppa:deadsnakes/ppa
+  - apt-get update -y
+  - apt-get install -y python${PYTHON_VERSION} python${PYTHON_VERSION}-venv python${PYTHON_VERSION}-dev python${PYTHON_VERSION}-distutils || echo "Unable to install Python ${PYTHON_VERSION}, will fallback to UV's installation"
+  - if [ -f /usr/bin/python${PYTHON_VERSION} ]; then ln -sf /usr/bin/python${PYTHON_VERSION} /usr/local/bin/python${PYTHON_VERSION}; fi
+
+  # Move renv cache from Docker to project directory so it can get picked up by the GitLab cache
+  # if it doesn't exist already
+  - "[[ -d $RENV_PATHS_CACHE ]] || cp -r /root/.cache/R/renv/cache $RENV_PATHS_CACHE"
+  - Rscript -e "if (!requireNamespace('renv', quietly = TRUE)) install.packages('renv')"
+  - Rscript -e "renv::restore()"
+  # end renv cache
+
+  # Install Python dependencies via UV
+  - pip3 install uv
+  - uv sync
+  - source .venv/bin/activate
+
+workflow:
+  rules:
+    # trigger every commit
+    - if: $CI_COMMIT_BRANCH
+
+pages:
+  stage: deploy
+
+  variables:
+    PAGES_PREFIX: "" # no prefix by default (run on the default branch)
+
+  pages:  # specifies that this is a Pages job and publishes the default public directory
+    path_prefix: "${PAGES_PREFIX}"
+    expire_in: 4 weeks # I think this doesn't affect the prod one
+  
+  environment:
+    name: $ENVIRONMENT_NAME
+    url: "${CI_PAGES_URL}/${PAGES_PREFIX}"
+
+  artifacts:
+    name: Quarto build
+    expose_as: Quarto build
+    paths:
+      - public
+    expire_in: 6 months
+
+  script:
+    # PREPARE FHIR SERVER
+    - echo "FHIR_SERVER is $FHIR_SERVER"
+    - echo "Waiting for FHIR server to be ready"
+    - wget -q --retry-connrefused --waitretry=10 --read-timeout=60 --timeout=30 -t 10 $FHIR_SERVER/metadata
+    - head -10 metadata
+    - echo "Loading data"
+    - uv run ./script/load_data.py
+    - echo "Verifying data was loaded successfully"
+    - curl -s $FHIR_SERVER/Patient | jq '.total'
+    # RUN QUARTO
+    - quarto render --site-url "${CI_PAGES_URL}/${PAGES_PREFIX}"
+    # Work around https://github.com/quarto-dev/quarto-cli/issues/3892
+    - cp modules/images/*.mp4 public/modules/images/
+    - |
+      if [ -z "$PAGES_PREFIX" ]; then
+        echo "Pages accessible at ${CI_PAGES_URL}"
+      else
+        echo "Pages accessible at ${CI_PAGES_URL}/${PAGES_PREFIX}"
+      fi
+  tags:
+    - pages
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+     # All other branches (prefix by branch name)
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      variables:
+        PAGES_PREFIX: $CI_COMMIT_BRANCH
+        ENVIRONMENT_NAME: review/$CI_COMMIT_BRANCH

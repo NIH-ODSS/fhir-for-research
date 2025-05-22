@@ -1,0 +1,93 @@
+---
+title: Bulk Data Access
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives_hide:
+  - question: OOOOOOOOOOO
+    answer: SMART on FHIR allows for a single application to integrate with multiple institutions' EHRs with minimal institution-specific customization. Without SMART on FHIR, substantial institution-specific development work would be needed.
+  - question: OOOOOOOOOOO
+    answer: SMART on FHIR has been used to integrate new CDS systems into EHRs and integrate additional data sources like patient-reported outcomes into EHRs.
+
+reading_time: true
+---
+
+## Bulk Data Access
+
+Bulk data access is key for researchers to do comprehensive data analysis needed in large-scale studies. Examples include population health studies and epidemiological research. Access to vast datasets allows for more robust statistical analyses and the ability to identify patterns and trends that may not be apparent in smaller data sets. Additionally, automated bulk data extraction reduces manual effort in data collection and entry, while supporting scalability of research projects.
+
+For developing standardized bulk data access in applications that can interface with any FHIR-enabled EHRs, Bulk FHIR may be ideal for most research application development initiatives.
+
+## Bulk FHIR
+
+The [Bulk Data Access standard](http://hl7.org/fhir/uv/bulkdata/), also known as "Bulk FHIR", enables researchers to retrieve large volumes of data from a patient population in an EHR. It is designed to handle large-scale data exports efficiently. The Bulk Data Access standard supports extraction of vast amounts of data (in the form of FHIR resources) in a single request, making it ideal for research, analytics, and population health management.
+
+The Bulk Data Access standard is part of the [SMART ecosystem](https://smarthealthit.org/), which maintains that developing "plug and play" healthcare applications enables development of "best of breed" digital health solutions, benefiting application developers, care teams, patients, industry, public health and others. Bulk Data Access can be leveraged in conjunction with SMART on FHIR to develop applications that can authenticate and authorize access and facilitate bulk data retrieval automatically.
+
+As an HL7® FHIR® standard, Bulk FHIR has been [adopted](https://docs.google.com/presentation/d/14ZHmam9hwz6-SsCG1YqUIQnJ56bvSqEatebltgEVR6c/edit#slide=id.g8c17644f87_23_1146) by many electronic health record (EHR) vendors, including Epic, Cerner, Athena Health, and Allscripts. In January 2023, [ONC announced its support for this standard](https://www.healthit.gov/buzz-blog/health-it/onc-supports-adoption-and-implementation-of-bulk-data-apis).
+
+-   **Key Features:**
+    -   **Asynchronous Export:** Allows for large datasets to be exported without overloading the server by processing the request asynchronously.
+    -   **Granular Data Retrieval:** Enables retrieval of specific types of data, such as patient records, claims, and other health-related information.
+    -   **Format:** Typically returns data in NDJSON (Newline Delimited JSON) format for easy processing.
+
+## Benefits Of Using Bulk FHIR
+
+Without Bulk FHIR, digital health application developers would face significant challenges in handling large-scale patient data transactions. Developing custom solutions to manage these transactions would not only be resource-intensive and time-consuming but also difficult to scale.
+
+Standard FHIR APIs are designed primarily for retrieving data related to individual patients in real time, typically through a single FHIR resource or a FHIR bundle. Consequently, without Bulk FHIR, accessing longitudinal data across a population or cohort would necessitate a series of repeated FHIR API calls for each individual patient, leading to inefficiencies and increased processing overhead. Bulk FHIR addresses these challenges by enabling the efficient retrieval of large data sets, thus facilitating scalable and streamlined data exchanges.
+
+Key benefits to using Bulk FHIR for developing FHIR applications that need access to large amounts of electronic health data include:
+
+### Efficient Data Retrieval
+
+-   **Scalability:** Bulk FHIR is designed for scenarios where large volumes of patient data need to be extracted, processed, or analyzed. It allows for the efficient retrieval of data for multiple patients simultaneously, making it well-suited for population-level analytics and reporting.
+-   **Batch Processing:** It supports asynchronous processing, enabling data extraction in batches, which is more efficient than retrieving data individually for each patient. This reduces the burden on servers and minimizes the need for repeated queries.
+
+### Performance and Speed
+
+-   **Reduced API Calls:** Instead of making multiple API calls to retrieve data for each patient, Bulk FHIR allows for a single request to fetch data for multiple patients. This significantly improves performance and reduces latency, especially when dealing with large datasets.
+-   **Optimized Data Transfer:** Bulk FHIR optimizes data transfer by using more efficient data formats (e.g., NDJSON) and compression, reducing the amount of data that needs to be transmitted and processed.
+
+### Cost-Effectiveness
+
+-   **Resource Utilization:** By reducing the number of API calls and optimizing data retrieval, Bulk FHIR can lower the computational resources required, leading to cost savings on infrastructure.
+-   **Reduced Bandwidth Usage:** The optimized data formats and batch processing reduce bandwidth usage, which can result in lower costs for data transfer, especially in cloud-based environments.
+
+### Compliance and Standardization
+
+-   **Interoperability:** Bulk FHIR adheres to the same standardized data models and protocols as individual FHIR resources, ensuring that applications developed using Bulk FHIR remain interoperable with other FHIR-based systems.
+-   **Regulatory Compliance:** Using Bulk FHIR supports compliance with regulatory requirements, such as those related to data sharing for population health management and research under the 21st Century Cures Act.
+
+### Support for Analytics and Research
+
+-   **Population Health Management:** Bulk FHIR is particularly useful for applications focused on population health management, as it allows for the extraction and analysis of data across large patient cohorts.
+-   **Research and Quality Improvement:** Researchers can leverage Bulk FHIR to access de-identified patient data for research purposes, enabling large-scale studies and quality improvement initiatives.
+
+### Security and Privacy
+
+-   **Granular Access Control:** Bulk FHIR provides mechanisms for managing access to large datasets while adhering to security and privacy standards, including support for OAuth 2.0 for authorization.
+
+### Future-Proofing
+
+-   **Growing Support:** As Bulk FHIR is increasingly adopted and supported by health systems and EHR vendors, applications developed using this approach are better positioned to be compatible with future data exchange initiatives and regulations.
+
+In summary, using Bulk FHIR for applications that need to access large amounts of patient data provides significant advantages in terms of efficiency, performance, cost-effectiveness, and support for large-scale analytics and research, making it a preferred choice for developers working with extensive healthcare datasets.
+
+## Research Application Using Bulk FHIR
+
+An example of a research initiative leveraging Bulk FHIR is the MULTI-State EHR-Based Network for Disease Surveillance (MENDS). MENDS is a population-based distrubuted data network for national chronic disease surveillance. Originally requiring institution-specific data extraction-transformation-load (ETL) routines, the [MENDS-on-FHIR](https://doi.org/10.1093/jamiaopen/ooae045) effort leveraged standards-based interoperability resources (including Bulk FHIR) to provide an alternative mechanism for sharing large amounts of research data. The project leveraged the US Core FHIR standard and Bulk FHIR to exchange data stored in the Observational Medical Outcomes Partnership (OMOP) Common Data Model (CDM) format, establishing a standards-based ETL pipeline.
+
+## References
+
+1.  [HL7 Bulk Data Access Implementation Guide](https://hl7.org/fhir/uv/bulkdata/)
+2.  [SMART Health IT - Bulk Data](https://docs.smarthealthit.org/bulk-data/)
+
+::: {.callout-tip appearance="simple"}
+For more information, see [this overview presentation](https://docs.google.com/presentation/d/14ZHmam9hwz6-SsCG1YqUIQnJ56bvSqEatebltgEVR6c/edit?usp=sharing) and the [HL7 specification](http://hl7.org/fhir/uv/bulkdata/).
+:::

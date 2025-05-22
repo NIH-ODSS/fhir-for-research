@@ -1,0 +1,16 @@
+---
+title: May 2023 Webinar References
+sidebar: false
+---
+
+<!-- This page is not linked to in the site, but is referenced in the FHIR for Research Intro webinar. -->
+
+- Brandt PS, Pacheco JA, Adekkanattu P, Sholle ET, Abedian S, Stone DJ, et al. Design and validation of a FHIR-based EHR-driven phenotyping toolbox. Journal of the American Medical Informatics Association 2022;29:1449–60. <https://doi.org/10.1093/jamia/ocac063>.
+- Cheng AC, Banasiewicz MK, Johnson JD, Sulieman L, Kennedy N, Delacqua F, et al. Evaluating automated electronic case report form data entry from electronic health records. J Clin Trans Sci 2023;7:e29. <https://doi.org/10.1017/cts.2022.514>.
+- Lobach DF, Boxwala A, Kashyap N, Heaney-Huls K, Chiao AB, Rafter T, et al. Integrating a Patient Engagement App into an Electronic Health Record-Enabled Workflow Using Interoperability Standards. Appl Clin Inform 2022;13:1163–71. <https://doi.org/10.1055/s-0042-1758736>.
+- Strasberg HR, Rhodes B, Del Fiol G, Jenders RA, Haug PJ, Kawamoto K. Contemporary clinical decision support standards using Health Level Seven International Fast Healthcare Interoperability Resources. Journal of the American Medical Informatics Association 2021;28:1796–806. <https://doi.org/10.1093/jamia/ocab070>.
+- Tarumi S, Takeuchi W, Chalkidis G, Rodriguez-Loya S, Kuwata J, Flynn M, et al. Leveraging Artificial Intelligence to Improve Chronic Disease Care: Methods and Application to Pharmacotherapy Decision Support for Type-2 Diabetes Mellitus. Methods Inf Med 2021;60:e32–43. <https://doi.org/10.1055/s-0041-1728757>.
+- Wesley DB, Blumenthal J, Shah S, Littlejohn RA, Pruitt Z, Dixit R, et al. A novel application of SMART on FHIR architecture for interoperable and scalable integration of patient-reported outcome data with electronic health records. Journal of the American Medical Informatics Association 2021;28:2220–5. <https://doi.org/10.1093/jamia/ocab110>.
+- Zong N, Stone DJ, Sharma DK, Wen A, Wang C, Yu Y, et al. Modeling cancer clinical trials using HL7 FHIR to support downstream applications: A case study with colorectal cancer data. International Journal of Medical Informatics 2021;145:104308. <https://doi.org/10.1016/j.ijmedinf.2020.104308>.
+
+Permalink to this page: <http://purl.org/fhir-for-research/2023-05-refs>

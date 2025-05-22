@@ -1,0 +1,73 @@
+---
+title: "REDCap on FHIR"
+
+toc: false
+number-sections: false
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+
+learning_objectives2:
+  - Understand how REDCap can integrate with FHIR to support research.
+  - Learn about the roles and approaches that may lead to successful REDCap on FHIR implementations.
+
+reading_time: true
+---
+
+@Cheng_2021 describe the development of "REDCap on FHIR," an approach for integrating REDCap with a FHIR-enabled sever.
+
+::: {.callout-note appearance="minimal" icon="false"}
+If you are not familiar with REDCap and its research use cases, please see the [REDCap Introduction](redcap-intro.qmd) module.
+:::
+
+In their manuscript, @Cheng_2021 describe the development of the Clinical Data Interoperability Services (CDIS), which facilitates the exchange of data between REDCap and any EHR via the FHIR API. As of September 2022, 40 institutions in the US and Canada have integrated REDCap with their Epic or Cerner EHR [@Cheng_Banasiewicz_Johnson_Sulieman_Kennedy_Delacqua_Lewis_Joly_Bistran-Hall_Collins_2023], which represents a small portion of the total number of institutions that have implemented REDCap. However, integrating REDCap with FHIR can provide significant value to researchers by making clinical data more accessible without requiring [manually querying FHIR endpoints](fhir-accessing-data.qmd).
+
+![The CDIS workflow uses FHIR to simplify the process of creating a registry from EHR data.](images/cheng-fhir-shortcut.png){fig-alt="Data flowing directly from an EHR to a REDCap registry, saving time and effort by bypassing a data warehouse and a flat file."}
+
+REDCap on FHIR/CDIS includes two approaches:
+
+1.  Clinical Data Pull (CDP), which applies to prospective studies that aggregate data and fill out case report forms (CRFs) for study participants.
+2.  Clinical Data Mart (CDM), which is for studies with a known cohort of patients and requires a bulk data extraction from an EHR.
+
+According to @Cheng_2021, both CDP and CDM can significantly reduce manual data entry into REDCap, and is reusable between projects at Vanderbilt University Medical Center (VUMC) without the need for support from IT staff.
+
+## Implementation approach
+
+Due to the relatively low percentage of institutions that have implemented REDCap on FHIR, it is unlikely this is available at your institution. If you are interested in pursuing an implementation at your institution, the following approaches may be useful.
+
+@Hawley_Yu_Bogetic_Potapova_Wakefield_Thompson_Kloiber_Hill_Jankowicz_Rotenberg_2021 describe a usability and implementation study at the Centre for Addiction and Mental Health (CAMH) in which they used REDCap to capture self-assessments from patients and transfer the data into a Cerner EHR. When a patient arrived the process saved time, improved the accuracy of data going into the EHR, and made the data accessible in real-time. While not specific to FHIR, the useful roles and responsibilities for implementing REDCap listed in this paper should apply to REDCap on FHIR implementations as well:
+
+> -   **Clinical REDCap administrator**: Clinical REDCap staff responsible for account creation, modification, and suspension for all user types. Responsible for moving projects and draft changes to production. Limited to 2-3 staff members.
+> -   **Project developer administrator**: Clinical REDCap staff responsible for creating REDCap projects and associated forms or surveys. Leads project validation to be carried out in collaboration with clinical stakeholders.
+> -   **Service administrator**: Specialized account for managing secure services post data collection (e.g., application programming interface data export to electronic health record).
+> -   **Clinical data lead**: Clinical staff responsible for monitoring the integrity of the data, providing clinic-specific training to clinic users, supporting minor technical issues in the clinic, facilitating project validation, submitting project change requests, approving subordinate account requests, and serving as the main point of contact for developers and administrators.
+> -   **Clinical care provider**: Clinical staff responsible for the administration and review of clinical assessments; can enter data that have been collected on paper into REDCap.
+> -   **Clinical assistant**: Clinical support staff responsible for administering patient survey queue in the clinic and providing simple technical assistance.
+
+Additionally, for REDCap on FHIR, close collaboration with the EHR implementation team and informaticists who are familiar with your institution's EHR is necessary.
+
+@mare2022 focused on the adoption of REDCap in academic and clinical environments identified similar roles and strategies to facilitate the process. They identified the following methods to support new REDCap users, listed below. Again, these are not specific to REDCap on FHIR but are still applicable.
+
+> -   top-down organizational support;
+> -   secure and reliable application, hosting infrastructure, and systems administration; an enabling and accessible REDCap support team;
+> -   regular hands-on training workshops covering REDCap project setup and data collection instrument design techniques;
+> -   annual local symposia to promote networking and awareness of all the latest software features and best practices for using them;
+> -   participation in REDCap Consortium activities;
+> -   and regular and ongoing mentorship from members of the Vanderbilt University Medical Center.
+
+The authors also used two strategies to support adoption of REDCap:
+
+1.  Building trust among researchers in the security and reliability of REDCap through several layers of back-up should any component fail and simulated data loss and retrieval exercises.
+2.  Establishing a REDCap administrator that acted as a dedicated, go-to person that could answer researchers' questions and offer consultations.
+
+## Conclusion
+
+REDCap and FHIR have global communities of users with active forums for getting support:
+
+-   The [REDCap Community Site](https://projectredcap.org/resources/community/) provides a resource for REDCap administrators across institutions to assist each other.
+-   The [FHIR community](fhir-community.qmd) may also be able to assist with the FHIR-specific aspects of integration with REDCap.
+
+When used together, FHIR can help researchers using REDCap to streamline their data collection and storage processes, find study participants, and develop study cohorts with greater accuracy.

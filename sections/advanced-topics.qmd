@@ -1,0 +1,50 @@
+---
+title: Advanced Topics
+sidebar: false
+---
+
+**Advanced Topics** in FHIR for research cover approaches to gathering and analyzing FHIR-formatted data for research purposes.
+
+Select your [role](/roles.html) to <mark>highlight</mark> the content that is most relevant to you:
+
+<a href="#" class="btn-role" data-role="investigator">Investigator</a>
+<a href="#" class="btn-role" data-role="research-leader">Research Leader</a>
+<a href="#" class="btn-role" data-role="informaticist">Informaticist</a>
+<a href="#" class="btn-role" data-role="software-engineer">Software Engineer</a>
+<a href="#" class="btn-role" data-role="clinician-scientist">Clinician Scientist/Trainee</a>
+
+*Recommended: complete highlighted [FHIR for Research Introduction](introduction.qmd) modules for your role first*
+
+:::{.highlight-by-role}
+### SMART on FHIR
+
+-   [Introduction](/modules/new-smart-on-fhir-intro.qmd)
+-   [Technical Details](/modules/new-smart-on-fhir-tech.qmd)
+
+## CDS Hooks
+
+-   [Introduction](/modules/new-cds-hooks-intro.qmd)
+-   [Types of CDS Hooks](/modules/new-cds-hooks-types.qmd)
+-   [Technical Example](/modules/new-cds-hooks-tech.qmd)
+
+## REDCap
+
+-   [Introduction](/modules/redcap-intro.qmd)
+-   [REDCap on FHIR](/modules/redcap-fhir.qmd)
+
+## Synthea
+-   [Synthea Overview](/modules/synthea-overview.qmd)
+-   [Running Synthea](/modules/synthea-running.qmd)
+-   [Customizing Synthea](/modules/synthea-customizing.qmd)
+
+## FHIR Bulk Data
+
+-   [FHIR Bulk Data Access](/modules/new-bulk-fhir.qmd)
+-   [FHIR Bulk Data webinar](/webinars/bulk-data/index.qmd)
+
+## Emerging Topics
+
+-   [Emerging Innovations](/modules/fhir-emerging-innovations.qmd)
+-   [Real World Research](/modules/fhir-research.qmd)
+-   [Genomics Data Standardization](/modules/genomics.qmd)
+:::

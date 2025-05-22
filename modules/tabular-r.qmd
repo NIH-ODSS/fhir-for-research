@@ -1,0 +1,294 @@
+---
+title: Analyzing FHIR Data in a Tabular Format With R
+
+roles:
+  - Informaticist
+
+learning_objectives2:
+  - Understand the high-level approaches for converting FHIR-formatted data into tabular for analysis in R.
+  - Learn how the fhircrackr library facilitates requesting data from a FHIR server, and creating tidy tabular data tables.
+
+execute:
+  cache: false # caching seems to unexpectedly break dependencies between chunks on full render
+  error: true
+
+# Print data frames
+format:
+   html:
+     df-print: paged
+     code-overflow: wrap
+
+reading_time: true
+---
+
+Data analysis approaches in R typically uses [data frames](https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Data-frames-1) to store tabular data. There are two primary approaches to loading FHIR-formatted data into Pandas DataFrames:
+
+1.  Writing R code to manually convert FHIR instances in JSON format into data frames.
+
+2.  Using a purpose-built library like [fhircrackr](https://polar-fhir.github.io/fhircrackr/) to automatically convert FHIR instances into DataFrames.
+
+    It is recommended to try this approach first. If it is not possible to use fhircrackr for your use case, it may be easier to convert the data from FHIR to tabular format [using Python](tabular-python.qmd) and then export it to R format compared to doing this completely in R. The [Reticulate package](https://rstudio.github.io/reticulate/) may facilitate this by allowing Python and R code to share data objects within [RStduio](https://support.posit.co/hc/en-us/articles/1500007929061-Using-Python-with-the-RStudio-IDE).
+
+To use fhircrackr, you will need a [R](https://www.r-project.org) runtime with fhircrackr installed. Typically R users work in the [RStudio IDE](https://posit.co/products/open-source/rstudio/) but this is not strictly necessary.
+
+::: callout-info
+## FHIR testing server
+
+The examples in this module use a FHIR testing server populated with [Synthea data in FHIR R4 format](https://synthea.mitre.org/downloads) via [public HAPI Test Server](https://hapi.fhir.org/) operated by [HAPI FHIR](https://hapifhir.io/).
+
+The endpoint for this testing server is:
+
+```         
+https://hapi.fhir.org/baseR4
+```
+
+However, any FHIR server loaded with testing data can be used. See [Standing up a FHIR Testing Server](synthea-test-server.qmd) for instructions to set up your own test server.
+
+The code blocks in the following section show sample output immediately after. This is similar to the code blocks and results in a rendered [RMarkdown file](https://rmarkdown.rstudio.com/).
+:::
+
+## Retrieving FHIR data
+
+Once your environment is set up, you can run the following R code to retrieve instances of the Patient resource from a test server:
+
+```{r}
+# Load dependencies
+library(fhircrackr)
+library(tidyverse) # Not strictly necessary, but helpful for working with data in R
+
+# Define the URL of the FHIR server and the request that will be made
+# Add a search parameter for Synthea-specific identifier system
+request <- fhir_url(
+    url = "https://hapi.fhir.org/baseR4",
+    resource = "Patient",
+    parameters = c(
+        identifier = "https://github.com/synthetichealth/synthea|"
+    )
+)
+
+# Perform the request
+patient_bundle <- fhir_search(request = request, max_bundles = 1, verbose = 0)
+
+# This method defines the mapping from FHIR to data frame columns.
+# If the `cols` argument is omitted, all data elements will be included in the data frame.
+table_desc_patient <- fhir_table_description(
+    resource = "Patient"
+)
+
+# Convert to R data frame
+df_patient <- fhir_crack(bundles = patient_bundle, design = table_desc_patient, verbose = 0)
+
+df_patient %>% head(5)
+```
+
+It is easier to see the contents of this DataFrame by printing out its first row vertically:
+
+```{r}
+df_patient[1, ] %>% t()
+```
+
+If you look at the output above, you can see fhircrackr collapsed the hierarchical FHIR data structure into data frame columns, with multiple values delimited by `:::` by default. For example, `Patient.identifier` has multiple values that appear in the data frame as:
+
+| Column name | Example Values |
+|--------------------------|----------------------------------------------|
+| `identifier.type.text` | `Medical Record Number:::Social Security Number:::Driver's License:::Passport Number` |
+| `identifier.value` | `bf23e283-4791-46e1-9d79-9e0ad9edd436:::bf23e283-4791-46e1-9d79-9e0ad9edd436:::999-21-6325:::S99948444:::X30821805X` |
+
+Splitting up these values is [discussed below](#elements-with-multiple-sub-values).
+
+## Selecting specific columns
+
+Usually not every single value from a FHIR instance is needed for analysis. There are two ways to get a more concise data frame:
+
+1.  Use the approach above to load all elements into a data frame, remove the unneeded columns, and rename the remaining columns as needed.
+2.  Use [XPath](https://en.wikipedia.org/wiki/XPath) to select specific elements and map them onto column names.
+
+The second approach is typically more concise. For example, to generate a DataFrame like this...
+
+| id  | gender | date_of_birth | marital_status |
+|-----|--------|---------------|----------------|
+| ... | ...    | ...           | ...            |
+
+...you could use the following code:
+
+```{r}
+table_desc_patient <- fhir_table_description(
+    resource = "Patient",
+    cols = c(
+        id = "id",
+        gender = "gender",
+        date_of_birth = "birthDate",
+        # Rather than having fhircrackr concatenate all `Patient.maritalStatus` values
+        # into one cell, you can select a specific value with XPath:
+        marital_status = "maritalStatus/coding/code"
+    )
+)
+
+df_patient <- fhir_crack(bundles = patient_bundle, design = table_desc_patient, verbose = 0)
+
+df_patient %>% head(5)
+```
+
+While XPath expressions can be quite complex, thier use in fhircrackr is often straight-forward. Nested elements are separated with `/`, and elements with multiple sub-values are identified by `[N]` where `N` is an integer starting at 1.
+
+There are two approaches to identifying element paths to construct XPath expressions:
+
+1.  Look at the FHIR specification or the relevant [FHIR Implementation Guide](data-modeling-reading-igs.qmd) to determine the paths of available data elements. For example, the [Patient page in the FHIR specification](https://www.hl7.org/fhir/patient.html) describes the elements and their hierarchy for instances of Patient.
+
+2.  Print out the raw data returned by the FHIR server. Fhircrackr uses XML-formatted data, and the following code will print out one of the instances of Patient requested above:
+
+```{r}
+xml2::xml_find_first(x = patient_bundle[[1]], xpath = "./entry[1]/resource") %>%
+    paste0() %>%
+    cat()
+```
+
+In some cases, you may need to construct more complex expressions like the one to extract `marital_status` from `Patient.maritalStatus.coding.code`. You can use a tool like [this XPath tester](https://extendsclass.com/xpath-tester.html) to help generate XPath expressions, though online tools such as these should not be used with real patient data. For more information on XPath, see [this guide](https://www.w3schools.com/xml/xpath_intro.asp).
+
+## Elements with multiple sub-values {#elements-with-multiple-sub-values}
+
+There are multiple `identifier[N].value` values for each instance of Patient in this dataset. By default, fhircrackr will concatenate these into a single cell per row, delimited with `:::` (this is configurable; use `fhir_table_description(..., sep = ' | ', ...)` to delimit with `|` instead).
+
+Fhircrackr provides some tools to split up multiple values stored in the same cell into separate rows in a "long" data frame:
+
+```{r}
+table_desc_patient <- fhir_table_description(
+    resource = "Patient",
+
+    # Prefix values in cells with indices to facilitate handling cells that contain
+    # multiple values
+    brackets = c("[", "]")
+)
+
+df_patient_indexed <- fhir_crack(bundles = patient_bundle, design = table_desc_patient, verbose = 0)
+
+df_patient_identifiers <- fhir_melt(
+    indexed_data_frame = df_patient_indexed,
+    columns = c("identifier.type.text", "identifier.value"),
+    brackets = c("[", "]"),
+    sep = ":::",
+    all_columns = FALSE
+)
+
+df_patient_identifiers %>% head(10)
+```
+
+The `df_patient_identifiers` data frame printed above has one row for each value of `Patient.identifier` for each instance of Patient. The in-cell indices (surrounded by `[ ]`) can be removed:
+
+```{r}
+df_patient_identifiers <- fhir_rm_indices(indexed_data_frame = df_patient_identifiers, brackets = c("[", "]"))
+
+df_patient_identifiers %>% head(10)
+```
+
+These can then be merged back into the original data frame as needed. For example, if you want to include the synthetic "Social Security Number" in the original data:
+
+```{r}
+df_patient %>%
+    # Add in row numbers for joining
+    mutate(
+        row_number = row_number()
+    ) %>%
+    left_join(
+        df_patient_identifiers %>%
+            # Note: this assumes there is just one social security number for each patient in the data.
+            # If this was not true, it would be necessary to remove extra data before joining so there
+            # was one row per patient.
+            filter(`identifier.type.text` == "Social Security Number") %>%
+            rename(
+                "ssn" = "identifier.value"
+            ) %>%
+            # Exclude the `identifier.type.text` column so it doesn't appear in the joined data frame
+            select(resource_identifier, ssn) %>%
+            # Fhircrackr generates the `resource_identifier` column as a string, but it needs to be
+            # an integer for joining.
+            mutate(resource_identifier = as.integer(resource_identifier)),
+        by = c("row_number" = "resource_identifier")
+    ) %>%
+    head(5)
+```
+
+You can see that the synthetic SSNs are now split out into a separate column.
+
+## Retrieving related data
+
+To retrieve instances of related resources, additional `request_params` can be added. See [Using the FHIR API to Access Data](fhir-accessing-data.qmd#multiple-types-of-resources) for more information on constructing the parameters for FHIR search interactions.
+
+In the example below, instances of Patient and instances of related Observation resources are requested:
+
+```{r}
+request <- fhir_url(
+    url = "https://hapi.fhir.org/baseR4",
+    resource = "Patient",
+    parameters = c(
+        "identifier" = "https://github.com/synthetichealth/synthea|",
+        "_revinclude" = "Observation:patient",
+        "_count" = "10" # Limit the number of patients returned to 10
+    )
+)
+
+response <- fhir_search(request = request, max_bundles = 1, verbose = 0)
+
+table_desc_patient <- fhir_table_description(
+    resource = "Patient",
+    cols = c(
+        id = "id",
+        gender = "gender",
+        date_of_birth = "birthDate",
+        marital_status = "maritalStatus/coding/code"
+    )
+)
+
+df_patient <- fhir_crack(bundles = patient_bundle, design = table_desc_patient, verbose = 0)
+
+table_desc_observation <- fhir_table_description(
+    resource = "Observation"
+)
+
+df_observation <- fhir_crack(bundles = response, design = table_desc_observation, verbose = 0)
+
+df_observation %>% glimpse()
+```
+
+This includes many different kinds of observations. The `Observation.code` element identifies the type of Observation. In this case,`http://loinc.org|72166-2` is the LOINC for smoking status. To get smoking status records identified by this LOINC:
+
+```{r}
+request <- fhir_url(
+    url = "https://hapi.fhir.org/baseR4",
+    resource = "Observation",
+    parameters = c(
+        "identifier" = "https://github.com/synthetichealth/synthea|",
+        "_include" = "Observation:patient",
+        "code" = "http://loinc.org|72166-2"
+    )
+)
+
+# `max_bundles = 1` limits the responses to a subset of Observations for the purposes of
+# this example -- this argument can be removed to get all relevant Observations/Patients (but
+# the query takes longer to run)
+response <- fhir_search(request = request, max_bundles = 1, verbose = 0)
+
+table_desc_patient <- fhir_table_description(
+    resource = "Patient",
+    cols = c(
+        id = "id",
+        gender = "gender",
+        date_of_birth = "birthDate",
+        marital_status = "maritalStatus/coding/code"
+    )
+)
+
+df_patient <- fhir_crack(bundles = patient_bundle, design = table_desc_patient, verbose = 0)
+
+table_desc_observation <- fhir_table_description(
+    resource = "Observation"
+)
+
+df_observation <- fhir_crack(bundles = response, design = table_desc_observation, verbose = 0)
+
+df_observation %>% glimpse()
+```
+
+The `df_observation` data frame contains just smoking status Observations. The `df_patient` data frame contains the Patients referenced by the Observations in `df_observation`.
+
+More information about the [`search` interaction used above to filter Observations is here](fhir-accessing-data.qmd#getting-all-patients-that-meet-specified-criteria).

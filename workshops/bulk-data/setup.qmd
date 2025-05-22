@@ -1,0 +1,131 @@
+---
+title: FHIR Bulk Data Workshop Setup
+
+toc: false
+number-sections: false
+---
+
+This workshop uses a [JupyterHub server](https://tljh.jupyter.org/en/latest/), which can be installed via [these instructions for Google Cloud Platform (GCP)](https://tljh.jupyter.org/en/latest/install/google.html).
+
+## Capacity planning
+
+JupyterHub has a [capacity planning](https://jupyterhub.readthedocs.io/en/latest/explanation/capacity-planning.html) page that may be helpful when deciding on the specifications for provisioning a server.
+
+## Manual setup on an existing server
+
+### Install JupyterHub
+
+Following the relevant portion of [these instructions](https://tljh.jupyter.org/en/latest/install/custom-server.html), run the following after SSHing into the Ubuntu VM:
+
+```sh
+sudo apt install python3 python3-dev git curl
+curl -L https://tljh.jupyter.org/bootstrap.py | sudo -E python3 - --admin jupyterhub --show-progress-page --plugin git+https://github.com/kafonek/tljh-shared-directory
+```
+
+The `--show-progress-page` option will show a status page at `http://<public ip address here>/index.html` while the installer is running.
+
+The setup should be automatic after running this command. When completed, navigating to `http://<public ip address here>` in your web browser should show JupyterHub. You log in with username `jupyterhub` and whatever password you enter in the login box will be set for the `jupyterhub` account automatically.
+
+### Creating users for the workshop
+
+Can batch create, password will be set the first time they log in
+
+Don't create extra admins -- they have root access to the server.
+
+### Resetting passwords
+
+Delete the user through the JupyterHub admin console. This will not delete their home folder on the server where their files are stored.
+
+### Deleting users
+
+In addition to deleting a user through the JupyterHub admin console, you will also need to delete their Linux account:
+
+```shell
+sudo userdel jupyter-usernamegoeshere
+```
+
+### Create shared data folders
+
+The `tljh-shared-directory` will create a `scratch` folder that all JupyterHub users will be able to read/write to. However, only the user that creates a file will be able to edit it.
+
+You can also create a read-only folder for all users:
+
+```sh
+sudo mkdir -p /srv/workshop
+cd /etc/skel
+sudo ln -s /srv/workshop workshop-read-only
+```
+
+All new users created after you run the above commands will have a `workshop-read-only/` folder symlink in their home folder.
+
+### Getting the Jupyter notebook and installing dependencies
+
+Create a new Terminal window in JupyterHub while logged in as an admin, and run the following command:
+
+```sh
+git clone https://github.com/NIH-ODSS/fhir-for-research.git
+sudo -E pip install -r /path/to/fhir-for-research/requirements.txt
+```
+
+The `requirements.txt` file you need is [here](https://github.com/NIH-ODSS/fhir-for-research/blob/main/requirements.txt) if you can't easily access your clone of the repo.
+
+### Getting the notebook in every user's home folder
+
+There are two options:
+
+1. Copy the notebook to `/etc/skel`, and JupyterHub will automatically copy it to the home folder for every new user. This is easier for the users, but there is no good way to update notebook contents once a user account has been created.
+2. Put it in the `/srv/workshop` folder, and have users open it via JupyterHub, "save as", and then refresh the page. This is more cumbersome for the users, but ensures everyone will have an up-to-date notebook to work off of.
+
+### Avoiding time-outs
+
+See [Culling idle notebook servers — The Littlest JupyterHub documentation](https://tljh.jupyter.org/en/latest/topic/idle-culler.html):
+
+```shell
+sudo tljh-config set services.cull.timeout 18000 # 5 hours
+sudo tljh-config reload
+```
+
+### Converting JWK to PEM
+
+```shell
+sudo apt install nodejs npm
+npm install node-jose
+```
+
+Create `convert.js` with the following contents:
+
+```js
+const jose = require("node-jose");
+
+const jwks = {}; // Set this to the full JWKS from https://bulk-data.smarthealthit.org
+
+// Get first key where the `key_ops` value is `sign` -- this is the private key
+const key = jwks["keys"].filter((k) => k.key_ops[0] == "sign")[0];
+
+// Convert private key to PEM format and print to terminal
+jose.JWK.asKey(key).then(function (key) {
+  console.log(key.toPEM(true));
+});
+```
+
+Now you can run `node convert.js` to get the private key in PEM format.
+
+### Creating `synthea.ndjson`
+
+1. Download the 1k FHIR R4 sample dataset from [here](https://synthea.mitre.org/downloads)
+2. Unzip and delete down to the number of patients you want (recommended: 50 or 100)
+3. Run `jq -c '.entry[].resource' *.json > synthea.ndjson` (this requires [`jq`](https://jqlang.github.io/jq/))
+
+Place the `.ndjson` file(s) in `/etc/skel` on the server to add them automatically to each new user's home folder.
+
+### Enable TOC in Jupyter
+
+From the Terminal window via a JupyterHub admin account:
+
+```shell
+sudo -E pip install jupyter_contrib_nbextensions
+sudo -E jupyter contrib nbextension install --sys-prefix
+sudo -E jupyter nbextension enable toc2/main --sys-prefix
+```
+
+This is based on [this documentation](https://tljh.jupyter.org/en/latest/howto/admin/enable-extensions.html)

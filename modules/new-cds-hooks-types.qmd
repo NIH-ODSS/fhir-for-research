@@ -1,0 +1,45 @@
+---
+title: Types of CDS Hooks
+
+roles:
+  - Investigator
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+reading_time: true
+---
+
+Understanding the different types of CDS Hooks is essential because it allows developers to deliver timely, context-specific decision support that seamlessly integrates into clinicians' workflows, enhancing user experience, reducing alert fatigue, and improving patient outcomes. By choosing the right hook for each scenario, developers can create targeted, efficient applications that provide critical information precisely when it's needed, leading to better clinical decisions and more effective EHR integration. This knowledge also enables scalable, adaptable solutions that can evolve with the complexity of healthcare needs.
+
+CDS Hooks can be broadly categorized based on when and how they are triggered within the EHR workflow. Below are some common types of CDS Hooks and examples of how they might be used. More detailed information on the varied types of CDS Hooks can be found on the [CDS Hooks community site](https://cds-hooks.org/).
+
+## `patient-view` Hook
+
+-   **Description:** The `patient-view` hook is triggered when a clinician opens a patient’s record or chart within the EHR. It provides an opportunity to display patient-specific information or suggest actions based on the patient’s health data.
+-   **Use Case Example:** Imagine a SMART on FHIR application that monitors a patient’s chronic conditions. When a clinician opens the patient’s chart, the `patient-view` hook could trigger an application that provides a summary of the patient’s recent lab results, medication adherence, and potential drug interactions.
+-   **When to Use:** This hook is ideal for applications that need to provide a comprehensive overview or specific recommendations whenever a patient’s chart is accessed.
+
+## `order-select` Hook
+
+-   **Description:** The `order-select` hook is triggered when a clinician starts the process of ordering a medication, lab test, or procedure for a patient. It allows the application to intervene at the moment the order is being considered.
+-   **Use Case Example:** A CDS system could use the `order-select` hook to alert the clinician if they are ordering a medication that might interact with the patient’s current prescriptions. For example, if a patient is already on a blood thinner, the application could warn the provider about potential interactions with certain pain relievers.
+-   **When to Use:** Use this hook when you need to provide decision support related to the selection of orders, such as drug interaction checks, dosage recommendations, or alternative therapy suggestions.
+
+## `order-sign` Hook
+
+-   **Description:** The `order-sign` hook is triggered when a clinician is about to sign and finalize an order. This hook allows the application to provide a final check before the order is submitted.
+-   **Use Case Example:** Before a clinician submits a lab test order, the `order-sign` hook could trigger a check to ensure that the test is appropriate for the patient’s condition and that it has not been ordered recently to avoid unnecessary duplication.
+-   **When to Use:** This hook is useful for applications that need to validate or review orders before they are finalized, such as verifying lab test relevance, checking for recent similar orders, or ensuring compliance with clinical guidelines.
+
+## `encounter-start` Hook
+
+-   **Description:** The `encounter-start` hook is triggered at the beginning of a patient encounter or visit. It can be used to prepare the clinician with relevant information or to initiate workflows specific to the patient’s visit type.
+-   **Use Case Example:** At the start of a patient visit, the `encounter-start` hook could trigger an application that provides a checklist of items to review based on the patient’s chronic conditions or upcoming procedures, ensuring that nothing important is overlooked during the visit.
+-   **When to Use:** Use this hook when you need to provide decision support or reminders at the start of a patient encounter, such as review prompts for chronic disease management or pre-visit checklists.
+
+## `encounter-discharge` Hook
+
+-   **Description:** The `encounter-discharge` hook is triggered when a patient is about to be discharged from a healthcare facility. This hook is useful for ensuring that all necessary discharge instructions, follow-up appointments, and prescriptions are in place.
+-   **Use Case Example:** Before discharging a patient, the `encounter-discharge` hook could trigger an application that ensures the patient has been prescribed necessary medications, received appropriate follow-up instructions, and been scheduled for any required post-discharge appointments.
+-   **When to Use:** This hook is ideal for supporting safe and effective discharge planning, ensuring that all critical steps are completed before the patient leaves the healthcare facility.

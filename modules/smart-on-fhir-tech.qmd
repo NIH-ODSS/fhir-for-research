@@ -1,0 +1,325 @@
+---
+title: Technical Details
+
+roles:
+  - Software Engineer
+
+bibliography: ../bibliography.bib
+
+reading_time: true
+---
+
+This module is meant for technical users who would like to start working hands-on with SMART on FHIR. Read the [SMART on FHIR Introduction](smart-on-fhir-intro.qmd) before continuing.
+
+## High-level technical considerations
+
+### Authorization pattern
+
+**Authorization** ensures that the user of an application has permission to perform specific actions. For SMART-on-FHIR applications, it ensures the user is allowed to access the FHIR data they are requesting.
+
+Your SMART on FHIR application will use one of the authorization patterns defined by the [SMART App Launch specification](http://www.hl7.org/fhir/smart-app-launch/).
+
+1.  [**SMART App Launch**](http://www.hl7.org/fhir/smart-app-launch/app-launch.html) supports applications that launch in an EHR or launch standalone:
+    1.  **EHR Launch:** A user launches the application within the EHR from an existing EHR session (e.g., custom a clinical decision support application).
+
+    2.  **Standalone Launch:** A user launches the application directly, like in a smartphone or stand-alone website (e.g., Apple's [Health app on the iPhone](https://support.apple.com/guide/healthregister/technical-requirements-specifications-health-apd12d144779/web)).
+2.  [**SMART Backend Services**](http://www.hl7.org/fhir/smart-app-launch/backend-services.html) support applications that run autonomously, like an automated data pipeline. SMART Backend Services are also used for user-facing applications where the FHIR authorization service does not need the user's information (e.g., a dashboard application).
+
+### Software libraries
+
+Open-source libraries exist in many programming languages to help developers work with FHIR data and SMART App Launch.
+
+[docs.smarthealthit.org](http://docs.smarthealthit.org) lists the following software libraries that support SMART App Launch:
+
+> -   [JavaScript or TypeScript](http://docs.smarthealthit.org/client-js): Client-side and server-side library with support for SMART App Launch
+>
+> -   [Node.js from Vermonster](https://github.com/Vermonster/fhir-kit-client): An alternative Node.js implementation
+>
+> -   [Python](http://docs.smarthealthit.org/client-py/): Server-side Python library with support for SMART App Launch
+>
+> -   [R](https://github.com/FirelyTeam/RonFHIR)
+>
+> -   [Ruby](https://github.com/fhir-crucible/fhir_client)
+>
+> -   [Swift (iOS)](https://github.com/smart-on-fhir/Swift-SMART)
+>
+> -   [Java](https://mvnrepository.com/artifact/org.hspconsortium.client/hspc-java-client)
+>
+> -   [.NET](https://fire.ly/fhir-api/): FHIR client library from Firely
+
+HL7®'s Confluence site also has a list of [FHIR-related software libraries](https://confluence.hl7.org/display/FHIR/Open+Source+Implementations).
+
+You can create a SMART on FHIR application without relying on third-party libraries, but using a third-party library will likely save development time.
+
+### Security and privacy
+
+FHIR servers will likely return health data that can be linked to an individual. If so, [rules around handling Protected Health Information (PHI)](https://www.hhs.gov/hipaa/for-professionals/security/laws-regulations/index.html) apply. Your institution's [IRB](https://www.hhs.gov/ohrp/education-and-outreach/online-education/human-research-protection-training/lesson-3-what-are-irbs/index.html) will also have policies for handling sensitive patient data used in research.
+
+Determine the security and privacy approach for health data early in your design process before working with any real patient data. You can use synthetic data and a [test FHIR server](smart-on-fhir-tech.qmd) during development and testing.
+
+### Human-centered design
+
+If you are developing a user-facing application, consider a [human-centered design](https://en.wikipedia.org/wiki/Human-centered_design) approach. From [ISO 9241-210:2019](https://www.iso.org/standard/77520.html):
+
+> Human-centered design is an approach to interactive systems development that aims to make systems usable and useful by focusing on the users, their needs and requirements, and by applying human factors/ergonomics, and usability knowledge and techniques. This approach enhances effectiveness and efficiency, improves human well-being, user satisfaction, accessibility and sustainability; and counteracts possible adverse effects of use on human health, safety and performance.
+
+For more information on human-centered design in healthcare research, see @gottgens2021.
+
+## Example SMART on FHIR app
+
+Follow the steps below to create a simple browser-based SMART on FHIR app (based on [this tutorial](https://docs.smarthealthit.org/tutorials/javascript/)) using JavaScript. This example will use SMART App Launch's [EHR Launch flow](https://www.hl7.org/fhir/smart-app-launch/app-launch.html#launch-app-ehr-launch).
+
+### Prerequisites
+
+You need:
+
+-   a text editor
+-   a way to run a local HTTP server (described [below](#step-4-run-a-local-web-server))
+-   familiarity with HTML, JavaScript, and the command line
+
+### Instructions
+
+Below are the instructions for getting an example SMART on FHIR app running locally. We provide a [detailed explanation](#explanation) of how this works after the instructions.
+
+#### Step 1: Create a project folder and files
+
+Create a folder with two files:
+
+1.  `launch.html`
+2.  `index.html`
+
+#### Step 2: Create the launch page
+
+Add the following content to `launch.html`:
+
+``` html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Launch My APP</title>
+        <!-- Use the SMART on FHIR JavaScript library to handle authorization -->
+        <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+    </head>
+    <body>
+        <script>
+            FHIR.oauth2.authorize({
+
+              // The client_id that you should have obtained after registering a client at
+              // the EHR.
+              //
+              // Note that this can be an arbitrary string when testing with
+              // http://launch.smarthealthit.org.
+              clientId: "my_web_app",
+
+              // The scopes that you request from the EHR. In this case we want to:
+              // launch            - Get the launch context
+              // openid & fhirUser - Get the current user
+              // patient/*.read    - Read patient data
+              scope: "launch openid fhirUser patient/*.read",
+
+              // Typically, if your redirectUri points to the root of the current directory
+              // (where the launchUri is), you can omit this option because the default value is
+              // ".". However, some servers do not support directory indexes so "." and "./"
+              // will not automatically map to the "index.html" file in that directory.
+              redirectUri: "index.html"
+            });
+        </script>
+    </body>
+</html>
+```
+
+Note that the [`FHIR.oauth2.authorize()`](https://docs.smarthealthit.org/client-js/api.html#authorizeoptionsoptions-promisenever) method will automatically redirect back to the authorization server (`launch.smarthealthit.org` for this example). This means that you will never see this page rendered in your browser.
+
+#### Step 3: Create the "app" page
+
+Add the following contents to `index.html`. This will be the testing "app" for this example:
+
+``` html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Example SMART App</title>
+
+        <!-- Use the SMART on FHIR JavaScript library -->
+        <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+
+        <!-- Use Bootstrap for styling -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+        <style>
+            /* Additional styling for text boxes that will show JSON data */
+            #patient, #meds {
+                font-family: Monaco, monospace;
+                white-space: pre;
+                font-size: 13px;
+                height: 38vh;
+                overflow: scroll;
+                border: 1px solid #CCC;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar bg-primary" style="margin-bottom: 2vh">
+          <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1 text-white">Example SMART on FHIR Application</span>
+          </div>
+        </nav>
+        <div class="container">
+            <h4>Current Patient</h4>
+            <div id="patient">Loading...</div>
+            <br/>
+            <h4>Medications</h4>
+            <div id="meds">Loading...</div>
+            <script type="text/javascript">
+                FHIR.oauth2.ready().then(function(client) {
+
+                    // Render the current patient (or any error)
+                    client.patient.read().then(
+                        function(pt) {
+                            document.getElementById("patient").innerText = JSON.stringify(pt, null, 4);
+                        },
+                        function(error) {
+                            document.getElementById("patient").innerText = error.stack;
+                        }
+                    );
+
+                    // Get MedicationRequests for the selected patient
+                    client.request("/MedicationRequest?patient=" + client.patient.id, {
+                        resolveReferences: [ "medicationReference" ],
+                        graph: true
+                    })
+
+                    // Reject if no MedicationRequests are found
+                    .then(function(data) {
+                        if (!data.entry || !data.entry.length) {
+                            throw new Error("No medications found for the selected patient");
+                        }
+                        return data.entry;
+                    })
+
+
+                    // Render the current patient's medications (or any error)
+                    .then(
+                        function(meds) {
+                            document.getElementById("meds").innerText = JSON.stringify(meds, null, 4);
+                        },
+                        function(error) {
+                            document.getElementById("meds").innerText = error.stack;
+                        }
+                    );
+
+                }).catch(console.error);
+            </script>
+        </div>
+    </body>
+</html>
+```
+
+#### Step 4: Run a local web server {#step-4-run-a-local-web-server}
+
+1.  Open a command prompt window and go to the folder you created.
+
+2.  Run a command to start a local web server on port `8000`. For example, if you have Python 3 on your system run:
+
+    ``` bash
+    python3 -m http.server 8000
+    ```
+
+    For Python 2, run:
+
+    ``` bash
+    python -m SimpleHTTPServer 8000
+    ```
+
+For more information on using Python as a local web server, review [Mozilla's test server guide](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/set_up_a_local_testing_server#running_a_simple_local_http_server). If you don't have Python, you can use [Ruby](https://apidock.com/ruby/Object/httpd) or [a Node package](https://github.com/http-party/http-server).
+
+Once you are running the server, navigate to [`http://localhost:8000`](http://localhost:8000). You should see a page that looks like this:
+
+![](images/smart-on-fhir-loading.png){fig-alt="Screenshot showing example SMART on FHIR application, displaying \"loading...\" for the patient and medication data."}
+
+**Note:** data will not load by opening `index.html` in your browser. To load data, you must go through the EHR launch flow (see next step).
+
+#### Step 5: Test with launch.smarthealthit.org
+
+Go to <https://launch.smarthealthit.org>, enter `http://localhost:8000/launch.html` for in the "App's Launch URL" field, and click "Launch".
+
+You should see the following happen:
+
+<!-- THIS FAILS {{< video images/smart-on-fhir-flow.mp4 >}} -->
+
+<!-- see https://github.com/quarto-dev/quarto-cli/issues/3892, it gets fixed in Quarto 1.3, but below is workaround -->
+
+![](images/smart-on-fhir-flow.mp4){fig-alt="video showing SMART-on-FHIR flow"}
+
+### App launch process explanation {#explanation}
+
+Here's a visual diagram of the process that occurs when you launch your example application with `launch.smarthealthit.org`:
+
+::: {#mermaidImageOld .mermaid-lightbox data-caption="Diagram showing the workflow for a SMART on FHIR EHR launch"}
+```{mermaid}
+sequenceDiagram
+    accTitle: Diagram showing the workflow for a SMART on FHIR EHR launch
+    %%{init:{'sequence':{'messageFontSize': 30, 'actorFontSize': 30}}}%%
+    participant A as localhost:8000/launch.html
+    participant B as launch.smarthealthit.org
+    participant C as localhost:8000/index.html
+    participant D as FHIR Server
+
+    B ->> B: Launch triggered via test website
+    B ->> A: Launch requested
+    A ->> B: Authorization request
+    B ->> B: Dummy provider log-in and patient selection
+    B ->> C: Authorization granted
+    C ->> B: Access token request
+    B -->> C: Access token response
+    C ->> D: Request Patient
+    D -->> C: Response with Patient JSON
+    C ->> D: Request MedicationRequests
+    D -->> C: Response with MedicationRequest JSON
+```
+:::
+
+Here are the details of this process:
+
+1.  You trigger the application launch by clicking "Launch" on `launch.smarthealthit.org`. This simulates an EHR user triggering a SMART on FHIR app launch using a link in the EHR.
+
+    In this case, `launch.smarthealthit.org` redirects your browser to `http://localhost:8000/launch.html?iss=http%3A%2F%2Flaunch.smarthealthit.org%2Fv%2Fr4%2Ffhir&launch=...`.
+
+    The [SMART App Launch documentation](http://hl7.org/fhir/smart-app-launch/STU2/app-launch.html#launch-app-ehr-launch) explains the two parameters in this URL:
+
+    > -   `iss`: Identifies the EHR's FHIR endpoint, which the app can use to obtain additional details about the EHR including its authorization URL.
+    > -   `launch`: Opaque identifier for this specific launch and any EHR context associated with it. This parameter must be communicated back to the EHR at authorization time.
+
+2.  `http://localhost:8000/launch.html` loads in your browser, and [`FHIR.oauth2.authorize()`](https://docs.smarthealthit.org/client-js/api.html#authorizeoptionsoptions-promisenever) is called with the options defined in `launch.html`'s source code. The `authorize()` method [obtains an authorization code](https://hl7.org/fhir/smart-app-launch/STU2/app-launch.html#obtain-authorization-code) from the testing server's "authorize" endpoint. In this case, it does this by triggering a browser redirect to `https://launch.smarthealthit.org/v/r4/auth/authorize` with [a number of parameters](https://hl7.org/fhir/smart-app-launch/STU2/app-launch.html#obtain-authorization-code).
+
+3.  Your browser loads a page on the `launch.smarthealthit.org` server simulating provider log-in and patient selection. (Note: If this application was being used in a real-world EHR, the provider would be logged in through the EHR and the selected patient would be whichever patient the provider was viewing when they launched the app in the EHR.)
+
+    This dummy flow gathers the information needed for `launch.smarthealthit.org` to provide the example application with the authorization code. It does this by redirecting your browser to `http://localhost:8000/index.html?code=...&state=...`. It knows to take you to `http://localhost:8000/index.html` because you specified the parameter `redirectUri: "index.html"` in the source code of `launch.html`.
+
+4.  `http://localhost:8000/index.html` loads in your browser and calls [`FHIR.oauth2.ready()`](http://docs.smarthealthit.org/client-js/api.html#readyoptions---promiseclient). This creates a [`Client`](http://docs.smarthealthit.org/client-js/client) instance that handles [obtaining](https://hl7.org/fhir/smart-app-launch/STU2/app-launch.html#obtain-access-token) and refreshing the OAuth access token needed to authorize access to the FHIR server, and making requests to the FHIR server with the proper headers.
+
+    In this case, a call is made to `https://launch.smarthealthit.org/v/r4/auth/token`, which responds with the authorization token that must be passed along with any requests for FHIR data.
+
+5.  `http://localhost:8000/index.html` calls `client.patient.read()` to request the Patient resource instance from the FHIR server (in this case, this results in a call to `https://launch.smarthealthit.org/v/r4/fhir/Patient/39234650-0229-4aee-975b-c8ee68bab40b`) and displays the raw JSON returned by the server. Note that the `read()` method automatically includes the authorization token from (4).
+
+6.  `http://localhost:8000/index.html` calls `client.request(...)` to request the MedicationRequest resource instances from the FHIR server (in this case, this results in a call to `https://launch.smarthealthit.org/v/r4/fhir/MedicationRequest?patient=39234650-0229-4aee-975b-c8ee68bab40b`) and displays the raw JSON returned by the server. Note that the `request()` method automatically includes the authorization token from (4).
+
+Now that the application has access to FHIR data, common front-end web development techniques could be used to create an application that utilizes this data.
+
+This example assumes a SMART on FHIR-enabled server (like the `https://launch.smarthealthit.org` testing server used above). See [this tutorial](http://docs.smarthealthit.org/tutorials/server-quick-start/) for more information on setting up a SMART on FHIR-enabled server.
+
+Additionally, [Cerner's browser-based app tutorial](https://engineering.cerner.com/smart-on-fhir-tutorial/) provides more detail on setting up a browser-based SMART on FHIR application.
+
+## Additional resources
+
+Several resources are listed at [docs.smarthealthit.org](https://docs.smarthealthit.org), including additional tutorials, test environments, vendor sandboxes, and sample apps.
+
+There are also a few recommendations for support on [docs.smarthealthit.org](https://docs.smarthealthit.org):
+
+> -   [FHIR Discussion Board](https://chat.fhir.org/) ([SMART Stream](https://chat.fhir.org/#narrow/stream/179170-smart))
+>
+> -   [SMART on FHIR community mailing list](https://groups.google.com/forum/#!forum/smart-on-fhir)
+
+For developers interested in using SMART on FHIR with Bulk Data Access, there is a [tutorial on using Bulk Data Access to export data to access via SQL](https://colab.research.google.com/drive/1HhEEB3MJ8LbMP2ta946s8OARPc5RflHu).

@@ -1,0 +1,92 @@
+---
+title: Synthetic Data
+
+roles:
+  - Informaticist
+  - Software Engineer
+  - Trainer
+
+learning_objectives:
+  - question: How can you build or test FHIR software without infringing on data privacy and ethics?
+    answer: Use synthetic data.
+  - question: How can you prepare synthetic data?
+    answer: Download a prepared database from the links provided, or generate your own database using Synthea.
+
+reading_time: true
+---
+
+<!-- TODO: parts of this webpage refer to an Journal which has not yet been published -->
+
+**Synthetic Data** describes how to access synthetic FHIR data and run on a test server. Synthetic data is provided by the [Synthea](https://github.com/synthetichealth/synthea)<sup>TM</sup> project.
+
+Synthetic data should be used instead of real data whenever possible when building and testing FHIR software. Using synthetic data allows researchers to run their software without human subjects privacy considerations, like IRB approval and privacy review.
+
+Synthetic data in FHIR format is typically available via two separate mechanism:
+
+1.  **As downloaded files (usually `.json` format)**, usually used for loading into software manually for testing or experimentation.
+2.  **From a FHIR server**, usually used for testing software that connects with FHIR API endpoints.
+
+## General-Purpose Synthetic Data
+
+The Synthea project provides static downloads of synthetic data at <https://synthea.mitre.org/downloads>.
+
+Synthea data may be used on [public FHIR test servers](https://confluence.hl7.org/display/FHIR/Public+Test+Servers) (it can often be identified by the numbers appended to the patient name elements). Note that the Synthea project's FHIR test server [has been retired](https://synthea.mitre.org/fhir-api), so if you want a FHIR test server with a specific Synthea dataset you will need [to set this up yourself](/modules/synthea-test-server.qmd).
+
+## Ophthalmology-Specific Synthetic Data With Imaging
+
+A set of Synthea data customized to include synthetic ophthalmology-related data is available. This data may be useful for ophthalmology-specific use cases, or for general purpose testing of FHIR data with embedded images (fundus photos and optical coherence tomography (OCT) foveal B-scans). <!-- The details of this data are described in a <mark>forthcoming journal article (link will be updated when this is available)<mark>. -->
+
+### FHIR Format
+
+The synthetic FHIR data are available in the following formats:
+
+1.  10 curated full-life records with both ophthalmology and non-ophthalmology conditions ([with images](https://app.box.com/file/1655184613208) \| [without images](https://app.box.com/file/1655184198662))
+2.  100 records with five years of history of both ophthalmology and non-ophthalmology conditions ([with images](https://app.box.com/file/1655184598808) \| [without images](https://app.box.com/file/1655184210662))
+3.  1000 records with five years of history and *only* ophthalmology conditions ([with images](https://app.box.com/file/1655184589208) \| [without images](https://app.box.com/file/1655184222662))
+
+*Note: the "with images" links include FHIR resources with embedded images, `.jpg` versions of the images alone, and DICOM versions of the images alone.*
+
+If you want to run a FHIR test server with these data pre-loaded, please see these [instructions using Docker Compose](https://github.com/NIH-NEI/fhir-for-research-smart-example).
+
+### Images Only
+
+Synthetic images alone (without accompanying FHIR data) are also available:
+
+#### Optical coherence tomography (OCT) foveal B-scans
+
+Two different image-only OCT datasets are available:
+
+1.  Synthetic OCT ([download .zip of 50k images in .png format](https://app.box.com/file/1658170581253))
+    -  ***Note:** The synthetic OCT images included in the FHIR data (described above) were drawn from these images.*
+2.  Subset of (1) reviewed by ophthalmology experts <!-- as part of <mark>\[link to forthcoming journal article\]</mark> --> ([download .zip](https://app.box.com/file/1655318954176))
+
+These are organized by disease state label:
+
+-   `CNV` = [choroidal neovascularization](https://en.wikipedia.org/wiki/Choroidal_neovascularization)
+-   `DME` = [diabetic macular edema](https://eyewiki.org/Diabetic_Macular_Edema)
+-   `Drusen` = [drusen](https://eyewiki.org/Age-Related_Macular_Degeneration#Drusen) related to age-related macular degeneration
+-   `Normal` = no disease
+
+#### Fundus photos
+
+Three different image-only fundus photo datasets are available:
+
+1.  Synthetic fundus photos used in the FHIR data (above) ([download .zip of 100 images in .jpg format](https://app.box.com/file/1655322016179))
+2.  An additional 900 synthetic fundus photos from the same model used to generate (1) ([download .zip of 900 images in .jpg format](https://app.box.com/file/1658153848131))
+3.  Synthetic fundus photos reviewed by ophthalmology experts <!-- as part of <mark>\[link to forthcoming journal article\]</mark> --> ([download .zip](https://app.box.com/file/1655316999841))
+    -   ***Note:** The synthetic image generation model was improved after these images were generated. The synthetic fundus photos used for the FHIR data -- items (1) and (2) above -- are generally higher quality.*
+
+## Using Synthea
+
+If you want to generate Synthea data yourself, please see the following resources:
+
+-   [Synthea Synthetic Data Overview](/modules/synthea-overview.qmd)
+-   [Running Synthea](/modules/synthea-running.qmd)
+-   [Customizing Synthea](/modules/synthea-customizing.qmd)
+
+## FHIR Test Servers
+
+If you want to run a FHIR testing server with a specific synthetic dataset, please see the following resources:
+
+-   General instructions for [standing up a FHIR testing server](/modules/synthea-test-server.qmd)
+-   [Instructions for running a FHIR testing server with the ophthalmology-specific synthetic data pre-loaded](https://github.com/NIH-NEI/fhir-for-research-smart-example)

@@ -1,0 +1,116 @@
+---
+title: "Genomics Data Standardization with FHIR"
+
+roles:
+  - Investigator
+  - Research Leader
+  - Informaticist
+
+reading_time: true
+---
+
+[Translational medicine](https://www.sciencedirect.com/science/article/abs/pii/B9780323898249000021 "What is translational medicine?") and [precision medicine](https://medlineplus.gov/genetics/understanding/precisionmedicine/definition/ "What is precision medicine?") involve combining clinical and genomic data to derive actionable insights that can be applied at the point of care. Typically, clinical and genomics data come from different sources: clinical data come from systems like electronic health records, laboratory information systems, and other specialty clinical systems, while genomics data are often sourced directly from the [bioinformatics](https://en.wikipedia.org/wiki/Bioinformatics) data pipelines responsible for processing source data from DNA sequencing machines.
+
+Developing combined clinical+genomics datasets is currently challenging because there are not widely adopted exchange standards that cover both clinical and genomic data. In their absence, bespoke structural and semantic mappings may be used, which limits reuse and scaling. This is also complicated by the "big data" challenges associated with genomic data due to its breadth and depth: a *single* human genome ranges from hundreds of megabytes to gigabytes in size, which is larger than most clinical datasets for *all* patients in a study.
+
+## Why FHIR for genomics standardization?
+
+[FHIR](http://hl7.org/fhir/ "Fast Healthcare Interoperability Resources") provides a cohesive framework for developing a standardized genomic learning health system. It proposes extensible and modular information models, operations, and tooling needed for the exchange and processing of clinical and genomic data.
+
+The HL7 genomics community aspires to address the entire clinical genomics data flow, from ordering to results reporting to evidence generation. This is possible because of the breadth of the HL7 community which has dedicated and collaborative working groups that address each part of the flow.
+
+## HL7 genomics-related FHIR specifications
+
+### FHIR Genomics Reporting Implementation Guide (GRIG)
+
+The [HL7 FHIR Genomics Reporting Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/index.html) (GRIG) provides guidance for a standardized representation of genomics data elements leveraging the FHIR framework of resources and operations, optimized for the genomic data exchange for clinical and research-oriented genomic use cases. The GRIG is a HL7 project under the [HL7 Clinical Genomics Workgroup](https://confluence.hl7.org/display/CGW) (CGWG).
+
+The GRIG is very broad in that it tries to meet both the provider and research needs, covering many aspects of genomics reporting, including:
+
+-   Representation of simple discrete variants, structural variants including copy number variants, complex variants as well as gross variations such as extra or missing chromosomes
+-   Representation of both known variants as well as fully describing de novo variations
+-   Germline and somatic variations
+-   Relevance of identified variations from the perspective of disease pathology, pharmacogenomics, transplant suitability (e.g., HLA typing), etc.
+-   Full and partial DNA sequencing, including whole genome and exome studies
+
+A high-level diagram summarizing the general FHIR genomics constructs in the GRIG is shown below:
+
+[![](images/genomics-general-report-overview.png){fig-alt="Diagram showing the high-level structure of the FHIR genomics constructs in the HL7 FHIR Genomics Reporting Implementation Guide." width="434"}](http://hl7.org/fhir/uv/genomics-reporting/general.html#genomics-report)
+
+An [artifact index](http://hl7.org/fhir/uv/genomics-reporting/artifacts.html) summarizes the genomics-related constructs including information modeling diagrams, FHIR profiles, example FHIR resources for each profile, and additional guidance on searching for genomic-related FHIR resources through 1) standard FHIR search parameters, and 2) FHIR operations that are tailored for bioinformatic tasks.
+
+[FHIR genomic operations](http://build.fhir.org/ig/HL7/genomics-reporting/operations.html "List of FHIR genomic operations") include but are not limited to:
+
+-   normalization services
+
+-   dynamic diagnostic or therapeutic implications based on a patient's variants
+
+-   retrieving cohorts of patients with specific variants, phenotypes, genotypes, study metadata
+
+**Note:** full specification of FHIR genomic operations are in development with a target ballot date in early 2024.
+
+### Genomic base FHIR resources
+
+The focus of the [GRIG](http://hl7.org/fhir/uv/genomics-reporting/index.html) is on genomics reporting that mostly occurs after annotation and interpretation in a bioinformatics pipeline. There are however additional research-driven needs for more granular data which merited the release of FHIR base resources. These include:
+
+[**MolecularSequence**](http://hl7.org/fhir/molecularsequence.html) - designed for representing molecular sequences. This resource is not be used for other entities such as variant, variant annotations, genotypes, haplotypes, etc. Those entities will be captured in [Observation](http://hl7.org/fhir/observation.html) profiles found in the [Genomics Reporting Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/index.html).
+
+[**GenomicStudy**](http://hl7.org/fhir/genomicstudy.html) - New with FHIR 5.0, the GenomicStudy resource specifies relevant information found in a genomic study, which includes one or more analyses, each serving a specific purpose. These analyses may vary in method (e.g., karyotyping, CNV, or SNV detection), performer, software, devices used, or regions targeted. The use of this resource differs from the Genomics Report profile from the GRIG in that detailed information about the results of the analyses in [GenomicStudy](http://hl7.org/fhir/genomicstudy.html) may be represented by [Observations](http://hl7.org/fhir/observation.html) and gathered in a [DiagnosticReport](http://hl7.org/fhir/diagnosticreport.html). Both resources may refer back to the originating GenomicStudy to allow navigation.
+
+### minimum Common Oncology Data Elements (mCODE)
+
+[mCODE](http://hl7.org/fhir/us/mcode/STU2.1/) is a FHIR specification for a minimal and actionable set of cancer data elements. mCODE includes relevant genomic elements since much of cancer research and care is dependent on genomics for disease discovery and therapeutic decision making.
+
+The mCODE standards specifications team works closely with the HL7 CGWG to ensure alignment between mCODE FHIR IG and the GRIG.
+
+### Phenopackets
+
+The [Global Alliance for Genomics and Health](https://www.ga4gh.org/) (GA4GH) [Phenopacket standard](https://www.ga4gh.org/news_item/phenopackets-standardizing-and-exchanging-patient-phenotypic-data/) is not a native FHIR-based standard. Rather it is a lightweight specification that intends to support global exchange of computable case-level phenotypic information for all types of disease diagnosis and research. However, the specification was ported to a [GA4GH Phenopacket FHIR Implementation Guide](http://phenopackets.org/core-ig/ig/branch/master/index.html) and is currently under development. The Phenopackets designers are working closely with the CCWG to align both standards.
+
+### Other genomics-related HL7 specifications
+
+There are several additional HL7 specifications that may be relevant:
+
+#### HL7v2 Laboratory Reporting Interface (LRI)
+
+The [HL7 Version 2.5.1 Implementation Guide: Laboratory Results Interface (LRI)](http://www.hl7.org/implement/standards/product_brief.cfm?product_id=279 "HL7v2 LRI standard specification") provides guidance on how to communicate laboratory results in general from a (reference) Laboratory's information system (LIS) to a system interested in receiving and processing lab results (e.g., EHR, Public Health, other Laboratory). It includes a section on sending genetic test results.
+
+Although HL7v2 is considered a legacy data interoperability standard, it is currently the most prevalent means of sending HL7-based structured genetic data from a reference lab to an EHR. Current efforts are underway to address migration strategies from HL7v2 to FHIR-based genomic transport mechanisms.
+
+#### HL7v3 Clinical Document Architecture Family Pedigree
+
+The [HL7 Clinical Genomics Family Health History (Pedigree) Model](http://www.hl7.org/implement/standards/product_brief.cfm?product_id=301) is a data standard for exchanging family histories among systems. This includes describing a patient's full pedigree (family and familial relationships) with diseases and conditions, and the option to link genetic data and risk analysis.
+
+The IG was initially released in 2013 and is based on the [HL7 Clinical Document Architecture (CDA®)](http://www.hl7.org/implement/standards/product_brief.cfm?product_id=7), prior to the initial release of the first FHIR standard. Although now considered a legacy standard, it is still used by some clinical applications today.
+
+## Relevant FHIR Tools
+
+### VCF to FHIR
+
+[vcf2fhir](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-021-04039-1) is a utility which converts VCF files into HL7 FHIR format, conforming to the HL7 FHIR GRIG. It is open-sourced and available [on GitHub](https://github.com/elimuinformatics/vcf2fhir "vcf2fhir github repository").
+
+## Engaging with the FHIR genomics community
+
+### HL7 Clinical Genomics Working Group
+
+The [HL7 Clinical Genomics Workgroup](https://confluence.hl7.org/display/CGW) (CGWG) comprise of a diverse community of researchers, providers, and non-profit specialty organizations primarily focused standards development that supports the semantically meaningful exchange of data between parties interested in clinical, personal, and population genomic information and family health history.
+
+CGWG is is the author and steward of the [FHIR Genomics Reporting Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/STU2/) (discussed above), a FHIR-based specification for the exchange of genomics reporting elements.
+
+### CodeX FHIR Accelerator domain: GenomeX
+
+[GenomeX](https://confluence.hl7.org/display/COD/Genomics) is a domain use case under the HL7 [CodeX FHIR Accelerator](https://confluence.hl7.org/display/COD/CodeX+Home). GenomeX consists of a multi-stakeholder community, working together as subject matter experts, to enable high-quality, computable data for the genomics ecosystem. The community aims to ensure that the genomics FHIR-based specifications meet the needs of stakeholders as validated through real-world pilots in designated use cases.
+
+The multi-stakeholder community represents a broad spectrum involved in genomic message and data exchange with representatives that include genomic reference labs, EHR vendors, provider organizations, life sciences, analytic and decision support platforms, and non-profit organizations and consortiums.
+
+Through consensus, GenomeX stakeholders bring a real-world implementation focus in two use cases identified in the development of an integrated and standardized genomics solution in two major areas:
+
+1.  Standardizing the data exchange of genomic reports from a reference lab to a clinical application.
+
+    [![](images/genomics-GX-UC1.png){fig-alt="GenomeX use case diagram showing the workflow for standardized exchange of genomics using FHIR."}](https://confluence.hl7.org/display/COD/GenomeX+-+Genomics+Data+Exchange)
+
+2.  Standardizing the message exchange and access of genomic data between a genomic repository and consuming applications through FHIR-based operations.
+
+    [![](images/genomics-GX-UC2.jpg){fig-alt="GenomeX use case diagram showing the workflow for message exchange between a genomic repository and consuming applications using FHIR."}](https://confluence.hl7.org/display/COD/GenomeX+-+Genomics+Data+Exchange)
+
+    The GenomeX community works closely with the HL7 CGWG as a validator and influencer of the existing FHIR specifications through real-world implementations.

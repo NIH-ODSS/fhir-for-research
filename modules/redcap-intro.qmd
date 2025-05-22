@@ -1,0 +1,66 @@
+---
+title: "Introduction to REDCap"
+
+toc: false
+number-sections: false
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Understand what REDCap is and how it can support research using clinical data.
+bibliography: ../bibliography.bib
+
+reading_time: true
+---
+
+[REDCap](https://www.project-redcap.org) (which stands for "Research Electronic Data Capture") is:
+
+> a secure web application for building and managing online surveys and databases. While REDCap can be used to collect virtually any type of data in any environment (including compliance with 21 CFR Part 11, FISMA, HIPAA, and GDPR), it is specifically geared to support online and offline data capture for research studies and operations.
+
+It was [designed in 2004 by researchers at Vanderbilt University](https://projectredcap.org/about/) that needed to capture personal health information in a secure and reliable format. REDCap provides functionality common to other web-based survey platforms (e.g., [SurveyMonkey](https://www.surveymonkey.com/) or [Qualtrics](https://www.qualtrics.com/)) with a number of additional features that are specific for research. More background information on REDCap is available in @redcap, and at <https://projectredcap.org/software/>.
+
+REDCap has grown into a global community with 3200 partner institutions in 128 countries and more than 56,000 projects [@Harris_Taylor_Minor_Elliott_Fernandez_ONeal_McLeod_Delacqua_Delacqua_Kirby_etal._2019]. To determine if your institution has REDCap, you can [search here](https://projectredcap.org/partners/) or ask your research informatics leader. Your institution's IRB is also likely aware if REDCap is actively being used.
+
+REDCap can be run inside an institution's firewall and may be configured to support storing identified health information for research purposes.
+
+## Use cases
+
+Common research uses of REDCap include:
+
+-   Collecting self-reported survey data from study participants (patients or providers)
+-   [Digital capture and storage of informed consent documents](https://victr.vumc.org/econsent_basics/)
+-   Entering, storing, and querying clinical information, like for a disease registry (for example, see @Metke-Jimenez_Hansen_2019 below or \@shalhout2022) or a vaccine status tracker (see @Lenert_Jacobs_Agnew_Ding_Kirchoff_Weatherston_Deans_2023 described below)
+-   Case report forms (for example, see @Cheng_Banasiewicz_Johnson_Sulieman_Kennedy_Delacqua_Lewis_Joly_Bistran-Hall_Collins_2023 below)
+-   Chart abstraction (for example, see @mayer2022)
+
+A more detailed look at example use cases follows.
+
+### Example use case: vaccine status tracker
+
+@Lenert_Jacobs_Agnew_Ding_Kirchoff_Weatherston_Deans_2023 tested a population-level vaccination status tracker, called VACtrac, using a combination of two approaches:
+
+1.  A FHIR-compatible copy of the existing statewide Immunization Information System (IIS), with a REDCap data warehouse
+2.  A REDCap health management program with a list of patients for providers to maintain communication with and update vaccination status records, either through a Bulk FHIR update or one-time query.
+
+VACtrac uses REDCap Clinical Data Interoperability Services (CDIS) FHIR plug-in for both Epic and Cerner EHRs to extract patient information. The REDCap database can be accessed and updated by multiple providers, so the burden of maintaining vaccination information can be spread among multiple providers.
+
+The [REDCap vaccination status tracker](https://github.com/vactraccovid/vactrac) is publicly available for adaption in other institutions.
+
+### Example use case: cancer registry
+
+@Metke-Jimenez_Hansen_2019 implemented FHIRCap, a transformation engine, to translate data in a REDCap project to FHIR resources. The authors tested FHIRCap on an existing REDCap form and database for a cancer registry. They were able to transform the information from REDCap to FHIR resources and then map the codes to SNOMED CT. While the process was manual and time intensive to set up, the rules only have to be written once for a project and can be used as long as the REDCap form doesn't change.
+
+### Example use case: case report forms
+
+@Cheng_Banasiewicz_Johnson_Sulieman_Kennedy_Delacqua_Lewis_Joly_Bistran-Hall_Collins_2023 describe how REDCap can be used to collect electronic case report forms, and how data elements on these forms may be populated automatically using [REDCap's integration with FHIR](redcap-fhir.qmd). Automatic population of these forms has the potential to increase accuracy and decrease the burden of manual data entry.
+
+Note that it is also possible to extract data from an EHR or other clinical system without FHIR, and load this into REDCap using its [import capability](https://guides.temple.edu/c.php?g=936400&p=8404930).
+
+## Next steps
+
+Please see the [REDCap on FHIR](redcap-fhir.qmd) module for more information on using REDCap with FHIR to directly integrate with clinical data.

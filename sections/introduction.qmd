@@ -1,0 +1,42 @@
+---
+title: Introduction
+sidebar: false
+---
+
+FHIR&reg; (pronounced "fire"), which stands for Fast Healthcare Interoperability Resources, is a platform for health data standardization and access. This **Introduction** breaks FHIR down into modules designed to enable FHIR for research.
+
+Select your [role](/roles.html) to <mark>highlight</mark> the content that is most relevant to you:
+
+<a href="#" class="btn-role" data-role="investigator">Investigator</a>
+<a href="#" class="btn-role" data-role="research-leader">Research Leader</a>
+<a href="#" class="btn-role" data-role="informaticist">Informaticist</a>
+<a href="#" class="btn-role" data-role="software-engineer">Software Engineer</a>
+<a href="#" class="btn-role" data-role="clinician-scientist">Clinician Scientist/Trainee</a>
+
+:::{.highlight-by-role}
+## What is FHIR
+
+-   [FHIR from 10,000 Feet](/modules/fhir-from-10000-ft.qmd)
+-   [FHIR from 1,000 Feet](/modules/fhir-from-1000-ft.qmd)
+-   [Brief History of FHIR](/modules/fhir-history.qmd)
+
+## What does FHIR look like
+
+-   [Key FHIR Resources](/modules/key-fhir-resources.qmd)
+-   [Terminology Introduction](/modules/terminology.qmd)
+-   [The FHIR Community & Documentation](/modules/fhir-community.qmd)
+-   [Common Data Models & FHIR](/modules/cdms.qmd)
+-   [FHIR Versions](/modules/fhir-versions.qmd)
+
+## How to Interpret FHIR guides
+
+-   [Reading a FHIR specification](/modules/data-modeling-reading-igs.qmd)
+-   [Real world FHIR specifications](/modules/data-modeling-real-world-igs.qmd)
+-   [Writing a FHIR specification](/modules/data-modeling-writing-igs.qmd)
+
+## How to use FHIR
+
+-   [Using the FHIR API to Access Data](/modules/fhir-accessing-data.qmd)
+-   [Introductory Webinar](/webinars/intro/index.qmd)
+:::
+

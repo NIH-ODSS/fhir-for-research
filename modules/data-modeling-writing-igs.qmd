@@ -1,0 +1,47 @@
+---
+title: Writing FHIR Implementation Guides
+
+roles:
+  - Investigator
+  - Informaticist
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Understand the mechanics of creating a FHIR Implementation Guide (IG) for a research use case.
+  - Describe best practices for authoring a FHIR IG.
+  - Apply these best practices in creating FHIR IGs for specific research use cases.
+
+reading_time: true
+---
+
+This module is meant for readers who are interested in creating their own FHIR Implementation Guides (IGs), and should be read after completing the [Reading IGs](data-modeling-reading-igs.qmd) module.
+
+## When should you create a FHIR IG?
+
+FHIR IGs describe how FHIR should be used for a specific use case. When using FHIR for research, if there is not an existing IG that covers your use case, it may be worthwhile to create one. Creating an IG can:
+
+-   Specify how your data needs are mapped onto FHIR resources and data elements.
+
+-   Identify which data elements are required, and how missing data should be handled for required and optional elements.
+
+-   Define formatting for data elements (e.g., ensuring all dates/times are in the same format and have the desired level of precision).
+
+-   Establish terminology bindings to specific ValueSets for [coded values](http://hl7.org/implement/standards/fhir/terminologies.html) to prevent representing the same concept with different codes.
+
+## Who should create a FHIR IG?
+
+FHIR IGs can be created by anyone with an understanding of FHIR and a toolchain for generating the IG. Typically the person in this role is an informaticist, or has substantial informatics experience. If you do not have someone with these skills on your project, you may be able to find someone via the [FHIR community](fhir-community.qmd).
+
+For research use cases, the Principal Investigator and relevant clinical experts should collaborate closely with the informaticists creating the IG to make sure it reflects the needs of the research study and is clinically sound. Additionally, informatics experts who understand the systems that will need to support the IG should also be involved in its authoring to ensure implementation is realistic.
+
+## Should IGs be created through HL7®?
+
+Many of the IGs listed in [Real World IGs](data-modeling-real-world-igs.qmd) are created and published through the [HL7 process](https://confluence.hl7.org/display/FHIR/FHIR+Implementation+Guide+Process+Flow). This is process is helpful for IGs that may be widely implemented or need to be updated on an ongoing basis to support implementation. It may not be necessary to create or publish an IG through HL7 if it is meant to be used for a limited time to support a specific study. IGs can also be moved under HL7 after they are created, though it is typically better to do this as early as possible to avoid any intellectual property issues. Researchers interested in the HL7 process can consult with the relevant [HL7 Work Group](fhir-community.qmd#hl7-work-groups).
+
+## How is an IG created?
+
+The [CodeX FHIR Accelerator](https://codex.hl7.org) has published a [set of comprehensive resources on IG authoring](https://fshschool.org/courses/) that includes a detailed explanation of how to author FHIR IGs. If you are interested in creating a FHIR IG, **please use the button below to open this resource in a new window:**
+
+<a class="btn-success" style="margin-left: 1rem" href="https://fshschool.org/courses/fsh-seminar/02-creating-an-ig.html" target="_blank">Open <strong>FSH Seminar \> Creating an IG</strong> materials →</a>
+
+Additionally, these resources include <a href="https://fshschool.org/courses/fsh-seminar/03-exercise.html" target="_blank">a hands-on exercise for creating a FHIR IG</a>, and <a href="https://fshschool.org/courses/fsh-seminar/04-deep-dive-with-fsh.html" target="_blank">a deep dive on the FSH language</a> used for FHIR profiling. Both are **strongly recommended** for informaticists who wish to author FHIR IG.

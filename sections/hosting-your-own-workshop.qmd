@@ -1,0 +1,12 @@
+---
+title: Hosting Your Own Workshop
+sidebar: false
+---
+
+If you are interested in **hosting your own workshop**, the following guides will be useful. These are based on NIH/ODSS's experience conducting the [FHIR Bulk Data Access](/workshops/bulk-data/index.qmd) and [SMART on FHIR](/workshops/smart-on-fhir/index.qmd) workshops.
+
+*Recommended: complete the [hands-on practice](/sections/hands-on-practice.qmd) workshops for reviewing your FHIR skills and inspiring your own workshop.*
+
+1. Review these [recommendations for conducting workshops](/webinars/workshop-recommendations/index.qmd).
+2. Setup your own [FHIR Test Server](/modules/synthea-test-server.qmd)
+3. Procure privacy-compliant [synthetic data](/modules/synthetic-data.qmd)

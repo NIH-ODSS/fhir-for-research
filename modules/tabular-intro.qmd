@@ -1,0 +1,53 @@
+---
+title: Introduction to Analyzing FHIR Data in a Tabular Format
+
+toc: false
+number-sections: false
+
+roles:
+  - Investigator
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Understand why it may be useful to convert FHIR-formatted data to a tabular format, and the skillsets needed to perform these conversions.
+  - Understand why it may be preferable to use Python or R to ingest FHIR-formatted data for final analysis in a statistics package like SAS or Stata.
+
+reading_time: true
+---
+
+Researchers who want to analyze FHIR-formatted data will typically need to convert data from FHIR format into a table-based format that can be used directly in analysis environments like Python, R, SAS, or Stata. Data analysis in these environments typically requires [tidy data](http://vita.had.co.nz/papers/tidy-data.pdf):
+
+> Tidy datasets are easy to manipulate, model and visualise, and have a specific structure: each variable is a column, each observation is a row, and each type of observational unit is a table.
+
+FHIR's data format does not meet this definition of "tidy." While instances of FHIR resources do typically map onto observational units, the data contained within instances of FHIR resources are not "flat" -- instead, data are stored in nested data structures. In some cases, like [`Observation.component`](https://www.hl7.org/fhir/observation.html), there may even be multiple "observational units" inside of a single FHIR resource instance.
+
+Fortunately, FHIR's computable [JSON or XML data format](fhir-from-1000-ft.qmd#the-structure-of-fhir) makes it possible to use software to convert FHIR data into a tabular format. This is can be done with custom code, or via existing purpose-build libraries.
+
+There are purpose-built libraries for Python and R that facilitate FHIR-to-tabular conversion:
+
+-   [FHIR-PYrate](https://github.com/UMEssen/FHIR-PYrate) for Python ([MIT](https://github.com/UMEssen/FHIR-PYrate/blob/main/LICENSE) open source license)
+-   [fhircrackr](https://github.com/POLAR-fhiR/fhircrackr) for R ([GPL-3 license](https://cran.r-project.org/web/packages/fhircrackr/index.html) open source license)
+
+A technical introduction to using these libraries with synthetic FHIR-format data is provided in [Using Python](tabular-python.qmd) and [Using R](tabular-r.qmd). The approach described in these modules can typically be performed by an informaticist, analyst, or statistician who is familiar with one of these environments and has reviewed the content on this website.
+
+## Using other analysis environments
+
+If you do not want to use Python or R to analyze your data, it is possible to use a different analysis tool like SAS or Stata.
+
+Modern versions of data analysis tools like SAS and Stata have the ability to directly read generic JSON or XML data. For example, SAS can read JSON via the [JSON engine](https://go.documentation.sas.com/doc/en/pgmsascdc/9.4_3.5/lestmtsglobal/n1jfdetszx99ban1rl4zll6tej7j.htm) and [XML via this method](https://support.sas.com/resources/papers/proceedings17/1318-2017.pdf). Stata can read JSON via [a third-party library](http://fmwww.bc.edu/RePEc/bocode/i/insheetjson.html) or using [its integration with Python](http://fmwww.bc.edu/RePEc/bocode/i/insheetjson.html). Other approaches like using an [ODBC driver](https://www.cdata.com/kb/tech/fhir-odbc-sas.rst) may also work.
+
+However, it may be simpler to use Python or R to convert FHIR-formatted data to tabular, and then import this into your analysis tool of choice. This can be done via [Pandas](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_stata.html) in Python or the [foreign](https://cran.r-project.org/web/packages/foreign/index.html) package in R.
+
+## Cloud tools
+
+If you are able to use public cloud providers like Amazon AWS, Google Cloud, or Microsoft Azure, you may be able to use tools that are part of these platforms to ingest FHIR-formatted data and analyze it. Use of these tools is beyond the scope of this module, but some additional information is linked below.
+
+-   Amazon AWS
+    -   [Analyze healthcare FHIR data with Amazon Neptune](https://aws.amazon.com/blogs/database/analyze-healthcare-fhir-data-with-amazon-neptune/)
+    -   [Analyzing healthcare FHIR data with Amazon Redshift PartiQL](https://aws.amazon.com/blogs/big-data/analyzing-healthcare-fhir-data-with-amazon-redshift-partiql/)
+-   Google Cloud
+    -   [Analyzing FHIR data in BigQuery](https://cloud.google.com/architecture/analyzing-fhir-data-in-bigquery)
+-   Microsoft Azure
+    -   [Analyzing FHIR data with Azure Synapse Analytics](https://techcommunity.microsoft.com/t5/healthcare-and-life-sciences/analyzing-fhir-data-with-azure-synapse-analytics/ba-p/2719006)

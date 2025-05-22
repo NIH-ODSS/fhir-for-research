@@ -1,0 +1,781 @@
+---
+title: FHIR Genomics Analysis for Clinical Decision Support
+jupyter: python3
+error: true
+execute:
+  cache: false # changes in fhir-server env will not be picked up otherwise
+learning_objectives2:
+  - Learn how to retrieve and analyze genomic data from FHIR servers using the Synthea Coherent Data Set
+  - Understand how to process genetic variants for clinical decision support
+  - Implement filtering and analysis of clinically significant variants
+  - Create CDS-ready outputs from FHIR genomic data
+
+format: 
+  html: default
+  ipynb: default
+
+reading_time: true
+---
+
+::: {.content-hidden when-format="ipynb"}
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/{{< env COLLAB_BINDER_PATH >}}/blob/main/workshops/data-analysis-cds/data/02-genomics-cds.ipynb)
+[![View in NBViewer](https://raw.githubusercontent.com/jupyter/design/refs/heads/main/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/{{< env COLLAB_BINDER_PATH>}}/blob/main/workshops/data-analysis-cds/data/02-genomics-cds.ipynb) <!-- Force download instead of opening the notebook as a page-->
+<a href="./02-genomics-cds.ipynb" download><img src="https://img.shields.io/badge/download-notebook-F37626?logo=jupyter" alt="Download Notebook"></a>
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/{{< env COLLAB_BINDER_PATH >}}/HEAD?urlpath=%2Fdoc%2Ftree%2Fworkshops%2Fdata-analysis-cds%2F02-genomics-cds.ipynb)
+:::
+
+## Introduction
+
+For the best learning experience, run this tutorial interactively, via one of the environment setup options. Use the above button depending on your chosen [setup option](index.qmd#environment-setup).
+
+This tutorial explores how to work with genomic data in FHIR for clinical decision support (CDS) applications. We'll use the [Synthea Coherent Data Set](index.qmd#synthetic-data) to retrieve and analyze genomic reports and observations, ultimately implementing a CDS service that provides actionable recommendations based on a patient's genetic profile.
+
+In this tutorial, we're using a FHIR server located at **{{< env FHIR_SERVER >}}**, but any FHIR server loaded with appropriate data can be used. For instructions on setting up your own test server, see [Standing up a FHIR Testing Server](../../modules/synthea-test-server.qmd).
+
+::: {.content-hidden when-format="ipynb"}
+## Learning Paths
+
+This tutorial offers three difficulty levels to accommodate different experience levels:
+
+| Level | Focus Areas | Recommended For |
+|------------------|------------------------|------------------------------|
+| [Beginner](#basic-setup-and-connection-beginner-level) | FHIR server connection, Basic genomics report retrieval | Those new to FHIR Genomics |
+| [Intermediate](#analyzing-genetic-variants-intermediate-level) | Variant analysis, Data transformation | Those familiar with genetic terminology and FHIR |
+| [Advanced](#implementing-clinical-decision-support-advanced-level) | CDS implementation, Clinical filtering | Experienced developers implementing genomic CDS systems |
+
+: Difficulty Levels {tbl-colwidths="\[20,40,40\]"}
+
+**Prerequisites:** Basic knowledge of Python, FHIR resources, and genomics terminology is recommended.
+:::
+
+::: {.content-visible when-format="ipynb"}
+## Dependencies
+Run the cell below to install required packages if you're in a fresh environment. 
+Skip this step if you already have these packages installed.
+
+```{python}
+#| eval: false
+
+# Install required dependencies
+try:
+  !pip install fhir_pyrate pandas==1.5.3 requests numpy==1.26.4
+
+  import numpy as np
+  if np.__version__ != '1.26.4':
+    raise ImportError("Incorrect numpy version")
+except ImportError:
+  # Force runtime restart to load the updated libraries
+  print('Restarting runtime.')
+  import os
+  os.kill(os.getpid(), 9)
+```
+
+## FHIR Server Setup
+<b>WARNING:</b> You must set a FHIR server URL below before running the
+rest of the notebook. If you don’t have access to a FHIR server, see
+<b>Standing up a FHIR Testing Server</b> on the FHIR for Research website
+for instructions.
+
+```{python}
+# | eval: false
+
+# Set your FHIR server URL
+import os
+
+# Replace with your actual FHIR server URL
+os.environ["FHIR_SERVER"] = "https://your-fhir-server-url.com"
+
+# Verify
+print(f"FHIR server set to: {os.environ.get('FHIR_SERVER')}")
+
+# Check if default URL is being used
+if os.environ.get("FHIR_SERVER") == "https://your-fhir-server-url.com":
+    print(
+        "\033[91m\033[1m\nWARNING: ACTION REQUIRED - Change the default FHIR server URL before continuing!\n\033[0m"
+    )
+```
+:::
+
+## Basic Setup and Connection (Beginner Level) {#basic-setup-and-connection-beginner-level}
+
+In this section, you'll learn how to:
+
+-   Connect to a FHIR server containing genomic data
+-   Retrieve basic genetic diagnostic reports
+-   Display genomic information in a structured format
+
+First, let's set up our connection to the FHIR server:
+
+```{python}
+# Load dependency
+import requests, os
+
+fhir_server = os.environ.get('FHIR_SERVER')
+print(f"Using FHIR server: {fhir_server}")
+
+# Check if the server is running and connection is successful
+response = requests.get(f"{fhir_server}/metadata")
+
+print(f"Server status: {response.status_code}")
+```
+
+::: callout-tip
+## Understanding the FHIR Metadata Endpoint
+
+The metadata endpoint (`/metadata`) is a special FHIR endpoint that returns the server's capability statement - a structured document that describes what the server can do. When we query this endpoint:
+
+-   We're checking if the server is responsive (status code 200)
+-   We're verifying it's a valid FHIR server
+-   The response contains details about supported resources, operations, and search parameters
+
+This is a lightweight way to validate connectivity before attempting more complex queries.
+:::
+
+If the server is responsive (code 200), proceed with the next code block.
+
+```{python}
+# Import required libraries
+import pandas as pd
+import json
+import re
+import os
+import requests
+from fhir_pyrate import Pirate
+from IPython.display import display, HTML
+
+# Initialize FHIR-PYrate
+search = Pirate(
+    auth=None,
+    base_url=fhir_server,
+    print_request_url=True,
+)
+```
+
+Now let's retrieve basic genetic diagnostic reports. The LOINC code [**55232-3**](https://loinc.org/55232-3/) refers to *Genetic analysis summary panel*, which is commonly used to identify genomic reports. To learn more about FHIRPath and mapping columns, refer to the intermediate level [FHIR analysis exercise](01-fhir-analysis.qmd#selecting-specific-columns-intermediate-level).
+
+```{python}
+# Fetch genomics reports
+print("Retrieving basic genetic diagnostic reports...")
+reports_df = search.steal_bundles_to_dataframe(
+    resource_type="DiagnosticReport",
+    request_params={"code": "http://loinc.org|55232-3", "_count": 10},
+    num_pages=1,
+    fhir_paths=[
+        ("id", "id"),
+        ("patient", "subject.reference"),
+        ("status", "status"),
+        ("code_display", "code.coding[0].display"),
+        ("issued", "issued"),
+    ],
+)
+
+# Display the first few genomics reports
+print("First few genomics reports:")
+display(reports_df.head())
+```
+
+:::: {.content-hidden when-format="ipynb"}
+::: {#genomics-concepts .callout-note}
+## Key Genomics Concepts in FHIR
+
+This tutorial introduces key FHIR genomics concepts from the [HL7 FHIR Genomics Reporting IG](http://hl7.org/fhir/uv/genomics-reporting/):
+
+| Category | Description | FHIR Resource |
+|-------------------|-------------------------|----------------------------|
+| Genomic Report | Container for all genomic results | DiagnosticReport |
+| Genomic Findings | Variants, genotypes, and haplotypes | Observation profiles |
+| Genomic Implications | Clinical impact of findings | Observation (linked via derivedFrom) |
+| Recommended Actions | Follow-up or treatment suggestions | Task |
+
+: Key Genomics Concepts in FHIR
+:::
+::::
+
+Let's examine what information we got back. The reports DataFrame contains basic information about genetic diagnostic reports, including:
+
+-   Patient references
+-   Report status
+-   Test types
+-   Issue dates
+
+## Analyzing Genetic Variants (Intermediate Level) {#analyzing-genetic-variants-intermediate-level}
+
+In this section, we'll:
+
+-   Retrieve detailed genetic observations
+-   Extract variant information
+-   Process genetic data for clinical use
+
+Let's retrieve diagnostic reports with their related observations in a single query:
+
+```{python}
+# Retrieve reports with related observations
+print("Retrieving genetic reports with observations...")
+results = search.steal_bundles_to_dataframe(
+    resource_type="DiagnosticReport",
+    request_params={
+        "code": "http://loinc.org|55232-3",  # LOINC code for "Genetic analysis summary panel"
+        "_include": "DiagnosticReport:result",  # Include the Observation resources
+        "_count": 10
+    },
+    num_pages=1
+)
+
+# Extract the different resource types from the results
+reports_df = results.get("DiagnosticReport", pd.DataFrame())
+observations_df = results.get("Observation", pd.DataFrame())
+
+# Display basic report information
+print("\nRetrieved genetic analysis reports:")
+display(reports_df[["id", "subject_reference", "status", "issued"]].head())
+
+# Display observation information
+print("\nRetrieved genetic observations:")
+print(f"Found {len(observations_df)} observations")
+display(observations_df.head(3))
+```
+
+:::: {.content-hidden when-format="ipynb"}
+::: {#fhir-search-params .callout-tip}
+## FHIR Search Parameters for Genomic Data
+
+When working with the Synthea Coherent Data Set:
+
+-   Use LOINC code **55232-3** for genetic reports
+-   Use `_include=DiagnosticReport:result` to retrieve related observations
+-   The dataset follows [US Core profiles for lab reports](https://build.fhir.org/ig/HL7/US-Core/StructureDefinition-us-core-diagnosticreport-lab.html) rather than [specialized genomic profiles](https://build.fhir.org/ig/HL7/genomics-reporting/StructureDefinition-genomic-report.html).
+:::
+::::
+
+Now, let's extract genetic variant information from the observations:
+
+```{python}
+# Extract genetic variant information from observations
+print("\nExtracting genetic variant information...")
+
+# Create a list to store variant information
+variants = []
+
+# Process each observation to extract key information
+for _, row in observations_df.iterrows():
+    # Check if text content is available
+    if 'code_text' in row and not pd.isna(row['code_text']):
+        display_text = str(row['code_text'])
+        
+        # Extract genetic information using regular expressions
+        gene_match = re.search(r'The (\S+) gene', display_text)
+        significance_match = re.search(r"variation of '([^']+)'", display_text)
+        variant_match = re.search(r'index (\S+) is', display_text)
+        risks_match = re.search(r'risk of: (.+)\.', display_text)
+        
+        # Create a record with the extracted information
+        variant_info = {
+            'patient': row['subject_reference'],
+            'gene': gene_match.group(1) if gene_match else 'Unknown',
+            'clinical_significance': significance_match.group(1) if significance_match else 'Unknown',
+            'variant_id': variant_match.group(1) if variant_match else 'Unknown',
+            'associated_risks': risks_match.group(1) if risks_match else 'Unknown'
+        }
+        
+        variants.append(variant_info)
+
+# Convert to DataFrame for easier analysis
+variants_df = pd.DataFrame(variants)
+
+# Display the extracted variants
+print("\nExtracted genetic variants:")
+display(variants_df.head(5))
+```
+
+## Implementing Clinical Decision Support (Advanced Level) {#implementing-clinical-decision-support-advanced-level}
+
+In this section, we'll: 
+
+-   Filter for clinically significant variants 
+-   Generate clinical recommendations 
+-   Implement a CDS service to deliver these recommendations
+
+First, let's filter for variants with significant clinical impact:
+
+```{python}
+# Filter for variants with significant clinical impact
+print("Filtering for clinically significant variants...")
+pathogenic_variants = variants_df[
+    variants_df['clinical_significance'].str.contains('Pathogenic|Risk Factor', na=False)
+]
+
+print(f"Found {len(pathogenic_variants)} variants with clinical significance")
+display(pathogenic_variants.head())
+```
+
+Now that we've analyzed genetic variants and generated recommendations, let's explore how to deploy these as a clinical decision support service using CDS Hooks.
+
+### What Are CDS Hooks?
+
+CDS Hooks is a standard for integrating clinical decision support into electronic health record (EHR) systems at the point of care. It allows our genomic analysis recommendations to be delivered to clinicians at the right time and in the right context.
+
+For a comprehensive introduction to CDS Hooks, please refer to [CDS Hooks Introduction](/modules/new-cds-hooks-intro.qmd), which covers the fundamental concepts, workflow, and implementation details.
+
+:::: {.content-hidden when-format="ipynb"}
+::: {#cds-hooks-overview .callout-note}
+## CDS Hooks at a Glance
+
+CDS Hooks provides a framework for:
+
+1.  **Event-Driven Integration**: Hooks trigger at specific points in clinical workflow
+2.  **Standard API**: Consistent way for EHRs to communicate with CDS services
+3.  **Card-Based Interface**: Recommendations delivered as "cards" within EHR UI
+4.  **Context-Aware**: Services receive patient context to provide relevant advice
+
+**Common Hook Points:**
+
+-   *patient-view*: When a patient's record is opened
+-   *order-select*: When a medication or procedure is selected
+-   *order-sign*: When orders are about to be signed
+
+**The CDS Hooks Workflow**
+
+When integrated into a real clinical environment, the CDS Hooks workflow would look like this:
+
+1.  **Trigger**: A clinician opens a patient's record, triggering the `patient-view` hook
+2.  **Request**: The EHR sends a request to a CDS service with the patient context
+3.  **Analysis**: CDS service queries the FHIR server for relevant genomic data and analyzes variants
+4.  **Response**: CDS service returns CDS Hooks cards with clinical recommendations
+5.  **Display**: The EHR displays these recommendations to the clinician within their workflow
+:::
+::::
+
+### Implementing a CDS Hooks Service for Genomic Analysis
+
+Now, let's create a CDS Hooks service to serve our genomic recommendations. This service will:
+
+1.  Analyze a patient's genetic data in real-time
+2.  Generate appropriate clinical recommendations
+3.  Return these recommendations as CDS Hooks cards
+
+The service exposes two endpoints:
+
+-   A discovery endpoint that tells EHRs what services are available
+-   A service endpoint that processes requests and returns recommendations
+
+We will use [Flask](https://flask.palletsprojects.com/en/stable/), a lightweight application
+framework for writing web applications and services using Python.  
+
+::: {.content-hidden when-format="html"}
+```{python}
+# Install Flask if needed
+%pip install flask
+```
+:::
+
+```{python}
+# Import necessary libraries
+from flask import Flask, jsonify, request
+import threading
+import time
+import re
+import pandas as pd
+
+# Choose a port for the Flask server
+flask_port = 3299
+flask_server_thread = None
+
+# Create a Flask application
+app = Flask(__name__)
+
+# CDS Hooks discovery endpoint - this tells EHRs what services we provide
+@app.route('/cds-services', methods=['GET'])
+def discovery():
+    return jsonify({
+        'services': [
+            {
+                'id': 'genomics-advisor',
+                'hook': 'patient-view',
+                'title': 'Genomics Clinical Advisor',
+                'description': 'Provides recommendations based on genetic findings',
+                # Note: In a production environment, prefetch could be used for optimization
+                # but is omitted here for simplicity
+            }
+        ]
+    })
+
+# CDS Hooks service endpoint - this returns recommendations for a specific patient
+@app.route('/cds-services/genomics-advisor', methods=['POST'])
+def genomics_advisor():
+    # Get data from the request
+    request_data = request.json
+    context = request_data.get('context', {})
+    patient_id = context.get('patientId')
+    
+    print(f"Processing request for patient: {patient_id}")
+    
+    try:
+        # Query for this specific patient's genetic reports
+        diagnostic_reports = search.steal_bundles_to_dataframe(
+            resource_type="DiagnosticReport",
+            request_params={
+                "code": "http://loinc.org|55232-3",  # Genetic analysis summary panel
+                "subject": patient_id,
+                "_count": 100
+            },
+            num_pages=1
+        )
+        
+        # Check if we got results
+        if isinstance(diagnostic_reports, dict) and "DiagnosticReport" in diagnostic_reports:
+            reports_df = diagnostic_reports["DiagnosticReport"]
+        else:
+            # The data might be directly in the DataFrame
+            reports_df = diagnostic_reports
+        
+        if reports_df.empty:
+            print("No genetic reports found for this patient")
+            pathogenic_variants = pd.DataFrame()
+        else:
+            print(f"Found {len(reports_df)} genetic reports for patient {patient_id}")
+            
+            # Extract genetic information from flattened result columns
+            variants = []
+            import re
+            
+            # Identify all result display columns
+            display_columns = [col for col in reports_df.columns if 'result' in col and 'display' in col]
+            print(f"Found {len(display_columns)} result display columns")
+            
+            # Process each result display column
+            for col in display_columns:
+                for _, row in reports_df.iterrows():
+                    if pd.notna(row[col]):
+                        display_text = str(row[col])
+                        
+                        # Extract information using regex
+                        gene_match = re.search(r'The (\S+) gene', display_text)
+                        significance_match = re.search(r"variation of '([^']+)'", display_text)
+                        variant_match = re.search(r'index (\S+) is', display_text)
+                        risks_match = re.search(r'risk of: (.+)\.', display_text)
+                        
+                        if gene_match or significance_match:
+                            variant_info = {
+                                'gene': gene_match.group(1) if gene_match else 'Unknown',
+                                'clinical_significance': significance_match.group(1) if significance_match else 'Unknown',
+                                'variant_id': variant_match.group(1) if variant_match else 'Unknown',
+                                'associated_risks': risks_match.group(1) if risks_match else 'Unknown'
+                            }
+                            
+                            variants.append(variant_info)
+            
+            # Convert to DataFrame and filter for pathogenic variants
+            variants_df = pd.DataFrame(variants)
+            print(f"Extracted {len(variants_df)} variants")
+            
+            if not variants_df.empty:
+                pathogenic_variants = variants_df[
+                    variants_df['clinical_significance'].str.contains('Pathogenic|Risk Factor', case=False)
+                ]
+                print(f"Found {len(pathogenic_variants)} pathogenic variants")
+            else:
+                print("No variants could be extracted")
+                pathogenic_variants = pd.DataFrame()
+                
+    except Exception as e:
+        import traceback
+        print(f"Error querying FHIR server: {e}")
+        print("Traceback:")
+        traceback.print_exc()
+        pathogenic_variants = pd.DataFrame()
+    
+    # Generate recommendations based on pathogenic variants
+    recommendations = []
+    
+    if not pathogenic_variants.empty:
+        # Check for specific gene variants
+        genes = pathogenic_variants['gene'].unique()
+        print(f"Found genes for recommendations: {genes}")
+        
+        # Known genes with clinical recommendations
+        gene_recommendations = {
+            'APOE': {
+                'title': 'APOE Pathogenic Variant Detected',
+                'detail': 'Consider lipid panel and cardiovascular risk assessment',
+                'source': 'Clinical Practice Guidelines',
+                'urgency': 'high'
+            },
+            'BRCA1': {
+                'title': 'BRCA1 Pathogenic Variant Detected',
+                'detail': 'Consider cancer risk assessment and screening',
+                'source': 'NCCN Guidelines',
+                'urgency': 'high'
+            },
+            'BRCA2': {
+                'title': 'BRCA2 Pathogenic Variant Detected',
+                'detail': 'Consider cancer risk assessment and screening',
+                'source': 'NCCN Guidelines',
+                'urgency': 'high'
+            },
+            'PON1': {
+                'title': 'PON1 Risk Variant Detected',
+                'detail': 'Consider cardiovascular risk assessment and lipid-lowering therapy',
+                'source': 'Cardiovascular Guidelines',
+                'urgency': 'medium'
+            },
+            'ADRB3': {
+                'title': 'ADRB3 Risk Variant Detected',
+                'detail': 'Associated with metabolic disorders and cardiovascular risk',
+                'source': 'Metabolic Risk Guidelines',
+                'urgency': 'medium'
+            },
+            'CCL2': {
+                'title': 'CCL2 Pathogenic Variant Detected',
+                'detail': 'Associated with inflammatory processes and stroke risk',
+                'source': 'Stroke Risk Guidelines',
+                'urgency': 'high'
+            },
+            'FTO': {
+                'title': 'FTO Risk Variant Detected',
+                'detail': 'Associated with obesity and insulin resistance',
+                'source': 'Metabolic Guidelines',
+                'urgency': 'medium'
+            }
+        }
+        
+        # Add recommendations for each significant gene
+        for gene in genes:
+            if gene in gene_recommendations:
+                recommendations.append(gene_recommendations[gene])
+                print(f"Added recommendation for gene: {gene}")
+        
+        # Check for risk categories in all variants
+        all_risks = ' '.join(pathogenic_variants['associated_risks'].dropna())
+        
+        # Add general variant recommendations if no specific ones
+        if not recommendations and len(pathogenic_variants) > 0:
+            unique_genes = ', '.join(genes)
+            recommendations.append({
+                'title': 'Genetic Variants Detected',
+                'detail': f'Clinically significant variants found in genes: {unique_genes}',
+                'source': 'Genetic Analysis',
+                'urgency': 'medium'
+            })
+            print(f"Added general recommendation for genes: {unique_genes}")
+    else:
+        print("No pathogenic variants found, no recommendations generated")
+    
+    # Convert recommendations to CDS cards
+    cards = []
+    
+    for rec in recommendations:
+        cards.append({
+            'summary': f"{rec['title']}",
+            'indicator': 'warning' if rec['urgency'] == 'high' else 'info',
+            'detail': rec['detail'],
+            'source': {
+                'label': rec['source']
+            }
+        })
+    
+    # If no recommendations were found, provide a default card
+    if not cards:
+        cards = [{
+            'summary': f'No Significant Genetic Findings - {test_patient_id}',
+            'indicator': 'info',
+            'detail': 'No pathogenic or likely pathogenic variants detected in this patient\'s genetic analysis.',
+            'source': {
+                'label': 'Genomics Service'
+            }
+        }]
+    
+    # Return the CDS Hooks response
+    return jsonify({'cards': cards})
+
+# Start Flask in a background thread
+def run_flask_in_thread():
+    from werkzeug.serving import run_simple
+    run_simple('localhost', flask_port, app, use_reloader=False, use_debugger=False)
+
+# Start the Flask server
+flask_server_thread = threading.Thread(target=run_flask_in_thread)
+flask_server_thread.daemon = True  # Thread will exit when the notebook exits
+flask_server_thread.start()
+
+# Give the server a moment to start
+time.sleep(1)
+
+print(f"CDS Hooks service running at http://localhost:{flask_port}/cds-services")
+```
+
+### Testing Our CDS Hooks Service
+
+Now that our CDS Hooks service is running, let's test it by simulating how an EHR would interact with it. When a clinician opens a patient's record in an EHR system, the EHR sends a request to all registered CDS services, allowing them to provide relevant recommendations.
+
+```{python}
+# Let's directly query for genetic reports and work with a patient that definitely has genetic data
+print("Querying for genetic diagnostic reports...")
+genetic_reports_dict = search.steal_bundles_to_dataframe(
+    resource_type="DiagnosticReport",
+    request_params={
+        "code": "http://loinc.org|55232-3",  # Genetic analysis summary panel
+        "_count": 5,
+        "_include": "DiagnosticReport:result",  # Include the Observation resources
+    },
+    num_pages=1,
+    fhir_paths=[
+        ("id", "id"),
+        ("subject", "subject.reference"),
+        ("status", "status"),
+        ("issued", "issued"),
+    ]
+)
+
+# Display diagnostic reports
+genetic_reports_df = genetic_reports_dict["DiagnosticReport"]
+print(f"Found {len(genetic_reports_df)} genetic reports")
+display(genetic_reports_df.head())
+    
+# Display observations count if available
+if "Observation" in genetic_reports_dict:
+    observations_df = genetic_reports_dict["Observation"]
+    print(f"Found {len(observations_df)} genetic observations")
+    
+# Select a patient of interest, as if a clinician selected a patient from the EHR
+test_patient_id = genetic_reports_df.loc[genetic_reports_df["subject"] == "Patient/df860bc2-1943-237f-7445-ed960a1ef069", "subject"].values[0]
+print(f"Selected patient with genetic data: {test_patient_id}")
+print(f"Testing with patient ID: {test_patient_id}")
+```
+
+::: callout-tip
+## Testing Locally vs. Production
+
+In production, EHR systems would send requests directly to your CDS Hooks service. Since we're developing locally, we need to manually mock these requests to test our service without connecting to a real EHR system.
+:::
+
+```{python}
+# Create a request with the selected patient
+mock_request = {
+    "hook": "patient-view",
+    "hookInstance": "d1577c69-dfbe-44ad-ba6d-3e05e953b2ea",
+    "context": {
+        "patientId": test_patient_id
+    }
+}
+
+# Send the request to our CDS service
+print("Sending request to CDS service...")
+service_response = requests.post(
+    f"http://localhost:{flask_port}/cds-services/genomics-advisor", 
+    json=mock_request
+)
+
+# Display the JSON response from our service
+print("\nCDS Service Response:")
+print(json.dumps(service_response.json(), indent=2))
+```
+
+The response contains CDS cards with our recommendations. These cards would typically be displayed directly in the EHR interface to help clinicians make informed decisions. Let's create a visual representation of how these cards might appear in an EHR system:
+
+```{python}
+# Extract the CDS cards from the response
+cards = service_response.json().get('cards', [])
+
+# Create a simple HTML visualization to show how these cards would appear in an EHR
+html_output = f"""
+<div style="font-family: Arial, sans-serif; border: 1px solid #ccc; border-radius: 5px; padding: 15px; max-width: 700px; margin: 0 auto;">
+    <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">
+        <h3 style="margin-top: 0;">EHR Patient View: {test_patient_id}</h3>
+        <div style="color: #666; font-size: 0.9em;">Genomic Decision Support</div>
+    </div>
+    
+    <div style="background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 10px; margin-bottom: 15px; border-radius: 3px;">
+        <p style="margin: 0; font-size: 0.9em; color: #6c757d;">
+            <strong>Demo Note:</strong> This is a simulation of how CDS Hooks would appear in an EHR. 
+            The buttons shown below are not functional in this demo. In a real implementation, 
+            clinicians would be able to click these buttons to take recommended actions.
+        </p>
+    </div>
+"""
+
+# Add each card to the visualization
+if not cards:
+    html_output += "<p>No clinical decision support recommendations available for this patient.</p>"
+else:
+    for card in cards:
+        # Set card color based on importance
+        border_color = "#007bff"  # Default blue
+        if card.get('indicator') == "warning":
+            border_color = "#ff9800"  # Orange for warnings
+        elif card.get('indicator') == "critical":
+            border_color = "#dc3545"  # Red for critical alerts
+            
+        # Create the card HTML
+        html_output += f"""
+        <div style="border-left: 4px solid {border_color}; padding: 10px 15px; margin-bottom: 10px; background-color: #f8f9fa;">
+            <h4 style="margin-top: 0;">{card.get('summary', '')}</h4>
+            <p>{card.get('detail', '')}</p>
+        """
+        
+        # Add suggestion buttons
+        if 'suggestions' in card:
+            html_output += '<div>'
+            for suggestion in card.get('suggestions', []):
+                html_output += f'<span style="display: inline-block; background: #e9ecef; border: 1px solid #ced4da; padding: 5px 10px; border-radius: 3px; margin-top: 8px; margin-right: 5px; cursor: pointer;">{suggestion.get("label", "")}</span>'
+            html_output += '</div>'
+            
+        # Add source information
+        if 'source' in card:
+            html_output += f'<div style="color: #6c757d; font-size: 0.85em; margin-top: 5px;">Source: {card.get("source", {}).get("label", "")}</div>'
+            
+        html_output += '</div>'
+
+html_output += "</div>"
+
+# Display the HTML
+print("\nVisualization of CDS Cards in EHR Interface:")
+display(HTML(html_output))
+```
+
+:::: {.content-hidden when-format="ipynb"}
+## Summary and Next Steps
+
+Congratulations on completing this tutorial on genomic clinical decision support! We've explored how to build a CDS service that can identify clinically relevant genomic variants and deliver actionable recommendations to clinicians at the point of care.
+
+In this tutorial, we've covered:
+
+1.  **Basic genomic data retrieval** from FHIR servers
+2.  **Variant analysis** and extraction of clinically relevant information
+3.  **Implementation of a CDS Hooks service** to deliver genomic recommendations
+4.  **Integration simulation** showing how the service would appear in an EHR
+
+::: callout-warning
+# Critical Implementation Considerations for Production Deployment
+
+Moving a prototype CDS service to production involves significant security, compliance, and safety concerns. Improper implementation could pose risks to patient care and data security.
+
+To extend this work in a production environment, you would need to:
+
+1.  **Host the Service**:
+    -   Deploy on a secure, HIPAA-compliant infrastructure with HTTPS and appropriate security measures
+2.  **Implement Authentication**:
+    -   Use industry-standard authentication protocols supported by your EHR
+3.  **Update Clinical Knowledge**:
+    -   Store clinical recommendations in a database rather than hardcoded values
+    -   Establish a regular review cycle with clinical experts
+4.  **Add Robust Error Handling**:
+    -   Implement comprehensive exception handling, logging, and monitoring
+    -   Develop a comprehensive test suite
+5.  **Test with Users**:
+    -   Conduct usability testing with actual clinicians
+    -   Start with a limited pilot before full deployment
+    -   Implement feedback mechanisms
+
+Remember that clinical decision support systems directly impact patient care—making robust implementation both an ethical and legal obligation.
+:::
+
+## Additional Resources
+
+For more information, see:
+
+-   [FHIR Genomics Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/)
+-   [CDS Hooks Documentation](https://cds-hooks.org/)
+-   [LOINC Genetic Variant Terms](https://loinc.org/genetic-variant/)
+-   [Learn more about CDS Hooks](/modules/new-cds-hooks-intro.qmd)
+
+::::

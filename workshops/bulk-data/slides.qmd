@@ -1,0 +1,64 @@
+---
+format:
+  revealjs:
+    theme: [default, ../../slides.scss]
+    preview-links: true
+    slide-number: c/t
+    footer: "© 2023 The MITRE Corporation / Approved for Public Release / Case #23-0966"
+editor: visual
+---
+
+# FHIR<sup>®</sup> Bulk Data Workshop {background-image="../../images/nih_slide_background.png" background-size="100vw 100vh" background-color="#20558A"}
+
+National Institutes of Health (NIH), Office of the Director (OD), Office of Data Science Strategy (ODSS)
+
+June 13, 2023 <br><br><br>
+
+::: {style="padding-left: 5em;"}
+<small>FHIR® is the registered trademark of Health Level Seven International (HL7). Use of the FHIR trademark does not constitute an HL7 endorsement of this workshop.</small>
+:::
+
+::: footer
+:::
+
+## FHIR Bulk Data workflow
+
+1.  Get an access token from the FHIR server
+2.  Request: `GET https://fhir.example.org/Group/[id]/$export`
+3.  Receive the requested FHIR data ("NDJSON" format)
+
+------------------------------------------------------------------------
+
+**FHIR Bulk Data workflow**
+
+### Step 1: Get an access token from the FHIR server
+
+1.  Create a key set for the client application (what we are making)
+2.  Register public key with the server
+3.  Authorize bulk data connection (SMART Backend Services OAuth)
+
+------------------------------------------------------------------------
+
+**FHIR Bulk Data workflow**
+
+### Step 2: Retrieving a Bulk Data export
+
+1.  Make a Bulk Data kick-off request
+2.  Request the status of the export
+
+------------------------------------------------------------------------
+
+**FHIR Bulk Data workflow**
+
+### Step 3: Receive the requested FHIR data ("NDJSON" format)
+
+1.  Download the NDJSON files
+2.  Load them into the destination environment (in our case, Python + Pandas)
+
+------------------------------------------------------------------------
+
+## Additional resources
+
+-   <http://purl.org/fhir-for-research/web>
+
+-   [Google Colab notebook showing how to load FHIR Bulk Data into a SQL (SQLite) database](https://colab.research.google.com/drive/1HhEEB3MJ8LbMP2ta946s8OARPc5RflHu)

@@ -1,0 +1,61 @@
+---
+title: Reading FHIR Implementation Guides
+
+toc: false
+number-sections: false
+
+roles:
+  - Investigator
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+  
+learning_objectives2:
+  - Understand the purpose and structure of FHIR Implementation Guides (IGs).
+  - |
+    Apply the approach described in "Reading an IG" to reading and evaluating IGs for research purposes.
+
+reading_time: true
+---
+
+FHIR Implementation Guides (IGs) define a "[set of rules of how a particular interoperability or standards problem is solved](https://www.hl7.org/fhir/R5/implementationguide.html)."
+
+IGs are published as web pages (like the [ones listed here](data-modeling-real-world-igs.qmd)) that include both human-readable and machine-readable versions of the rules. For example, the [human-readable version of US Core's Patient profile](http://hl7.org/fhir/us/core/structuredefinition-us-core-patient.html) and [the machine-readable version](http://hl7.org/fhir/us/core/StructureDefinition-us-core-patient.profile.json.html) are published alongside each other in the US Core IG. Additionally, IGs typically include substantial narrative content describing the problem they are addressing and providing additional context for their rules.
+
+Researchers who are working with FHIR will likely need to read FHIR IGs, including those that are not specifically designed for research purposes (like [US Core](http://hl7.org/fhir/us/core/)).
+
+FHIR IGs typically share a common structure and format (especially those published through HL7®). The [CodeX FHIR Accelerator](https://codex.hl7.org) has published a [set of comprehensive resources on IG authoring](https://fshschool.org/courses/) that includes a detailed explanation of how to read and understand these common elements across IGs. **Please use the button below to open this resource in a new window:**
+
+<a class="btn-success" style="margin-left: 1rem" href="https://fshschool.org/courses/fsh-seminar/01-reading-an-ig.html" target="_blank">Open <strong>FSH Seminar \> Reading an IG</strong> materials →</a>
+
+## Evaluating an IG for research
+
+The approach described in the materials FSH Seminar materials linked above can be applied to reviewing an IG for research purposes. Some of the key considerations specifically for research include:
+
+-   Are all the necessary data elements included in the resources profiled in the IG? Determining
+
+-   Are the constraints defined in the IG appropriate for the relevant research use cases?
+
+    -   Are necessary data elements marked as required or marked as MustSupport? This means that conforming FHIR servers should provide the data elements if they are available.
+
+    -   Are there any required data elements that are problematic from a research perspective? (E.g., requiring a patient's name for research on deidentified data.)
+
+-   Are there terminology bindings, and are they sufficiently strong to ensure consistent output?
+
+    -   Note that unless a terminology binding is set at the "[required](https://www.hl7.org/fhir/R5/terminologies.html#strength)" level, FHIR servers may still return concepts that are not in the bound ValueSet.
+
+    -   This is especially relevant for using FHIR across different systems or institutions, which may use different terminology. It may be necessary to map to a single set of concepts, either as part of the FHIR implementation or during data analysis.
+
+-   Is the IG implemented on the relevant FHIR servers you wish to get data from? If not, how much effort would be required to implement it?[^1]
+
+    -   In the US, many IGs are based on US Core. Because many FHIR-enabled systems already support US Core, it may be easier to implement IGs that are based on it compared to IGs that are not.[^2]
+
+[^1]: One approach to assessing this is to access instances of FHIR resources profiled in the IG from the FHIR server, and then compare them to the IG to see how close they are to the desired output.
+
+    Conformance to an IG can be assessed automatically using a tool like [the FHIR validator](https://confluence.hl7.org/display/FHIR/Using+the+FHIR+Validator), or the output of the FHIR server can be manually compared against the profiles in the IG.
+
+[^2]: IGs that are published through HL7 in the [US Realm](https://www.hl7.org/fhir/us/) are typically required to either be based on US Core, or get an explicit exemption (which should be described in the IG).
+
+## Next steps
+
+Researchers using FHIR may wish to extend an [existing IG](data-modeling-real-world-igs.qmd), or create their own from scratch to define how FHIR should be used for their use case. Please see [Writing IGs](data-modeling-writing-igs.qmd) for more information.

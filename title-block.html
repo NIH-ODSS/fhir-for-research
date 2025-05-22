@@ -1,0 +1,213 @@
+<header id="title-block-header">
+<!--
+$if(area)$
+<nav aria-label="breadcrumb">
+<ol class="breadcrumb">
+<li class="breadcrumb-item"><a href="#">$area.name$</a></li>
+<li class="breadcrumb-item"><a href="#">$topic.name$</a></li>
+</ol>
+</nav>
+$endif$
+-->
+
+<h1 class="title">$title$</h1>
+$if(subtitle)$
+<p class="subtitle">$subtitle$</p>
+
+$endif$
+
+$if(date)$
+<p class="date">$date$</p>
+$endif$
+$if(abstract)$
+<div class="abstract">
+<div class="abstract-title">$abstract-title$</div>
+$abstract$
+</div>
+$endif$
+</header>
+
+<!-- Begin learning objectives block -->
+$if(learning_objectives)$
+<div class="callout-tip callout callout-style-default callout-captioned" id="learning-objectives">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Learning objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+$for(learning_objectives)$
+<li>
+    $learning_objectives.question$
+    <div class="answer">$learning_objectives.answer$</div>
+</li>
+$endfor$
+</ol>
+</div>
+</div>
+$endif$
+
+$if(learning_objectives2)$
+<div class="callout-tip callout callout-style-default callout-captioned" id="learning-objectives">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Learning objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+$for(learning_objectives2)$
+<li>
+    $learning_objectives2$
+</li>
+$endfor$
+</ol>
+</div>
+</div>
+$endif$
+
+$if(roles)$
+<div class="callout-note callout callout-style-simple no-icon callout-captioned" id="relevant-roles">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Relevant roles:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul class="target-roles list-inline">
+$for(roles)$
+    <li class="list-inline-item">$roles$</li>
+$endfor$
+</ul>
+</div>
+</div>
+$endif$
+<!-- End learning objectives block -->
+
+<!-- Hack to add key points block at end of page-->
+$if(learning_objectives)$
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Only run if answers are set.
+  if (!document.querySelector('li[data-no-answer="true"]')) {
+    // Create a clone of element with id ddl_1:
+    let clone = document.querySelector('#learning-objectives').cloneNode( true );
+
+    // Change the id attribute of the newly created element:
+    clone.id = 'key-points';
+
+    // Append the newly created element on element p
+    //
+    // Figure out if `#quarto-appendix` exists
+    if(document.getElementById("quarto-appendix")) {
+        document.getElementById('quarto-document-content').insertBefore(clone, document.getElementById("quarto-appendix"));
+    } else {
+        document.querySelector('#quarto-document-content').appendChild( clone );
+    }
+    document.querySelector('#key-points .callout-caption-container').textContent = 'Key points';
+    document.querySelector('#key-points .prompt').textContent = 'The learning objective questions are below, along with their answers:'
+    document.querySelector('#key-points .target-roles-container').remove();
+  }
+});
+</script>
+$endif$
+<!-- End hack to add key points block at end of page-->
+
+<!-- Reading time logic -->
+$if(reading_time)$
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  
+    // Step 1: Count words in parent document
+    let totalWords = 0;
+    const mainContent = document.querySelector('#quarto-document-content');
+    if (mainContent) {
+      const parentWords = mainContent.innerText.trim().split(/\s+/).length;
+      totalWords += parentWords;
+    }
+  
+    // We'll update the badge once we've processed ALL iframes (or there are none)
+    function updateReadingTimeBadge(wordCount) {
+      const wpm = 200;
+      const readingTime = Math.ceil(wordCount / wpm);
+  
+      let displayText;
+      if (readingTime === 1) {
+        displayText = 'Estimated reading time: 1 minute';
+      } else {
+        displayText = 'Estimated reading time: ' + readingTime + ' minutes';
+      }
+  
+      // Create the badge
+      const timeBadge = document.createElement('span');
+      timeBadge.classList.add('reading-time-badge');
+      timeBadge.textContent = displayText;
+
+      const titleBlockHeader = document.querySelector('#title-block-header');
+      if (titleBlockHeader) {
+        titleBlockHeader.appendChild(timeBadge);
+      }
+    }
+  
+    // Step 2: Gather iframes
+    const iframes = document.querySelectorAll('iframe');
+    
+    // If there are no iframes, just show the reading time for parent content
+    if (iframes.length === 0) {
+      updateReadingTimeBadge(totalWords);
+      return;
+    }
+  
+    // We only update after ALL iframes have loaded or errored
+    let pending = iframes.length;
+  
+    // Helper to decrement pending count and update once done
+    function iframeDone() {
+      pending--;
+      if (pending === 0) {
+        // All iframes processed
+        updateReadingTimeBadge(totalWords);
+      }
+    }
+  
+    // Step 3: Iterate through each iframe
+    iframes.forEach(iframe => {
+      // Listen for 'load' (fires whether same-origin or cross-origin)
+      iframe.addEventListener('load', function() {
+        try {
+          // Attempt to read the iframe's text (works only if same-origin)
+          const iframeDoc = iframe.contentWindow.document;
+          const iframeText = (iframeDoc.body.innerText || "").trim();
+          const iframeWords = iframeText.split(/\s+/).filter(Boolean).length;
+  
+          totalWords += iframeWords;
+        } catch (err) {
+          // Cross-origin or any other error
+          console.warn("Could not read iframe content (possibly cross-origin):", err);
+          // No addition to totalWords
+        }
+        // Mark this iframe as processed
+        iframeDone();
+      }, { once: true });
+  
+      // Listen for 'error' in case the iframe fails to load
+      iframe.addEventListener('error', function() {
+        console.warn("Iframe failed to load:", iframe.src);
+        // Just move on (no addition to totalWords)
+        iframeDone();
+      }, { once: true });
+    });
+  
+  });
+  </script>
+$endif$

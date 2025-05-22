@@ -1,0 +1,239 @@
+---
+title: Workshop Recommendations
+
+roles:
+  - Trainer
+
+learning_objectives:
+  - question: Identify existing FHIR for research capacity-building resources
+  - question: Understand the process for re-using existing resources for future capacity-building activities
+  - question: Apply recommendations and best practices from past NIH workshops to future workshops
+
+reading_time: true
+
+number-sections: false
+---
+
+## Slides
+
+These slides summarize the content found below.
+
+```{=html}
+<iframe style="border: 3px solid #dee2e6; width: 100%; height: 475px;" src="slides.html"></iframe>
+```
+### Other slide formats
+
+-   [Printable web page](slides.html?print-pdf)
+-   [Accessible PDF](Webinar%20-%20Workshop%20Recommendations%20508C.pdf)
+
+------------------------------------------------------------------------
+
+## Existing capacity-building resource permalinks
+
+**Note:** Permalinks below are provided by purl.org, which is a service run by the Internet Archive for persistent URLs that can be updated if the actual URL changes. This is helpful to avoid dead links in webinar videos.
+
+Existing resources include:
+
+1.  FHIR for Research documentation website (i.e., this website)
+
+    -   Website permalink: <https://purl.org/fhir-for-research/web>
+
+    -   GitHub permalink: <https://purl.org/fhir-for-research/github>
+
+2.  Webinars
+
+    -   Introduction to FHIR for Research: <https://purl.org/fhir-for-research/webinars/intro>
+
+    -   FHIR Bulk Data Introduction: <https://purl.org/fhir-for-research/webinars/bulk-data>
+
+3.  Hands-on workshops
+
+    -   FHIR Bulk Data: <https://purl.org/fhir-for-research/workshops/bulk-data>
+
+    -   SMART on FHIR: <https://purl.org/fhir-for-research/workshops/smart-on-fhir>
+
+    -   More on FHIR API programming: <https://datascience.nih.gov/fhir-initiatives/researchers-training>
+
+## Workshop best practices
+
+Workshops are a useful approach to help attendees quickly climb the learning curve for a technical topic. They typically include a combination of lecture and hands-on participation. We recommend pairing live workshops with with written documentation (like this website) that participants can refer to later.
+
+## Capability assessments {#capability-assessments}
+
+A capability assessment is a structured approach for identifying the current level of understanding and skill sets relating to a topic. This approach was used to inform the content in the self-paced learning resources, webinars, and workshops on this site.
+
+A capability assessment may help you adapt existing content to meet the needs and interests of your target audience.
+
+### Recommendations
+
+1.  Select a representative sample of people to connect with. Bear in mind that current FHIR capabilities and future needs may differ substantially across organizations.
+
+    Similarly, including a variety of roles in the assessment will ensure that content can support different needs. It may be helpful to connect with people that hold the following roles to build a well-rounded picture of what the capabilities and needs in a FHIR for Research workshop:
+
+    -   Investigators/Researchers
+    -   Research leaders
+    -   Informaticists
+    -   Software Engineers
+    -   Clinician Scientists/Trainees
+
+    (These are the [roles](../../roles.qmd) we considered when developing the content on this website.)
+
+2.  Use a variety of outreach methods. The capability assessment that informed this website used unstructured listening sessions and surveys, which allowed us to capture perspectives from different roles across multiple organizations.
+
+3.  Adapt existing content in response to the observations. Throughout the outreach process, identify common themes and observations from your discussions, surveys, and/or listening sessions. Based on the observations, consider adapting the existing workshops to fit the needs of your group of researchers. Examples of useful adaptations may include:
+
+    -   Identifying relevant FHIR resources to export in the FHIR Bulk Data workshop based on local researcher needs and EHR capabilities.
+    -   Aggregate specific data elements in the SMART on FHIR Applications workshop that are relevant to research topics.
+
+4.  Meet participants at their level of interest and engagement. Not all training participants will need the same level of knowledge about FHIR, or other technology used to work with FHIR APIs and data.
+
+    Note that the existing content on this website was designed to be approachable for people with all levels of technical expertise. Content is generally organized from least-to-most technically complex to provide an "on ramp" for a less experienced audience. However, modifications may need to be made to tailor to your specific audience.
+
+### Getting started with a capability assessment
+
+We used roughly the following steps for the capability assessment that informed this website:
+
+-   Identify interviewees
+-   Set-up meetings with interviewees
+-   Write survey questions if using a written format or structured interview. The [capability assessment questions](capability-assessment-survey.qmd) used for developing this course content are available as a guide
+-   Hold conversations with previously identified interviewees
+-   Aggregate observations from conversations
+-   Reach back to interviewees with follow-up questions if necessary
+-   Adapt existing resources to support the technical needs and research interests identified in the prior conversations and surveys
+
+## Course development
+
+Using an instructional design framework may be useful when developing new modules or workshops. The ADDIE framework ([Analysis, Design, Development, Implementation, and Evaluation](https://en.wikipedia.org/wiki/ADDIE_Model)) is a commonly used cyclical model for instructional design and educational program development. It consists of five stages:
+
+1.  Analysis: Assess what the target audience already knows about a specific topic, their experience with the subject, and what resources are available.
+    -   See above for recommendations on conducting a [capability assessment](#capability-assessments)
+2.  Design: Create learning objectives.
+3.  Development: Create course content that reflects the learning objectives. This should be an iterative process that incorporates regular feedback from learners and instructors.
+    -   [Bloom's Taxonomy](https://tips.uark.edu/using-blooms-taxonomy) may be useful in constructing learning objectives
+4.  Implementation: Determine where the course will be held, in what format, what materials will be needed, and how they will be used.
+5.  Evaluation: Use the learning objectives from the second stage to evaluate the course. Consider assessing participant satisfaction, learning, and performance when comparing the learning objectives to the outcomes.
+
+Following an instructional design framework like ADDIE can support the following best practices identified from our workshop development and implementation:
+
+-   **Tailor technical prerequisites to the anticipated audience.** For example, our SMART on FHIR workshop requires basic HTML and JavaScript experience for hands-on participation. Using a [capability assessment](#capability-assessments) can provide valuable information on the existing experience of your audience.
+
+-   **Provide an "on ramp"** introducing the topic at the beginning so less technical participants can still get value from the beginning, as mentioned above. For example, we included an [introductory webinar](../bulk-data/index.qmd) at the beginning of our [FHIR Bulk Data workshop](../../workshops/bulk-data/index.qmd).
+
+    If you design live events to allow for less technical members to leave before getting into more technical content, it's helpful to clearly identify the "drop points" where people who are not interested in the technical content can safely leave.
+
+-   **Provide a walk-through to introduce hands-on participation.** This can be in the form of reviewing sample code or filling in a template live.
+
+-   **Provide a way for participants to ask questions** if you are asking participants to do hands-on technical work (e.g., writing Python code to call a FHIR API). This could be in the form of an optional "lab" at the end of a workshop where participants can ask questions, or a point of contact for questions after the fact.
+
+    Participants may also need to ask questions about getting their environment set up. Strategize to reduce setup as much as possible (e.g., use cloud Jupyter environment rather than requiring participants to run it locally -- more on this below). Having a brief "preflight" immediately before the hands-on portion of the workshop is also advisable. ([Example preflight slide from the FHIR Bulk Data workshop](preflight-example-slide.qmd).)
+
+    To avoid individual-specific questions disrupting the workshop, it is advisable to have an additional person to serve as a "TA". For virtual workshops, enable a breakout room that the TA can use to help participants 1:1 or in a small group.
+
+### Workshop length
+
+Based on our experience, we recommend keeping the total length of a workshop under 3 hours per day. Having a longer workshop may introduce scheduling difficulties that can suppress attendance, and fatigue may result in diminishing returns for participants. Consider 1-2 hours of content, and an optional "lab" hour if there is substantial hands-on content to allow participants to work independently and ask questions. Include 5 minute breaks every hour.
+
+### Registration
+
+We recommend requiring registration to attend workshops. This allows for monitoring and adjustment of outreach strategy if the desired mix of people don't initially sign up. Registration should start at least 2 weeks ahead of the event, and ideally should start even earlier for a longer event that may require participants to shift their usual schedule to attend.
+
+Registration should clearly identify prerequisites, required technical skills, and if there is an introductory portion appropriate for all audiences followed by a more technical portion.
+
+Consider whether your registration form should allow for participants to request reasonable accommodations for disabilities. (This may be required by your organization.)
+
+### Accessibility
+
+The following recommendations support enhanced accessibility of workshop materials:
+
+-   Use Zoom local recording (or similar) to record screen and audio
+-   Share recording with subtitles for accessibility
+    -   Modern transcription applications like [MacWhisper](https://goodsnooze.gumroad.com/l/macwhisper) can generate subtitles that are quite accurate, requiring fairly minimal manual editing
+    -   Subtitles can be in a .srt "sidecar" file -- this is a plain text file that can be easily edited by hand
+-   Provide slides and other materials on a single website at the time of the event
+    -   e.g., <https://purl.org/fhir-for-research/workshops/bulk-data>
+    -   Consider "upstreaming" any materials to the main open source GitHub repository; see \[../../contribute.qmd\] for more information
+-   Use URLs in slides that can be updated later if the website changes (e.g. from <https://purl.org>) to avoid broken links in video recordings
+
+## Environment & data
+
+### Compute
+
+If possible, provide a cloud compute environment with dependencies pre-installed. This will save on setup time and avoid participants getting stuck on technical issues during the workshop.
+
+To run a compute environment on a server, you can use:
+
+-   **Python/Jupyter:** <https://tljh.jupyter.org> for up to 100 users
+
+-   **R/RStudio Server:** <https://posit.co/download/rstudio-server/>
+
+If you don't want to run a server, there are a number of different services you can use. Two of these are: - Free, some additional complexity: <https://mybinder.org> - \$15/month, more reliable: <https://posit.cloud/plans/instructor?option=instructor>
+
+### Running a server
+
+Typically memory is the main constraint, which scales linearly with the number of simultaneous users. Our FHIR Bulk Data workshop using JupyterHub (via TLJH) required around 600MB/user minimum. You can run your code ahead of time to estimate memory needs.
+
+CPU usage will likely be low unless your workshop includes a lot of CPU-constrained code (e.g., training machine learning models).
+
+The TLJH website includes [information on resource estimation](https://tljh.jupyter.org/en/latest/howto/admin/resource-estimation.html). As of writing, it does not appear that RStudio Server has similar documentation, but the overall constraints should be similar.
+
+NIH-funded researchers may take advantage of the STRIDES Initiative for cloud computing. For more information, visit <https://datascience.nih.gov/strides>.
+
+For an example of server setup instructions, see [the instructions](../../workshops/bulk-data/setup.qmd) for the [FHIR Bulk Data workshop](../../workshops/bulk-data/index.qmd).
+
+### Synthetic data
+
+Using synthetic data for workshops avoids privacy issues with patient data. [Synthea](https://synthea.mitre.org) provides synthetic data in FHIR format, and [additional information is here](/modules/synthetic-data.qmd).
+
+### FHIR test server
+
+Workshops that use the FHIR API will need a test server. There are a few options for this:
+
+-   <https://launch.smarthealthit.org> for SMART on FHIR testing
+
+-   <https://bulk-data.smarthealthit.org> for FHIR Bulk Data testing
+
+-   <https://hapifhir.io> if you want to run your own FHIR server (also includes a public sandbox: <http://hapi.fhir.org>)
+
+See the module on [Standing up a FHIR Testing Server](../../modules/synthea-test-server.qmd) for more instructions.
+
+## About this website
+
+The content on this website is broken up into self-contained "modules" distributed among the following sections:
+
+1.  [Introduction](../../sections/introduction.qmd)
+2.  [Advanced Topics](../../sections/advanced-topics.qmd)
+3.  [Hands-on Practice](../../sections/hands-on-practice.qmd)
+4.  [Hosting your own Workshop](../../sections/hosting-your-own-workshop.qmd)
+
+This website is generated from [source code](https://purl.org/fhir-for-research/github) using [Quarto](https://quarto.org%3E):
+
+-   Quarto is a tool for generating static documentation websites that include R or Python code
+-   It's made by Posit (the company that makes RStudio)
+
+The narrative content is written in [Markdown](https://quarto.org/docs/authoring/markdown-basics.html). More information about editing, modifying, or reusing content from this website is [available here](../../contribute.qmd).
+
+## Working with Revealjs slides
+
+Quarto supports three different formats for generating slides. We use one of these called [Revealjs](https://quarto.org/docs/presentations/revealjs/). This is an especially good format for slides that include code. For virtual workshops, screen sharing a single browser window that includes Revealjs slides in a tab is easier than switching between applications.
+
+To create PDFs of Revealjs slides, you can use [DeckTape](https://github.com/astefanutti/decktape), a command line tool for converting HTML slides (including Revealjs) into PDF. Note that DeckTape-generated PDFs are not accessible by default.
+
+## Sharing accessible slides
+
+Like Revealjs PDFs, PowerPoint slides are not by default accessible. [Microsoft guidance for making accessible PowerPoint files](https://support.microsoft.com/en-us/office/make-your-powerpoint-presentations-accessible-to-people-with-disabilities-6f7772b2-2f33-4bd2-8ca7-dae3b2b3ef25).
+
+[Adobe Acrobat Pro](https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html) may be useful in making PDFs accessible (we were not able to find an open source tool to support in adding accessibility features to PDFs). The [PDF Accessibility Checker](https://pdfua.foundation/en/) can be used to assess the accessibility of PDFs.
+
+If you generate a PDF from PowerPoint slides, use [these instructions](https://support.microsoft.com/en-au/office/create-accessible-pdfs-064625e0-56ea-4e16-ad71-3aa33bb4b7ed) to add accessibility tags to the PDF.
+
+## Mermaidjs
+
+Quarto supports [Mermaidjs diagrams](https://quarto.org/docs/authoring/diagrams.html). If you need to download a Mermaidjs diagram as a SVG, [this Chrome bookmarklet](http://nytimes.github.io/svg-crowbar/) may be helpful.
+
+To add an accessibility title to a Mermaidjs diagram, add `accTitle` like below:
+
+```{{{{mermaid}}}}
+sequenceDiagram
+    accTitle: Diagram showing the workflow for a SMART on FHIR EHR launch
+    ...
+```

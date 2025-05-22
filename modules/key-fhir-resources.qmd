@@ -1,0 +1,546 @@
+---
+title: "Key FHIR Resources"
+
+area:
+  name: Overview
+topic:
+  name: FHIR for Research
+
+roles:
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives:
+  - question: Identify key FHIR resources.
+    answer: Patient, Observation, and Bundle.
+  - question: Explain the significance of a FHIR resource's "structure table" in the FHIR specification and identify what is included in the table.
+    answer: The data elements of each FHIR resource are listed in a "structure table" on that resource's page in the FHIR specification. The structure table includes each data element's name, flags, cardinality, type, constraints, and descriptions.
+  - question: Describe how FHIR resources support interoperability.
+    answer: The data elements of each FHIR resource are rigorously defined by the FHIR specification. Systems that (correctly) implement the FHIR specification are therefore able have a consistent location and format for storing data, which supports transfer of medical information without loss of meaning.
+
+reading_time: true
+---
+
+Resources are the key building blocks of FHIR. A [**FHIR resource**](https://www.healthit.gov/sites/default/files/page/2021-04/Intro%20to%20FHIR%20Resources%20Fact%20Sheet.pdf) is a structure that contains medical information in an unambiguous format. This allows different systems to understand information in the same way,[^1] which is necessary for health systems to accurately share data.
+
+[^1]: When systems exchange information with unambiguous and shared meaning, it is called [semantic interoperability](https://en.wikipedia.org/wiki/Semantic_interoperability).
+
+## Core elements
+
+The FHIR core v5.0.0 (also known as Revision 5, or R5) defines [157 resources](https://hl7.org/fhir/R5/resourcelist.html) that allow for healthcare interoperability. The [HL7® FHIR® standard](https://hl7.org/fhir) gives a well-structured summary of FHIR's core resources:
+
+[![The organization of FHIR's core resources. From \[HL7's FHIR specification\](https://hl7.org/fhir/R5).](images/fhir-index-R5.png){fig-alt="Screenshot from the FHIR specification showing the organization of FHIR resources. Level 1: basic framework on which the specification is built. Level 2: Supporting implementation and binding to external specifications. Level 3: Linking to real-world concepts in the healthcare system. Level 4: Record-keeping and and Data Exchange for the healthcare process. Level 5: Providing the ability to reason about the healthcare process."}](https://hl7.org/fhir/R5)
+
+As shown above, the FHIR core resources are organized into 5 levels:
+
+-   **Levels 1 and 2** include data types and infrastructure required to implement FHIR, including "meta" FHIR resources used to describe aspects of FHIR itself.
+-   **Levels 3 and 4** include intuitive FHIR resources information such as `Patient` or `Observation`.
+-   **Level 5** includes abstract FHIR resources such as clinical workflows with the intended use of [Clinical Decision Support](https://www.healthit.gov/topic/safety/clinical-decision-support).
+
+## Representation
+
+A FHIR resource may be encoded in different standard formats like [JSON and XML](https://hl7.org/fhir/formats.html#wire). These format are used throughout the software industry, not just in healthcare. Using standard formats allows common programming languages and software tools to process FHIR resources.[^2]
+
+[^2]: In contrast, HL7 V2 messages use their own proprietary encoding format, which cannot be parsed without a purpose-built software or custom code.
+
+::: {.callout-tip collapse="true"}
+## Examples of JSON and XML formats
+
+JSON looks like this:
+
+```         
+{
+  "resourceType" : "Patient",
+  "id" : "example",
+  "name" : [{
+    "use" : "official",
+    "family" : "Chalmers",
+    "given" : ["Peter",
+    "James"]
+  }]
+}
+```
+
+XML looks like this:
+
+```         
+<?xml version="1.0" encoding="UTF-8"?>
+<Patient xmlns="http://hl7.org/fhir">
+    <id value="example"/>
+    <name>
+        <use value="official"/>
+        <family value="Chalmers"/>
+        <given value="Peter"/>
+        <given value="James"/>
+    </name>
+</Patient>
+```
+:::
+
+## Design
+
+The critical concepts across the FHIR resource design are:
+
+-   **Granularity**: Capture all possible information.
+-   **Flexibility**: Work with a variety of pre-existing data pipelines.
+-   **Extensibility**: Encompass quirks in real-world workflows.
+-   **Metadata**: Support auto-discovery and self-documentation.
+
+FHIR resources support the concepts above and follow [object-oriented principles](https://en.wikipedia.org/wiki/Object-oriented_programming), a key software engineering concept. They bridge the world between technical implementation and real-world medical practice while minimizing compromises.
+
+To understand how FHIR accomplishes this, let's examine the [Patient resource](https://hl7.org/fhir/patient.html).
+
+## The Patient resource {#the-patient-resource}
+
+Here is a [FHIR structure table](https://hl7.org/fhir/formats.html#table) for the [Patient resource](https://hl7.org/fhir/patient.html#resource):
+
+::: {.fancybox-figure data-fancybox="images/fhir-r5-patient-structure.png" data-src="images/fhir-r5-patient-structure.png" data-caption="The structure for FHIR Patient resource. <a href='https://hl7.org/fhir/R5/patient.html#resource' target='_blank'>https://hl7.org/fhir/R5/patient.html#resource</a>"}
+[![Click to enlarge](images/fhir-r5-patient-structure.png){fig-alt="The structure for FHIR Patient resource. Go to https://hl7.org/fhir/R5/patient.html#resource for a text version."}](https://hl7.org/fhir/R5/patient.html#resource)
+:::
+
+All FHIR resources have a similar table representing their contents. These tables have the following columns:
+
+-   **Name:** The element name.
+-   **Flags:** Special markers that carry information required for implementers. The flags **`N`**, `?!`, and `Σ` represent [normative](https://www.hl7.org/fhir/R5/versions.html#std-process), [is-modifier](https://www.hl7.org/fhir/R5/conformance-rules.html#isModifier), and [in-summary](https://www.hl7.org/fhir/R5/search.html#summary) respectively. We will not cover FHIR attribute flags in detail here, but [HL7 documents them](https://www.hl7.org/fhir/formats.html#table).
+-   **Card.:** The cardinality of the attribute in format `{minimum}..{maximum}`. Cardinality refers to the number of data points an element can hold. The most intuitive cardinality values are `1..1` which means "one value required" and `0..1`, which means "one value is optional. However, other options are possible, like `0..*`, which means"any number of values."[^3]
+-   **Type:** The primitive or complex [data type](https://hl7.org/fhir/datatypes.html). A [primitive data type](https://www.hl7.org/fhir/datatypes.html#primitive) is a base data type, like [`date`](https://hl7.org/fhir/R5/datatypes.html#date) or [`integer`](https://hl7.org/fhir/R5/datatypes.html#integer). A [complex data type](https://hl7.org/fhir/R5/datatypes.html#complex) is constructed from other data types, like [Address](https://hl7.org/fhir/R5/datatypes.html#Address).
+-   **Description & Constraints:** A human-targeted explanation of the element that may contain constraints that implementers must enforce. Constraints (like "element X must be populated if element Y is missing") may be formally defined through a language called [FHIRPath](https://hl7.org/fhir/fhirpath.html).
+
+[^3]: A cardinality of `0..*` might be appropriate for a "middle name" element, where a person might have no middle name, one middle name, or multiple middle names.
+
+Defining a FHIR resource automatically generates a structure table, so structure tables are available for any resource.
+
+### Basic types example: `Patient.active`
+
+Under "Patient" there is an element `active` which is referred to as `Patient.active`. From the table we know that `Patient.active` is a `boolean` (i.e., "true" or "false") and can either be omitted or have one value (cardinality `0..1`).
+
+An example of the `Patient.active` element in JSON format would look like:
+
+``` json
+{
+  ...
+  "active": "true",
+  ...
+}
+```
+
+And in XML:
+
+``` xml
+...
+<active value="true"/>
+...
+```
+
+### Complex types example: `Patient.name`
+
+`Patient.name` is of complex type [HumanName](https://hl7.org/fhir/datatypes.html#HumanName). Complex types are FHIR resources and have their own structure table. Here's the one for HumanName:
+
+::: {.fancybox-figure data-fancybox="images/fhir-human-name-structure-r5.png" data-src="images/fhir-human-name-structure-r5.png" data-caption="The structure for Patient.name, which is a HumanName. <a href='https://hl7.org/fhir/datatypes.html#HumanName' target='_blank'>https://hl7.org/fhir/datatypes.html#HumanName</a>"}
+[![Click to enlarge](images/fhir-human-name-structure-r5.png){fig-alt="The structure for Patient.name, which is a HumanName. Go to https://hl7.org/fhir/datatypes.html#HumanName for a text version."}](https://hl7.org/fhir/datatypes.html#HumanName)
+:::
+
+HumanName's elements all have primitive types, such as `HumanName.given`, an array of zero or more strings, and `HumanName.use`, a code-string that must be one of the provided values. As an example, the name Pieter van de Heuvel would be represented in JSON as:
+
+``` json
+{
+  "name": [
+    {
+      "use": "usual",
+      "family": "van de Heuvel",
+      "given": [
+        "Pieter"
+      ],
+      "suffix": [
+        "MSc"
+      ]
+    }
+  ]
+}
+```
+
+::: callout-note
+## The flexibility of FHIR's data modeling approach
+
+The structure of HumanName highlights the flexibility of FHIR's approach to modeling data. `HumanName` allocates seven separate elements to represent a person's name. Compare this with a standard approach in a relational database, which would typically allocate only a few fields.
+
+In FHIR, all of these elements are, allowing for flexibility in how implementers represent names. For example, some implementers might store names as a single string (e.g., `Pieter van de Heuvel, MSc`), while others might split up the name parts into separate elements (like the JSON above).
+
+Making elements optional balances flexibility with interoperability: this approach provides a standard location and encoding for the data element in question, without requiring *all* systems to populate it. This approach is used throughout the core FHIR resource definitions.
+
+This degree of flexibility is not helpful in all use cases. FHIR addresses this through [resource Profiles](https://hl7.org/fhir/profiling.html), which provide a way to computably describe use case-specific constraints (e.g., "all names must include a `family` element"). Profiles are collected in [Implementation Guides (IGs)](data-modeling-real-world-igs.qmd) to provide a complete specification based on FHIR for a given use case.
+:::
+
+### Choice elements example: `Patient.deceased[x]`
+
+Elements that can have more than one data type are called [**choice elements**](https://hl7.org/fhir/formats.html#choice). The `Patient.deceased[x]` attribute demonstrates some characteristics of a choice element.
+
+-   The term `Patient.deceased[x]`, with `[x]` in the name, appears in documentation only--never in an instance of Patient that's been populated with data.
+
+-   Instead, one *and only one* of the following may appear in an instance of Patient: `Patient.deceasedBoolean` or `Patient.deceasedDateTime`. The documentation shows that these are the two valid types for `Patient.deceased[x]`.
+
+-   All choice elements *must* have a maximum cardinality of `1` [per the FHIR specification](https://hl7.org/fhir/formats.html#choice).
+
+-   `Patient.deceased[x]` happens to have a minimum cardinality of `0`, so an instance of Patient may also omit both `Patient.deceasedBoolean` and `Patient.deceasedDateTime`. Other choice elements may have a minimum cardinality of `1` and require one of the indicated datatypes.
+
+This flexibility allows the status of non-deceased patients to be represented by `Patient.deceasedBoolean = false` or an absent value, while deceased patients can be represented by `Patient.deceasedBoolean = true` or `Patient.deceasedDateTime = "2023-01-01T01:01:01"`.
+
+Choice elements are always denoted by a `[x]` suffix in documentation. The `[x]` is replaced with the name of the datatype in [CamelCase](https://en.wikipedia.org/wiki/Camel_case): `deceased[x]` becomes `deceasedDateTime` for the [dateTime type](https://www.hl7.org/fhir/datatypes.html#dateTime).
+
+::: {.callout-note collapse="true"}
+## Implementing choice elements
+
+While choice elements provide flexibility, they add complexity for implementers, including researchers. When working with choice elements, consider the following:
+
+-   Assume that any of a choice element's possible types may be present. For example, a tabular representation of Patient instances would include two columns related to "deceased": `deceased_boolean` and `deceased_datetime`. An analyst could add logic to collapse this down to a single column for a given analysis (e.g., logic like, "if `deceased_datetime` is not empty and `deceased_boolean` is missing, then set `deceased_boolean` to `true`").
+
+-   When possible, use existing software libraries to do the FHIR-to-tabular conversion, such as R's [fhircrackr](https://cran.r-project.org/web/packages/fhircrackr/vignettes/fhircrackr_intro.html), which may simplify handling choice elements.
+
+-   When developing custom software, use FHIR's official [list of choice elements](https://hl7.org/fhir/choice-elements.json) to systematically handle them rather than hard-coding special cases for each resource.
+
+-   If possible, use [FHIR profiles](https://www.hl7.org/fhir/profiling.html) to add constraints to disallow undesirable datatypes for choice elements. For example, if `Patient.deceasedDateTime` is *never* useful for a given use case, a profile of Patient could disallow `Patient.deceasedDateTime` and require `Patient.deceasedBoolean`. This is like defining a data dictionary ahead of data collection and can drastically simplify analysis *as long as the data sources also implement the custom profiles*.
+:::
+
+### CodeableConcepts example: `Patient.maritalStatus`
+
+`Patient.maritalStatus` is a [CodeableConcept](http://hl7.org/fhir/datatypes.html#CodeableConcept), which is a commonly used complex type in FHIR. CodeableConcepts bind an attribute to a specific set of terminology concepts. `Patient.maritalStatus` is bound to the [Marital Status Codes Value Set](http://hl7.org/fhir/valueset-marital-status.html). For more on FHIR's terminology resources, see the [terminology module](terminology.qmd).
+
+In addition to identifying a value set for the binding, a CodeableConcept also identifies the [strength of the binding](https://www.hl7.org/fhir/terminologies.html#strength):
+
+-   **`required` binding**: The value of the element **must** be from the specified value set.
+
+-   **`extensible` binding**: If a code in the specified value set represents the concept, then that code **must** be used. Otherwise, a different code can be used.
+
+-   **`preferred` binding**: The use of codes from the specified value set is encouraged but not required.
+
+-   **`example` binding**: The specified value set is an example, and codes outside the specified value set can be used freely.
+
+The base FHIR specification generally does not have `required` bindings as these restrict the flexibility of resources. Instead, required bindings are added for specific use cases via [FHIR profiles](https://www.hl7.org/fhir/profiling.html).
+
+::: {.callout-note collapse="true"}
+## Implementing CodeableConcepts
+
+Implementers and researchers should consider the following when implementing CodeableConcepts:
+
+-   Using a FHIR profile to require specific value sets simplifies analysis.
+
+-   Unless an element has a `required` binding, do not assume that FHIR data will only include codes from the specified value set. Make sure you perform an exploratory data analysis for any CodeableConcept binding strength other than `required`.
+
+    For example, the `Patient.maritalStatus` binding is `extensible`: while you *may* see values from [the bound value set](https://www.hl7.org/fhir/valueset-marital-status.html) (like `M` for married), you may also see values from other value sets (like the SNOMED CT concept [54986009](https://browser.ihtsdotools.org/?perspective=full&conceptId1=54986009&edition=MAIN/2023-03-31&release=&languages=en) "Engaged to be married (finding)" ).
+:::
+
+### Inheritance in FHIR
+
+In software engineering, [inheritance](https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)) is a common pattern for sharing attributes across similar classes (e.g., a **parent** class called "pet" might have two **child** classes called "dog" and "cat". "Dog" and "cat" **inherit** properties from the "pet" parent class, like "name," "weight," and "cuteness.").
+
+FHIR has a similar pattern, where resources like Patient inherit from a parent type called [DomainResource](http://hl7.org/fhir/domainresource.html). You can see this in the first row of the structure table for Patient:
+
+::: {.fancybox-figure data-fancybox="images/fhir-r5-patient-domainresource.png" data-src="images/fhir-r5-patient-domainresource.png" data-caption="The first few rows of the structure table of the Patient resource, with an arrow indicating that Patient is a DomainResource."}
+![Click to enlarge](images/fhir-r5-patient-domainresource.png){fig-alt="The first few rows of the structure table of the Patient resource, with an arrow indicating that Patient is a DomainResource."}
+:::
+
+Similarly, DomainResource is a child of [Resource](http://hl7.org/fhir/resource.html), which is the base of almost all FHIR resources. Because FHIR resources are children of DomainResource, they have the same set of core elements in their computable representation. This is useful if you are writing software that needs to process resource definitions from the FHIR specification.
+
+FHIR profiles also exhibit inheritance, where a profile inherits the constraints from another profile or from a base FHIR resource.
+
+### A Patient Example
+
+To summarize the Patient resource, here is an [anonymized example](https://hl7.org/fhir/patient-example-f001-pieter.json.html) from the real world:
+
+``` json
+{
+  "resourceType": "Patient",
+  "id": "f001",
+  "text": {
+    "status": "generated",
+    "div": "..."
+  },
+  "identifier": [
+    {
+      "use": "usual",
+      "system": "urn:oid:2.16.840.1.113883.2.4.6.3",
+      "value": "738472983"
+    },
+    {
+      "use": "usual",
+      "system": "urn:oid:2.16.840.1.113883.2.4.6.3"
+    }
+  ],
+  "active": true,
+  "name": [
+    {
+      "use": "usual",
+      "family": "van de Heuvel",
+      "given": [
+        "Pieter"
+      ],
+      "suffix": [
+        "MSc"
+      ]
+    }
+  ],
+  "telecom": [
+    {
+      "system": "phone",
+      "value": "0648352638",
+      "use": "mobile"
+    },
+    {
+      "system": "email",
+      "value": "p.heuvel@gmail.com",
+      "use": "home"
+    }
+  ],
+  "gender": "male",
+  "birthDate": "1944-11-17",
+  "deceasedBoolean": false,
+  "address": [
+    {
+      "use": "home",
+      "line": [
+        "Van Egmondkade 23"
+      ],
+      "city": "Amsterdam",
+      "postalCode": "1024 RJ",
+      "country": "NLD"
+    }
+  ],
+  "maritalStatus": {
+    "coding": [
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus",
+        "code": "M",
+        "display": "Married"
+      }
+    ],
+    "text": "Getrouwd"
+  },
+  "multipleBirthBoolean": true,
+  "contact": [
+    {
+      "relationship": [
+        {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v2-0131",
+              "code": "C"
+            }
+          ]
+        }
+      ],
+      "name": {
+        "use": "usual",
+        "family": "Abels",
+        "given": [
+          "Sarah"
+        ]
+      },
+      "telecom": [
+        {
+          "system": "phone",
+          "value": "0690383372",
+          "use": "mobile"
+        }
+      ]
+    }
+  ],
+  "communication": [
+    {
+      "language": {
+        "coding": [
+          {
+            "system": "urn:ietf:bcp:47",
+            "code": "nl",
+            "display": "Dutch"
+          }
+        ],
+        "text": "Nederlands"
+      },
+      "preferred": true
+    }
+  ],
+  "managingOrganization": {
+    "reference": "Organization/f001",
+    "display": "Burgers University Medical Centre"
+  }
+}
+```
+
+Note that [JSON](https://en.wikipedia.org/wiki/JSON) representations of resources begin with `resourceType: "<resource>"` to indicate the base FHIR resource type.
+
+In [XML](https://en.wikipedia.org/wiki/XML) representations of resources, the tag enclosing the data identifies the resource type (in [this case](https://hl7.org/fhir/patient-example-f001-pieter.xml.html), `<Patient ...> ... </Patient>`).
+
+Typically, JSON is easier to read (both for humans and computers) than XML, so JSON is used primarily in FHIR for Research.
+
+::: {.callout-note collapse="true"}
+## Implementing FHIR in JSON and XML
+
+Regarding the JSON and XML representations of FHIR, implementers and researchers should be aware of the following:
+
+-   In either JSON or XML, the underlying data of the FHIR resource are the same. You can convert between JSON and XML representations of FHIR data without loss of information.
+
+-   You should use JSON by default when writing code to ingest in FHIR instances (or computable representations of FHIR profiles or resource definitions).
+
+-   When requesting FHIR data from a server, you can [specify](https://www.hl7.org/fhir/http.html#parameters) the format of the response.
+
+-   If you work with R, the [fhircrackr](https://github.com/polar-fhir/fhircrackr) library uses the XML representation of FHIR resource instances. If you use this library, you will need basic familiarity with XML to [extract data elements from the FHIR resource instances](https://github.com/polar-fhir/fhircrackr#flattening-resources).
+:::
+
+## The Observation resource
+
+[Observation](https://hl7.org/fhir/observation.html) is another commonly used FHIR resource. It captures vital signs, laboratory data, imaging results, clinical findings, device measurements, and more. Like the Patient resource, there is an [Observation structure table](http://hl7.org/fhir/observation.html#resource):
+
+::: {.fancybox-figure data-fancybox="images/fhir-observation-structure.png" data-src="images/fhir-observation-structure.png" data-caption="The structure for FHIR observation resource. <a href='https://hl7.org/fhir/observation.html#resource' target='_blank'>https://hl7.org/fhir/observation.html#resource</a>"}
+[![Click to enlarge](images/fhir-observation-structure.png){fig-alt="Observation structure with attributes status:code, code:CodeableConcept, subject:Reference(Patient), and value[x]. Go to https://hl7.org/fhir/observation.html#resource for a text version."}](https://hl7.org/fhir/observation.html#resource)
+:::
+
+Below is a JSON example `Observation` of high blood glucose levels:
+
+``` json
+{
+  "resourceType": "Observation",
+  "id": "f001",
+  "text": {
+    "status": "generated",
+    "div": "..."
+  },
+  "identifier": [
+    {
+      "use": "official",
+      "system": "http://www.bmc.nl/zorgportal/identifiers/observations",
+      "value": "6323"
+    }
+  ],
+  "status": "final",
+  "code": {
+    "coding": [
+      {
+        "system": "http://loinc.org",
+        "code": "15074-8",
+        "display": "Glucose [Moles/volume] in Blood"
+      }
+    ]
+  },
+  "subject": {
+    "reference": "Patient/f001",
+    "display": "P. van de Heuvel"
+  },
+  "effectivePeriod": {
+    "start": "2013-04-02T09:30:10+01:00"
+  },
+  "issued": "2013-04-03T15:30:10+01:00",
+  "performer": [
+    {
+      "reference": "Practitioner/f005",
+      "display": "A. Langeveld"
+    }
+  ],
+  "valueQuantity": {
+    "value": 6.3,
+    "unit": "mmol/l",
+    "system": "http://unitsofmeasure.org",
+    "code": "mmol/L"
+  },
+  "interpretation": [
+    {
+      "coding": [
+        {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+          "code": "H",
+          "display": "High"
+        }
+      ]
+    }
+  ],
+  "referenceRange": [
+    {
+      "low": {
+        "value": 3.1,
+        "unit": "mmol/l",
+        "system": "http://unitsofmeasure.org",
+        "code": "mmol/L"
+      },
+      "high": {
+        "value": 6.2,
+        "unit": "mmol/l",
+        "system": "http://unitsofmeasure.org",
+        "code": "mmol/L"
+      }
+    }
+  ]
+}
+```
+
+By observing that the `resourceType` is `"Observation"` and using the structure table above, you can interpret the JSON content as follows:
+
+-   **`Observation.id = f001`**: The `id` attribute from the grandparent class `Resource`. See [accessing FHIR data](fhir-accessing-data.qmd) for how to use a resource id.
+-   **`Observation.text`**: Human-targeted text in HTML that an EHR will display if FHIR software fails.
+-   **`Observation.status = final`**: A *required* [code](http://hl7.org/fhir/datatypes.html#primitive) string. This indicates the observation is finalized.
+-   **`Observation.code`**: A *required* `CodeableConcept`, using [LOINC](http://hl7.org/fhir/valueset-observation-codes.html) for the example binding.
+-   **`Observation.subject`**: A [Reference](http://hl7.org/fhir/references.html#Reference) to another FHIR resource. In this case, it is the example Patient from earlier.
+-   **`Observation.valueQuantity`**: A supplied `value[x]` choice element for storing the result of the test. In this case, they use type [Quantity](http://hl7.org/fhir/datatypes.html#Quantity) to specify blood glucose concentration.
+
+## The Bundle resource
+
+Grouping multiple FHIR instances into one package is often helpful, like grouping the blood-glucose Observation example above with the referenced Patient. The [Bundle](https://hl7.org/fhir/bundle.html) resource is often used for this in FHIR.
+
+In an instance of Bundle, each grouped instance is stored inside **`Bundle.entry[i].resource`**. Find examples of Bundles [here](https://hl7.org/fhir/diagnosticreport-examples.html).
+
+::: {.callout-caution collapse="true"}
+## Bundle vs NDJSON
+
+You may discover certain FHIR communities using [**NDJSON** (Newline-Delimited JSON)](http://ndjson.org/) instead of `Bundle`. In NDJSON, each FHIR resource is printed on one line, and a new line indicates the next FHIR resource. NDJSON is more efficient than `Bundle` for large data transfers, and, as of March 1st 2023, [FHIR R5 includes NDJSON in Draft status](http://hl7.org/fhir/5.0.0-draft-final/nd-json.html). FHIR data in NDJSON will likely be relatively rare for the next few years as implementers catch up. `Bundle` is used more frequently, and can include [pagination](https://www.hl7.org/fhir/search.html#count) for large amounts of data.
+:::
+
+## The CapabilityStatement resource
+
+A [CapabilityStatement](https://hl7.org/fhir/capabilitystatement.html) is a resource that contains metadata about a FHIR server, including what resources the server hosts and how to access them.
+
+CapabilityStatements provide information like:
+
+-   **`CapabilityStatement.url`:** The base URI for the FHIR server. This may also be the URI for capability statement itself, which includes the base URI for the server.
+-   **`CapabilityStatement.fhirVersion`:** The FHIR version that the API conforms to. Note that a FHIR server may provide API endpoints for multiple FHIR versions simultaneously via API endpoint URLs like `https://fhir.example.com/R4/...` and `https://fhir.example.com/R5/...` for FHIR R4 and R5 respectively.
+-   **`CapabilityStatement.format`:** The [encoding formats](https://hl7.org/fhir/formats.html#wire) supported by the FHIR server. [FHIR queries](fhir-accessing-data.qmd) must specify one of these formats via the [HTTP `Accept` Header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept).
+-   **`CapabilityStatement.implementationGuide`:** The [implementation guides (IG)](data-modeling-real-world-igs.qmd) that the FHIR server conforms to. However, a server may be partially or fully compliant to an IG without listing it in the metadata.
+-   **`CapabilityStatement.rest[i].security.service`:** The [RESTful security services](http://hl7.org/fhir/valueset-restful-security-service.html#expansion) required to access data on this server. This example uses [SMART-on-FHIR](smart-on-fhir-intro.qmd), but other possibilities include [OAuth](https://oauth.net/) or [UDAP](https://www.udap.org/).
+-   **`CapabilityStatement.rest[i].resource.type`:** All FHIR resources supported by the server. Note: this does not include foundational resources such as `CapabilityStatement` or `Bundle`, but typically resources [level 3 and higher](https://hl7.org/fhir).
+-   **`CapabilityStatement.rest[i].resource.interaction`:** The [RESTful interactions](http://hl7.org/fhir/http.html) available for that resource by the server. For example, the [`search`](http://hl7.org/fhir/http.html#search) interaction is a RESTful API action available in FHIR. The `CapabilityStatement.rest[i].resource.searchParam` field specifies what search parameters are possible.
+
+Properly implemented FHIR servers must provide an instance of CapabilityStatement at the `/metadata` endpoint.[^4] This provides a way for software to discover key information about the features of a given FHIR server. Note that the real-world capabilities of a FHIR server may not match its stated capabilities, so software that accesses FHIR servers should be resilient to deviations from the published CapabilityStatements.
+
+[^4]: <http://hapi.fhir.org/baseR4/metadata> is a real-world example of a CapabilityStatement instance.
+
+## Other common FHIR resources:
+
+[Condition](https://hl7.org/fhir/condition.html)
+
+:   A problem, diagnosis, or clinical event. It should be the reason for a medical intervention and tie into a larger [clinical workflow](http://hl7.org/fhir/workflow.html). There is some use-case overlap with `Observation`; an IG will provide better guidance.
+
+[Procedure](https://hl7.org/fhir/procedure.html)
+
+:   A medical activity performed on a patient, such as surgery, diagnostic procedures, or therapy. It should be a part of a clinical workflow.
+
+[Practitioner](https://hl7.org/fhir/practitioner.html)
+
+:   Any individual providing healthcare or a related service, from physicians to receptionists to service animals.
+
+[Organization](https://hl7.org/fhir/organization.html)
+
+:   Any formal or informal group of entities acting towards a collective cause, such as hospitals, departments, corporations, or health insurance groups.
+
+[Composition](https://hl7.org/fhir/composition.html)
+
+:   A set of FHIR resources that create a single coherent clinical statement, and usually acts as the skeleton for a [document](http://hl7.org/fhir/documents.html). This is often used in conjunction with a `Bundle`.
+
+[Extension](https://hl7.org/fhir/extension.html)
+
+:   A FHIR resource composed of a definitive URL and an `Extension.value[x]` of any type. Almost all resources inherit an extension attribute from `DomainResource.extension`, and an IG should explain how to use it.
+
+[StructureDefinition](https://hl7.org/fhir/structuredefinition.html)
+
+:   A FHIR resource that defines other FHIR resources. A structure definition instance exists for all FHIR resources, which allows for powerful dynamic programming and automated documentation.
+
+[OperationDefinition](https://hl7.org/fhir/operationdefinition.html)
+
+:   A FHIR resource that defines [FHIR operations](http://hl7.org/fhir/operations.html) in addition to traditional REST operations. OperationDefinitions often begin with a dollar sign (`$`). For example, `https://fhir.example.com/Patient/$match` will perform a [patient matching operation](http://hl7.org/fhir/patient-operation-match.html). This resource allows for powerful dynamic programming for FHIR operations.

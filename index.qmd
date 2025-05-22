@@ -1,0 +1,103 @@
+---
+title: "Home"
+section-divs: false
+
+# Canonical Markdown breaks the formatting for some reason -- but it doesn't look like this stops it
+editor_options:
+  markdown:
+    canonical: true
+
+toc: false
+sidebar: false
+
+format:
+  html:
+    css:
+      - styles.css
+      - index.css
+---
+
+:::::: column-screen
+::::: hero
+:::: hero-background
+::: hero-content
+# A Guide to Using FHIR® for Research
+
+Learn how FHIR can be used to exchange health data, and how to incorporate it in your research.
+
+[Get Started →](sections/introduction.qmd){.button}
+:::
+::::
+:::::
+::::::
+
+::::::: content-block
+:::::: features
+::: feature
+### Introduction
+
+This introduction to FHIR for research explains what FHIR is, what does FHIR data look, how to intepret FHIR guides, and how FHIR is used.
+
+[Learn more »](sections/introduction.qmd){.learn-more}
+:::
+
+::: feature
+### Advanced Topics
+
+SMART on FHIR, Clinical Decision Support Hooks, and other real-world approaches to gathering FHIR data for research purposes.
+
+[Learn more »](sections/advanced-topics.qmd){.learn-more}
+:::
+
+::: feature
+### Hands-on Practice
+
+Do-it-yourself workshops on tabular data analysis, Bulk Data access, and more.
+
+[Learn more »](sections/hands-on-practice.qmd){.learn-more}
+:::
+::::::
+:::::::
+
+:::::: topics
+### Other Topics
+
+::::: topics-list
+::: topic
+#### Hosting Your Own Workshop {.workshop}
+
+Hosting a workshop is a great way to learn and share experiences working with FHIR. View our recommendations for setting up and running a successful workshop.
+
+[View the Workshop Guides »](/sections/hosting-your-own-workshop.qmd){.learn-more}
+:::
+
+::: topic
+#### Style Guide {.guide}
+
+Read our Style Guide for this website and how to reference FHIR standards and specifications in your own communications.
+
+[View the Style Guide »](/style-guide.qmd){.learn-more}
+:::
+:::::
+::::::
+
+:::::: audience
+### Who is This Guide For?
+
+::::: guide
+::: description
+This guide is suitable for a wide range of technical and domain roles. Working with FHIR and health data will almost always require a broad range of skills and expertise.
+
+[Read more about different roles »](/roles.qmd){.learn-more}
+:::
+
+::: role-list
+-   Investigator
+-   Research Leaders
+-   Informaticist
+-   Software Engineer
+-   Clinical Scientist
+-   Trainer
+:::
+:::::
+::::::

@@ -1,0 +1,390 @@
+---
+title: Using the FHIR API to Access Data
+
+roles:
+  - Informaticist
+  - Software Engineer
+
+learning_objectives2:
+  - Understand the basics of how to access data via the FHIR API.
+  - Describe common types of searches to read data from a FHIR server for research.
+
+reading_time: true
+---
+
+[An Application Programming Interface (API) is](https://en.wikipedia.org/wiki/API) "a way for two or more computer programs to communicate with each other."
+
+[FHIR defines a standard API](https://www.hl7.org/fhir/http.html) that allows you (or your software) to request data from a FHIR-enabled server. The basics of this API should be consistent across FHIR servers, though servers can add their own custom functionality on top of the standard FHIR API.
+
+FHIR's API is based on [an architecture called REST (REpresentational State Transfer)](https://www.ibm.com/topics/rest-apis). The details of this architecture are beyond the scope of this module, but we will cover a few high-level characteristics of REST below as they are important for understanding FHIR's API.
+
+It's worth noting that most modern web-centric APIs are "RESTful" -- this is helpful for software engineers without prior FHIR experience who want to work with FHIR APIs because they have likely encountered other RESTful APIs.
+
+## Constructing a FHIR API request
+
+A FHIR server's API is typically accessed via a [URL](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL)[^1] like `https://hapi.fhir.org/baseR4/`.
+
+[^1]: URLs may only be accessible inside an institution's firewall, or may be accessible to the public internet. Even if a FHIR server is accessible to the public internet, it may not respond to *any* request -- depending on how it is configured, it may require authentication (like a username and password) to return any data.
+
+This URL is used to construct the API request, which typically takes the following form:
+
+``` markdown
+GET https://hapi.fhir.org/baseR4/Patient/591702
+```
+
+This would retrieve a FHIR instance of [Patient](https://www.hl7.org/fhir/patient.html) for the patient with the ID `591702`.
+
+::: {#query-dropdown .callout-note .column-page .bg-white}
+## Try a FHIR API request
+
+The general structure of a FHIR API request includes the following:
+
+-   `GET` = HTTP "verb", which tells the server whether you are asking for data or performing another operation (see [the FHIR documentation](https://www.hl7.org/fhir/http.html#trules) for details)
+-   `https://hapi.fhir.org/baseR4/` = URL to the FHIR API
+-   `Patient` = FHIR resource type you want
+-   `591702` = The ID for the resource you want (note that an ID is not needed for some types of API requests)
+
+You can use this information to **fill out the form below** to construct and run a **live** FHIR query below to retrieve this patient's instance of Patient:
+
+```{=html}
+<div class="d-xl-flex row justify-content-around g-3">
+  <div class="col-xl-4 mb-2 my-xl-auto mx-auto mx-xl-2" style="width:12rem;">
+    <select id="accessing-fhir-data-query-http-verb" class="form-select" aria-label="Select a FHIR Resource" name="query-http-verb">
+      <option selected>Select HTTP Verb</option>
+      <option value="GET">GET</option>
+      <option value="POST">POST</option>
+      <option value="HEAD">HEAD</option>
+      <option value="PATCH">PATCH</option>
+      <option value="PUT">PUT</option>
+      <option value="DELETE">DELETE</option>
+    </select>
+  </div>
+
+  <div class="col-xl-4 mb-2 my-xl-auto">
+    <div class="input-group">
+      <input type="text" class="form-control form-control-sm" placeholder="https:// ..." aria-label="URL to FHIR API" name="query-base-uri" size="50">
+
+      <span class="input-group-text">/</span>
+
+      <select id="accessing-fhir-data-query-resource" class="form-select form-select-sm" aria-label="Select a FHIR Resource" name="query-resource">
+        <option selected>Select a FHIR resource</option>
+        <option value="Patient">Patient</option>
+        <option value="Observation">Observation</option>
+      </select>
+
+      <span class="input-group-text">/</span>
+
+      <input type="text" class="form-control form-control-sm" placeholder="[resource ID here]" aria-label="FHIR resource ID" name="query-id">
+    </div>
+
+  </div>
+
+  <div class="col-xl-4 mb-2 my-xl-auto mx-2 text-center">
+    <button class="btn btn-sm btn-primary rounded py-2 py-xl-1" style="line-height:2;" onclick="getPatient()">Run&nbsp;query</button>
+  </div>
+</div>
+
+<br />
+
+<div id="query-output"></div>
+```
+:::
+
+The response to a FHIR API request is typically in [JSON](https://en.wikipedia.org/wiki/JSON) format, which, like REST, is a commonly used data interchange format.
+
+Here's an example of what this looks like for an instance of a Patient resource:
+
+``` json
+{
+    "resourceType": "Patient",
+    "id": "1234",
+    "identifier":
+    [
+        {
+            "use": "official",
+            "type":
+            {
+                "coding":
+                [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "MR",
+                        "display": "Medical Record Number"
+                    }
+                ],
+                "text": "Medical Record Number"
+            },
+            "system": "http://hospital.smarthealthit.org",
+            "value": "smart-1032702"
+        }
+    ],
+    "active": true,
+    "name":
+    [
+        {
+            "use": "official",
+            "family": "Shaw",
+            "given":
+            [
+                "Amy",
+                "V"
+            ]
+        }
+    ],
+    "telecom":
+    [
+        {
+            "system": "phone",
+            "value": "800-782-6765",
+            "use": "mobile"
+        },
+        {
+            "system": "email",
+            "value": "amy.shaw@example.com"
+        }
+    ],
+    "gender": "female",
+    "birthDate": "2007-03-20",
+    "address":
+    [
+        {
+            "use": "home",
+            "line":
+            [
+                "49 Meadow St"
+            ],
+            "city": "Mounds",
+            "state": "OK",
+            "postalCode": "74047",
+            "country": "USA"
+        }
+    ]
+}
+```
+
+Modern programming languages universally support parsing JSON, which makes it easier to work with FHIR data than if a bespoke format was used.[^2] JSON also is relatively easy for humans to read.
+
+[^2]: FHIR servers can also typically return data in other standard formats, like [XML](https://en.wikipedia.org/wiki/XML).
+
+## Common API requests for research
+
+Researchers will typically be reading data from a FHIR server rather than modifying data on the FHIR server. Requests to read data for research purposes will typically be one of the following:
+
+1.  Getting instances of resources for a specific patient
+2.  Getting all patients that meet a certain set of criteria
+
+Examples of API requests for these use cases are described below. For additional information on FHIR's search capabilities, please see the [Search page in the FHIR specification](https://www.hl7.org/fhir/search.html).
+
+### Getting instances of resources for a specific patient
+
+The example above (`GET https://hapi.fhir.org/baseR4/Patient/591702`) shows how to get the instance of Patient for the patient with the ID `591702`.
+
+::: callout-tip
+## Making requests to a FHIR server
+
+Because FHIR's RESTful interface uses standard HTTP requests, it is possible to make `GET` requests by pasting a URL like `https://hapi.fhir.org/baseR4/Patient/591702`into your browser's address bar (omit the `GET` when using your browser, as loading web pages uses `GET` by default).
+
+However, it may be helpful to use an API testing tool like [Postman](https://www.postman.com) or [Hoppscotch](https://hoppscotch.io) when constructing FHIR searches for testing, or viewing longer responses. **Note that caution should be used when loading real patient data with FHIR via third-party tools.** The FHIR search examples in this module use synthetic data so this is not a concern here.
+
+You can also use Python or another scripting language to make FHIR API requests and parse the responses. [This Jupyter notebook]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_0_Introduction.ipynb) demonstrates how to do this with Python.
+:::
+
+It is possible to get resources related to this patient as well. For example, to get all the Observation resources associated with patient `591702`, make the following request:
+
+```         
+GET https://hapi.fhir.org/baseR4/Patient?_id=591702&_revinclude=Observation:patient
+```
+
+Note that rather than including the ID as part of the URL like in `GET https://hapi.fhir.org/baseR4/Patient/591702`, this request uses the [`_id` parameter](https://www.hl7.org/fhir/search.html#_id). This is necessary because we need to use the [`search` interaction](https://www.hl7.org/fhir/http.html#search) rather than the [`read` interaction](https://www.hl7.org/fhir/http.html#read)[^3] to retrieve multiple instances at once.
+
+[^3]: `GET https://hapi.fhir.org/baseR4/Patient/591702` from above is an example of the `read` interaction.
+
+This request also uses the [`_revinclude` parameter](https://www.hl7.org/fhir/search.html#_include), which tells the FHIR server to follow the "reverse link" to identify instances of Observation where the reference in `Observation.patient` refers to one of the instances of Patient returned by the search.
+
+The response to a `search` interaction is an instance of the [Bundle](https://www.hl7.org/fhir/bundle.html) resource, which contains the instances of the Patient and Observation resources returned by the server in response to the search. More information on Bundle can be found in [Key FHIR Resources](key-fhir-resources.qmd#the-bundle-resource).
+
+Depending on your query, the response may be too large for the sever to easily return all at once. In this case, the server may employ [paging](http://www.hl7.org/fhir/http.html#paging) to split up the response. If it does, the response will include an entry in the `link` element that indicate the URL that provides the `relation="next"` page. To retrieve all the results, you will need to issue a `GET` request to the `next` URLs on each page of results. The last page of results will not have a `next` URL populated.
+
+#### Multiple types of resources
+
+The same approach can be used to get multiple types of resources at once. The query below will include both Observation and Condition instances for the specified patient using multiple `_revinclude` parameters:
+
+```         
+GET https://hapi.fhir.org/baseR4/Patient?_id=591702&_revinclude=Observation:patient&_revinclude=Condition:patient
+```
+
+#### Get instances of a resource without including Patient
+
+If you want to get *just* the instances of a resource like Observation for a patient, without including the instance of Patient, the following approach can be used:
+
+```         
+GET https://hapi.fhir.org/baseR4/Observation?patient=591702
+```
+
+This instructs the server to return instances of Observation where `Observation.patient=591702`.
+
+### Getting all patients that meet specified criteria
+
+FHIR's `search` interaction does not allow for the same degree of filtering logic as a SQL-style query in a relational database. However, it does include some ability to filter with AND/OR logic, or by other criteria. Below are a few examples of this functionality.
+
+To get all the patients who have an Observation observation with a specific value of `Observation.code`, make the following request:
+
+```         
+GET https://hapi.fhir.org/baseR4/Patient?_has:Observation:patient:code=http://loinc.org|718-7
+```
+
+This requests all instances of Patient that are associated with an instance of Observation via `Observation.patient`, and have `Observation.code=http://loinc.org|718-7` via [reverse chaining](https://www.hl7.org/fhir/search.html#has). (`718-7` is the LOINC for "[Hemoglobin \[Mass/volume\] in Blood](https://loinc.org/718-7/)".)
+
+If you want the instances of Observation along with Patient, you can use this request instead:
+
+```         
+GET https://hapi.fhir.org/baseR4/Observation?code=http://loinc.org|718-7&_include=Observation:patient
+```
+
+The [`_include` parameter](https://www.hl7.org/fhir/search.html#_include) tells the server to return instances of Observation where `code=http://loinc.org|718-7`, and then to follow the reference in `Observation.patient` and include the referenced instances as well.
+
+It is possible to perform more complex selection and filtering operations via the FHIR search API. For example, to get the subset of these observations with hemoglobin values \> 20, make this request:
+
+```         
+GET https://hapi.fhir.org/baseR4/Observation?code=http://loinc.org|718-7&_has:Observation&value-quantity=gt20
+```
+
+The parameter `value-quantity=gt20` tells the server to take the subset of the selected Observation instances with `Observation.valueQuantity` greater than (`gt`) 20. Care should be used when analyzing the response to ensure `Observation.valueQuantity.units` is consistent.
+
+A number of other logic and filtering capabilities are described in detail on in [a section on the Search page in the FHIR specification](https://www.hl7.org/fhir/search.html#combining).
+
+## Determining a FHIR server capabilities
+
+All servers are required to support the [`capabilities` interaction](https://www.hl7.org/fhir/http.html#capabilities) which documents the server's functionality. The capability interaction is of the form:
+
+```         
+GET [base]/metadata
+```
+
+This request will return an instance of a resource called a [CapabilityStatement](https://www.hl7.org/fhir/capabilitystatement.html) that defines the behaviors supported by the server.
+
+Instances of CapabilityStatement are often extremely long -- [the response](https://gist.github.com/masnick/4ae69f88c498a98f65d40a1098bcc9f6) from `GET https://hapi.fhir.org/baseR4/metadata` is more than 25,000 lines of JSON. Therefore, if you wish to use the `capabilities` interaction to discover server capabilities, you will likely need to write a script to assist with parsing the response. More information on this can be found [here]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_1_Opioids.ipynb) under "Querying the Server." The FHIR specification has a [summary table of interactions](https://www.hl7.org/fhir/http.html#summary) that may be available on a server, which may help in understanding the response of the `capabilties` interaction.
+
+## Next steps
+
+If you are interested in using the FHIR API to access data, you may want to review the following resources:
+
+-   The [general FHIR API documentation](https://www.hl7.org/fhir/http.html) and the documentation specific to the [`search` interaction](https://www.hl7.org/fhir/search.html) in the FHIR specification.
+
+-   The workshop covering [FHIR data analysis](/workshops/data-analysis-cds/01-fhir-analysis.qmd) if you are interested in extracting data from a FHIR server into a Python Pandas DataFrame.
+
+-   NIH/ODSS training materials on using Python/Pandas to extract data from a FHIR server and integrate it with other data sources (note that R versions of these exercises are [also available](https://datascience.nih.gov/fhir-initiatives/researchers-training)):
+
+    -   [Exercise 1: Patients Prescribed Opioids]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_1_Opioids.ipynb)
+
+    -   [Exercise 2: "Kids First" Data]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_2_KidsFirst.ipynb)
+
+    -   [Exercise 3: Drug-Drug Interactions]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_3_DrugInteractions.ipynb)
+
+```{=html}
+<!-- script to expand FHIR Query callout/dropdown -->
+<script>
+  document.querySelector("#query-dropdown > .callout-header").addEventListener("click", () => {
+    console.log("Resizing query dropdown");
+    document.querySelector("#query-dropdown").classList.toggle("column-body");
+    document.querySelector("#query-dropdown").classList.toggle("column-page");
+  });
+</script>
+
+<!-- script to execute FHIR Query demo -->
+<script>
+  let getPatient = function() {
+    let outputNode = document.getElementById('query-output');
+    outputNode.innerHTML = ""; // clear any previous results
+
+    let baseUriInput = document.querySelector("[name='query-base-uri']");
+    let resourceInput = document.querySelector("[name='query-resource']");
+    let idInput = document.querySelector("[name='query-id']");
+
+    let method = document.querySelector("[name='query-http-verb']").value;
+
+
+    // validate selected http verb
+    if( method != "GET" ) {
+      outputNode.innerHTML = `
+        <div class="alert alert-danger">The FHIR query in this situation must be <b>GET</b>. Please try again.</div>
+      `;
+      return false;
+    }
+
+
+    // construct & validate full url
+    if((baseUriInput.value == null) || (baseUriInput.value == "")) {
+      outputNode.innerHTML = `
+        <div class="alert alert-danger">The FHIR query base URI in this situation should be <b>https://hapi.fhir.org/baseR4</b>. Please try again.</div>
+      `;
+      return false;
+    }
+    if((resourceInput.value != "Patient") && (resourceInput.value != "Observation")) {
+      outputNode.innerHTML = `
+        <div class="alert alert-danger">The FHIR query base URI in this situation should be <b>Patient</b>. Please try again.</div>
+      `;
+      return false;
+    }
+    if((idInput.value == null) || (idInput.value == "")) {
+      outputNode.innerHTML = `
+        <div class="alert alert-danger">The FHIR query ID in this situation should be <b>591702</b>. Please try again.</div>
+      `;
+      return false;
+    }
+    let url = baseUriInput.value + "/" + resourceInput.value + "/" + idInput.value;
+
+
+    // fetch request and construct response view
+    fetch(url, {method: method})
+    .then(res => res.text())
+    .then(function (res) {
+      let viewerString = jsonViewer(res, true);
+      if( viewerString === null ) {
+        outputNode.innerHTML = `
+          <div class="alert alert-danger">
+            FHIR query returned incorrect JSON syntax. Query response:
+            <hr />
+            ${res}
+          </div>
+        `
+      }
+      else {
+        outputNode.innerHTML = `
+          <div>
+            <h4>Live response from <code>${baseUriInput.value}</code>:</h4>
+            <ul class="nav nav-tabs" id="outputTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="outputViewerTab" data-bs-toggle="tab" data-bs-target="#outputViewer" type="button" role="tab" aria-controls="outputViewer" aria-selected="true">Viewer</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="outputJsonTab" data-bs-toggle="tab" data-bs-target="#outputJson" type="button" role="tab" aria-controls="outputJson" aria-selected="false">JSON</button>
+              </li>
+            </ul>
+            <div class="tab-content" id="outputTabContent" style="height:50vh;overflow:scroll;">
+              <div class="tab-pane fade show active" id="outputViewer" role="tabpanel" aria-labelledby="outputViewerTab"></div>
+              <div class="tab-pane fade" id="outputJson" role="tabpanel" aria-labelledby="outputJsonTab"></div>
+            </div>
+          </div>
+        `;
+        document.querySelector("#outputViewer").appendChild( parseHTML( viewerString ) );
+        document.querySelector("#outputJson").innerHTML = `
+          <div class="sourceCode">
+            <pre class="sourceCode json code-with-copy"><code class="sourceCode json">${res}</code></pre>
+          </div>
+        `;
+
+      }
+    })
+    .catch(function(err) {
+      // This is where you run code if the server returns any errors
+      console.log("Failed to fetch patient: ", err)
+      outputNode.innerHTML = `
+        <div class="alert alert-danger">FHIR query failed. The correct FHIR query is <b>GET https://hapi.fhir.org/baseR4/Patient/591702</b>. Please try again.</div>
+      `
+    });
+
+    return false;
+  };
+</script>
+```
