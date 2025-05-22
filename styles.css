@@ -1,0 +1,129 @@
+/* css styles */
+.highlight {
+  background-color: #fffeca;
+}
+#relevant-roles li:after {
+  content: ' |';
+  color: #bbb;
+}
+#relevant-roles .list-inline-item:not(:last-child) {
+  margin-right: 0;
+}
+#relevant-roles li:last-child:after {
+  content: '';
+}
+#relevant-roles {
+  border-left-color: #bbb;
+}
+
+.btn-outline-custom {
+  color: #20558a;
+  border-color: #20558a;
+}
+
+.btn-outline-custom:hover {
+  color: white;
+  background-color: #20558a;
+}
+
+/* Hide left and right footers in favor of a single centered footer */
+.nav-footer-left, .nav-footer-right {
+  display: none;
+}
+
+/* glightbox customization */
+.figure {
+  text-align: center;
+}
+
+.gslide-description {
+  background-color: black !important;
+  color: white;
+  text-align: center;
+}
+
+/* json viewer css */
+.json_view {
+  font-family: monospace;
+  font-size: 16px;
+}
+.json_view > .json_view__item {
+  display: block;
+}
+
+.json_view__item {
+  display: none;
+  margin-top: 10px;
+  padding-left: 20px;
+  user-select: none;
+}
+
+.json_view__item--collapsible {
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+.json_view__item--collapsible::before {
+  content: "+";
+  position: absolute;
+  left: 5px;
+}
+.json_view__item--collapsible::after {
+  background-color: lightgrey;
+  content: "";
+  height: 100%;
+  left: 9px;
+  position: absolute;
+  top: 26px;
+  width: 1px;
+}
+.json_view__item--collapsible:hover > .json_view__key, .json_view__item--collapsible:hover > .json_view__value {
+  text-decoration: underline;
+}
+
+.json_view__toggle {
+  display: none;
+}
+.json_view__toggle:checked ~ .json_view__item {
+  display: block;
+}
+
+.json_view__key {
+  color: darkblue;
+  display: inline;
+}
+.json_view__key::after {
+  content: ": ";
+}
+
+.json_view__value {
+  display: inline;
+}
+
+.json_view__value--string {
+  color: green;
+}
+
+.json_view__value--number {
+  color: blue;
+}
+
+.json_view__value--boolean {
+  color: #e50000;
+}
+
+.json_view__value--type-object, .json_view__value--type-array {
+  color: #767676;
+}
+
+
+/* Learning objectives/key points */
+#learning-objectives .answer {
+  display: none;
+}
+
+#key-points .answer {
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  color: green;
+}
