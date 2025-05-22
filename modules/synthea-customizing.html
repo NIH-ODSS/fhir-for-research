@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Customizing Synthea Data – FHIR® for Research</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../modules/new-bulk-fhir.html" rel="next">
+<link href="../modules/synthea-running.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dece3bd051e391dd7205a6b15f93dc59.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-ed04999718f06b735b1f8009dce43b94.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-416da0712179dc1ff0278a6ba892b12c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-360c049c7bc2ff2c1f0b1e1328e2ba2f.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<!-- head.html -->
+<!-- any content in this file is inserted into <head></head> -->
+
+<script src="../modules/mappings.js"></script>
+
+<script>
+// test if local storage is available and inititilize global variable store, code adapted from:
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+function initLocalStorage() {
+  let storage;
+  try {
+    storage = window["localStorage"];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return storage;
+  } catch (e) {
+    console.log("Error: local storage unavailable.");
+    return (
+      e instanceof DOMException &&
+      // everything except Firefox
+      (e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === "QuotaExceededError" ||
+        // Firefox
+        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage &&
+          storage.length !== 0
+    );
+  }
+}
+
+var store = initLocalStorage();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Yantramanav:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="Customizing Synthea Data – FHIR® for Research">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://nih-odss.github.io/fhir-for-research/modules/images/module_builder_start.png">
+<meta property="og:site_name" content="FHIR® for Research">
+<meta property="og:image:height" content="670">
+<meta property="og:image:width" content="1220">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="..">
+    <span class="navbar-title">FHIR® for Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/introduction"> 
+<span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../sections/advanced-topics" aria-current="page"> 
+<span class="menu-text">Advanced Topics</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hands-on-practice"> 
+<span class="menu-text">Hands-on Practice</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hosting-your-own-workshop"> 
+<span class="menu-text">Hosting Your Own Workshop</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../contribute"> 
+<span class="menu-text">Questions &amp; Contributions</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/NIH-ODSS/fhir-for-research"> <i class="bi bi-github" role="img" aria-label="View the GitHub repository for this site">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../modules/synthea-overview">Synthea</a></li><li class="breadcrumb-item"><a href="../modules/synthea-customizing">Customizing Synthea</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sections/advanced-topics" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Advanced Topics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">SMART on FHIR</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-smart-on-fhir-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-smart-on-fhir-tech" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Details</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">CDS Hooks</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-cds-hooks-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-cds-hooks-types" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Types of CDS Hooks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-cds-hooks-tech" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">REDCap</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/redcap-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/redcap-fhir" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">REDCap on FHIR</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Synthea</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-overview" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Synthea Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-running" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Synthea</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-customizing" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Customizing Synthea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Bulk Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-bulk-fhir" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bulk Data Access</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../webinars/bulk-data" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Webinar</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Emerging Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/fhir-emerging-innovations" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Emerging Use Cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/fhir-research" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Real World Research</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/genomics" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Genomics Data Standardization</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#modules" id="toc-modules" class="nav-link active" data-scroll-target="#modules"><span class="header-section-number">1</span> Modules</a>
+  <ul class="collapse">
+  <li><a href="#creating-and-editing-modules" id="toc-creating-and-editing-modules" class="nav-link" data-scroll-target="#creating-and-editing-modules"><span class="header-section-number">1.1</span> Creating and Editing Modules</a></li>
+  <li><a href="#creating-a-new-module" id="toc-creating-a-new-module" class="nav-link" data-scroll-target="#creating-a-new-module"><span class="header-section-number">1.2</span> Creating a New Module</a></li>
+  <li><a href="#editing-an-existing-module" id="toc-editing-an-existing-module" class="nav-link" data-scroll-target="#editing-an-existing-module"><span class="header-section-number">1.3</span> Editing an Existing Module</a></li>
+  <li><a href="#loading-modules-into-synthea" id="toc-loading-modules-into-synthea" class="nav-link" data-scroll-target="#loading-modules-into-synthea"><span class="header-section-number">1.4</span> Loading Modules Into Synthea</a></li>
+  </ul></li>
+  <li><a href="#keep-modules" id="toc-keep-modules" class="nav-link" data-scroll-target="#keep-modules"><span class="header-section-number">2</span> Keep Modules</a></li>
+  <li><a href="#modifying-demographics" id="toc-modifying-demographics" class="nav-link" data-scroll-target="#modifying-demographics"><span class="header-section-number">3</span> Modifying Demographics</a></li>
+  <li><a href="#module-overrides" id="toc-module-overrides" class="nav-link" data-scroll-target="#module-overrides"><span class="header-section-number">4</span> Module Overrides</a></li>
+  <li><a href="#flexporter" id="toc-flexporter" class="nav-link" data-scroll-target="#flexporter"><span class="header-section-number">5</span> Flexporter</a></li>
+  <li><a href="#other-tools" id="toc-other-tools" class="nav-link" data-scroll-target="#other-tools"><span class="header-section-number">6</span> Other Tools</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../modules/synthea-overview">Synthea</a></li><li class="breadcrumb-item"><a href="../modules/synthea-customizing">Customizing Synthea</a></li></ol></nav><h1 class="title display-7">Customizing Synthea Data</h1></header>
+
+<header id="title-block-header">
+<!--
+-->
+
+
+
+</header>
+
+<!-- Begin learning objectives block -->
+
+<div class="callout-tip callout callout-style-default callout-captioned" id="learning-objectives">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Learning objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>
+    Understand the options that are available for customizing Synthea to fit a use case.
+</li>
+</ol>
+</div>
+</div>
+
+<div class="callout-note callout callout-style-simple no-icon callout-captioned" id="relevant-roles">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Relevant roles:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul class="target-roles list-inline">
+    <li class="list-inline-item">Investigator</li>
+    <li class="list-inline-item">Informaticist</li>
+    <li class="list-inline-item">Software Engineer</li>
+</ul>
+</div>
+</div>
+<!-- End learning objectives block -->
+
+<!-- Hack to add key points block at end of page-->
+<!-- End hack to add key points block at end of page-->
+
+<!-- Reading time logic -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  
+    // Step 1: Count words in parent document
+    let totalWords = 0;
+    const mainContent = document.querySelector('#quarto-document-content');
+    if (mainContent) {
+      const parentWords = mainContent.innerText.trim().split(/\s+/).length;
+      totalWords += parentWords;
+    }
+  
+    // We'll update the badge once we've processed ALL iframes (or there are none)
+    function updateReadingTimeBadge(wordCount) {
+      const wpm = 200;
+      const readingTime = Math.ceil(wordCount / wpm);
+  
+      let displayText;
+      if (readingTime === 1) {
+        displayText = 'Estimated reading time: 1 minute';
+      } else {
+        displayText = 'Estimated reading time: ' + readingTime + ' minutes';
+      }
+  
+      // Create the badge
+      const timeBadge = document.createElement('span');
+      timeBadge.classList.add('reading-time-badge');
+      timeBadge.textContent = displayText;
+
+      const titleBlockHeader = document.querySelector('#title-block-header');
+      if (titleBlockHeader) {
+        titleBlockHeader.appendChild(timeBadge);
+      }
+    }
+  
+    // Step 2: Gather iframes
+    const iframes = document.querySelectorAll('iframe');
+    
+    // If there are no iframes, just show the reading time for parent content
+    if (iframes.length === 0) {
+      updateReadingTimeBadge(totalWords);
+      return;
+    }
+  
+    // We only update after ALL iframes have loaded or errored
+    let pending = iframes.length;
+  
+    // Helper to decrement pending count and update once done
+    function iframeDone() {
+      pending--;
+      if (pending === 0) {
+        // All iframes processed
+        updateReadingTimeBadge(totalWords);
+      }
+    }
+  
+    // Step 3: Iterate through each iframe
+    iframes.forEach(iframe => {
+      // Listen for 'load' (fires whether same-origin or cross-origin)
+      iframe.addEventListener('load', function() {
+        try {
+          // Attempt to read the iframe's text (works only if same-origin)
+          const iframeDoc = iframe.contentWindow.document;
+          const iframeText = (iframeDoc.body.innerText || "").trim();
+          const iframeWords = iframeText.split(/\s+/).filter(Boolean).length;
+  
+          totalWords += iframeWords;
+        } catch (err) {
+          // Cross-origin or any other error
+          console.warn("Could not read iframe content (possibly cross-origin):", err);
+          // No addition to totalWords
+        }
+        // Mark this iframe as processed
+        iframeDone();
+      }, { once: true });
+  
+      // Listen for 'error' in case the iframe fails to load
+      iframe.addEventListener('error', function() {
+        console.warn("Iframe failed to load:", iframe.src);
+        // Just move on (no addition to totalWords)
+        iframeDone();
+      }, { once: true });
+    });
+  
+  });
+  </script>
+
+
+
+<p>While data generated by Synthea may be valuable for a number of different use cases, out of the box it may not address everyone’s. If your needs are completely different from what Synthea offers then it might not be the best option, but if the data is close and just needs a <em>little bit</em> more, there are multiple approaches to customizing it. The best approach will depend on the specifics of your use case.</p>
+<p>This page describes in detail a few of the options available for customizing output from Synthea, and is meant for people who actually intend to customize data. No Java programming experience required, but you should be familiar with the basics of Synthea so make sure to read <a href="synthea-overview">Synthea Overview</a> and <a href="synthea-running">Running Synthea</a> first, and you should be comfortable modifying text-based files and using the command line.</p>
+<section id="modules" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="modules"><span class="header-section-number">1</span> Modules</h2>
+<p>By default, Synthea includes dozens of modules representing the progression and treatment of common diseases and determinants of health. Synthea modules are either <strong>top-level modules</strong>, also referred to as <strong>core modules</strong>, which will run for every patient in the simulation starting at birth, or <strong>submodules</strong>, which are only run when specifically invoked from another module via a specific state. The set of modules is not fixed; users can create, edit, or delete modules as needed.</p>
+<p>There are three fundamental concepts involved in the modules:</p>
+<ul>
+<li><strong>States</strong>, which can be broken down further into:
+<ul>
+<li><strong>Clinical States</strong>, which represent events related to the patient’s health care. A clinical state will nearly always result in one or more entries being added to the patient’s record.</li>
+<li><strong>Control States</strong>, which drive the progression and flow through the module. For example, delays and guards will pause the module for some amount of time.</li>
+</ul></li>
+<li><strong>Transitions</strong>, which represent the connections between states. States may transition directly to another state, or they may branch to multiple states, where the path the patient takes may vary based on different logical conditions or weighted random chance.</li>
+<li><strong>Logical Conditions</strong>, which are tests against aspects of the patient, their health record, or their path through the modules, which can be “true” or “false”.</li>
+</ul>
+<p>The Synthea wiki details all of the available options for <a href="https://github.com/synthetichealth/synthea/wiki/Generic-Module-Framework%3A-States">States</a>, <a href="https://github.com/synthetichealth/synthea/wiki/Generic-Module-Framework%3A-Transitions">Transitions</a>, and <a href="https://github.com/synthetichealth/synthea/wiki/Generic-Module-Framework%3A-Logic">Logical Conditions</a>.</p>
+<p>During the generation process, Synthea will process each module individually, one state at a time. States will process and transition to the next state immediately, with the following exceptions:</p>
+<ul>
+<li>Terminal states represent the end of the module.</li>
+<li>Delay states, where the module will continue only after the specified amount of time has passed.</li>
+<li>Guard states, where the module will continue only after the given logical condition becomes true.</li>
+<li>Encounter states of type “wellness”, where the module will determine when to enter the encounter using a schedule based on the patient’s age and current symptoms.</li>
+</ul>
+<section id="creating-and-editing-modules" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="creating-and-editing-modules"><span class="header-section-number">1.1</span> Creating and Editing Modules</h3>
+<p>For the most detailed and up-to-date guidance on creating and editing modules, see <a href="https://github.com/synthetichealth/synthea/wiki/Generic-Module-Framework">the Generic Module Framework section on the Synthea wiki</a>.</p>
+<p>While the module JSONs can technically be written by hand, we strongly recommend using <a href="https://synthetichealth.github.io/module-builder/">the Module Builder</a> to edit modules graphically.</p>
+<p>Before starting with the module builder, we recommend watching a <a href="https://www.youtube.com/watch?v=cOfI6FOKv0s">short video introduction to the Module Builder</a>, and reading through a <a href="https://github.com/synthetichealth/synthea/wiki/Module-Builder-Tutorial">module builder tutorial on the Synthea Wiki</a>.</p>
+</section>
+<section id="creating-a-new-module" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="creating-a-new-module"><span class="header-section-number">1.2</span> Creating a New Module</h3>
+<p>In the Module Builder, click the “New Module” button in the upper left. This will open a new tab in the builder with the simplest possible module: an Initial state that transitions directly to a Terminal state.</p>
+<p><img src="images/module_builder_start.png" class="img-fluid"></p>
+<p>Either state can be clicked on to select it and change the name, type, transition, or other properties via the sidebar. As you familiarize yourself with the module builder, try clicking on the various fields to see what options are available. No changes here can directly affect Synthea, so don’t worry, it is completely impossible to break anything (though it is possible to lose work, so we recommend downloading work-in-progress modules to a file often). If you make a mistake, nearly any change can be undone with the Undo button.</p>
+<p>To add new states to the module, click the “+ Add State” button in the upper right of the editor. Note this will do slightly different things based on what is currently selected in the module graph:</p>
+<ul>
+<li>If nothing is selected, the new state will be added off to the side. You must manually connect other states to it, and it to other states by editing the transitions.</li>
+<li>If a state is selected, the new state will be added “at the end” of the selected state. The selected state will now transition directly to the new state, and the new state will have the original transition from the selected state.</li>
+<li>If a transition arrow is selected, the new state will be added “inside” the transition. The transition will now point to the new state, and the new state will transition directly to the original target of the transition.</li>
+</ul>
+<p>Again, the new state can be clicked on to select it and change the name, type, transition, or other properties via the sidebar. Different options and fields will appear depending on the state and transition type selected.</p>
+</section>
+<section id="editing-an-existing-module" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="editing-an-existing-module"><span class="header-section-number">1.3</span> Editing an Existing Module</h3>
+<p>To load an existing module for editing, first click the “Open Module” button at the top of the Module Builder. From the load module screen there are a few options:</p>
+<ul>
+<li>The “Core Modules” and “Submodules” are a good first step for exploring the various modules available.</li>
+<li>The “GitHub modules” tab loads modules directly from various branches on the core Synthea repository on GitHub.</li>
+<li>You can also drag &amp; drop a module JSON file onto the modal, click to open a file browser to select a JSON file, or paste the JSON content of the file into the “Paste JSON” tab.</li>
+<li>The “Local Storage” and “My Modules” tabs will be empty initially, but as you use the module builder these may be populated with modules you edit.</li>
+</ul>
+<p>Once a module is loaded, you can add, edit, or remove states just as you would if you were creating a new module. Note that no matter how you load a module into the module builder, you are editing a copy. As before, this means you should feel free to experiment without worrying about breaking anything, but do download your module regularly to make sure you don’t lose work if something goes wrong.</p>
+</section>
+<section id="loading-modules-into-synthea" class="level3" data-number="1.4">
+<h3 data-number="1.4" class="anchored" data-anchor-id="loading-modules-into-synthea"><span class="header-section-number">1.4</span> Loading Modules Into Synthea</h3>
+<p>Top-level modules in Synthea are stored in the <code>src/main/resources/modules</code> folder under the base <code>synthea</code> directory. Submodules are stored in further subfolders under this. If your new or modified module is a top-level module and is expected to run for all patients starting at birth, make sure it is in the <code>src/main/resources/modules</code> folder. If you are modifying an existing module, make sure the name is exactly the same (in terms of capitalization, spaces vs underscores, etc) and you completely replace the file in its original location.</p>
+<p>Once your module has been loaded, no special command line flags are necessary. Simply re-run Synthea with your desired configuration and it should pick up the new module immediately.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Common Issues / Frequently Asked Questions
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<ul>
+<li>I created a module with just a Condition/Observation/Procedure but it doesn’t show up in records. Why not?
+<ul>
+<li>Most likely the issue is that the state is being processed and the record entry is added immediately at birth, but then filtered out at export time. By default Synthea only keeps the last 10 years of history when a patient is exported. This setting is driven by the configuration item <code>exporter.years_of_history</code>. This setting can be changed either on the command line with flag <code>--exporter.years_of_history=N</code> or if using the developer setup, in the configuration file at <code>src/main/resources/synthea.properties</code>. We recommend setting this option to <code>0</code>, meaning “keep all history”, while creating and debugging a new module.</li>
+</ul></li>
+<li>Why isn’t Synthea processing my module?
+<ul>
+<li>First, make sure you are not encountering the same issue as the previous question, where your module is being processed but the record entries are filtered out. Next, make sure the module is actually being loaded - watch the list of modules being loaded at startup and confirm your new module is in that list. It may be useful to temporarily remove other modules to speed up the process.</li>
+</ul></li>
+<li>How can I run only my module and none of the default modules?
+<ul>
+<li>Generally this is not recommended as there are dependencies between modules which may be non-obvious and removing some can result in unexpected behavior, errors, or crashes. Also note that some of the modules are included as part of the core engine and cannot be easily disabled. However if for debugging purposes you would like to disable the default modules, the best approach is to remove the files from <code>src/main/resources/modules</code> (or move them somewhere else).</li>
+</ul></li>
+</ul>
+<p>If your module still does not work as expected, please feel free to post a <a href="https://github.com/synthetichealth/synthea/discussions">discussion item on the Synthea GitHub</a> to request assistance. Make sure to include as much information as possible, including the module and any errors you are seeing.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="keep-modules" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="keep-modules"><span class="header-section-number">2</span> Keep Modules</h2>
+<p>It is common in many use cases that only records with specific attributes are relevant, for example, maybe you only want records containing a certain diagnosed Condition. There are a few approaches that can be taken here:</p>
+<ol type="1">
+<li>Post-process the data with another tool such as a Python script, to examine a set of exported records and filter out those that do not meet your defined criteria. (Note that if the condition of interest is rare, it may take a lot of time and resources to generate sufficient records)</li>
+<li>Modify the module for your condition of interest, to ensure all patients get the condition. (Note this may be trivial in some instances, but in others the relationships between modules can be complex, or the item of interest may be set within the Java engine.)</li>
+<li>Use a Keep Module. A Keep Module is a module similar to a disease module, that defines criteria for whether a record should be kept or discarded. The biggest advantage of a Keep Module is that all patients exported will have the desired criteria, and it will generate the requested number of patients. (That is, assuming the criteria are possible to meet.)</li>
+</ol>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>It is critical that the Keep Module represent logic that it is possible for a Synthea record to actually meet. For instance, the Diabetes module will never onset diabetes in a patient earlier than age 18, so a Keep Module for “keep patients under 18 with Diabetes” will not work.</p>
+<p>Synthea does not have the ability to recognize when a Keep Module is impossible to satisfy. In these situations, to avoid running forever, the simulation will stop after a certain number of failed attempts to generate a record. If the situation is known to be possible but exceptionally rare, it is possible to increase the number of failed attempts before the simulation stops, with the config setting: <code>generate.max_attempts_to_keep_patient = 1000</code></p>
+</div>
+</div>
+<p>The basic idea of a Keep Module is that it is a regular Synthea module, built with the Module Builder, with a specially named Terminal state “Keep”. The module should use conditional transitions with logic such as “Active Condition” to determine whether to send patients to the Keep state or not. Patients that end the module in the Keep state will be exported, patients that end the module in any other state will be discarded and Synthea will restart a new patient with the same demographics but a different seed.</p>
+<p><img src="https://user-images.githubusercontent.com/13512036/116620440-d484ab00-a90f-11eb-97dc-bf8881e0bea6.png" class="img-fluid" alt="A Keep Module, a Synthea module with 3 states, where Patients with an Active Condition of Diabetes or Hypertension transition to a Terminal state named Keep"></p>
+<p>Construct a Keep Module using the Module Builder as usual (see instruction above in <a href="#creating-and-editing-modules">Creating and Editing Modules</a> ), but do not save the .json file to the <code>src/main/resources/modules</code> folder. The easiest place to store it is in the base <code>synthea</code> folder.</p>
+<p>Finally to actually run Synthea with the Keep Module, use the <code>-k</code> flag with the path to the file, for example:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">run_synthea</span> <span class="at">-k</span> must_have_diabetes.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now patients exported to any output format will only be patients matching the defined criteria from the Keep Module.</p>
+<p>Note that only one Keep Module may be used at a time, however the logic within it can be as complex as you need.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you only need patients with some active clinical criteria, such as Conditions or Medications, the <a href="https://synthetichealth.github.io/spt/#/customizer">Synthea Toolkit</a> contains a minimal editor for creating this type of simple Keep Module quickly. For anything more complex, use the full <a href="https://synthetichealth.github.io/module-builder/">Module Builder</a> instead.</p>
+</div>
+</div>
+<p>More information on Keep Modules is available <a href="https://github.com/synthetichealth/synthea/wiki/Keep-Patients-Module">on the Synthea wiki</a>.</p>
+</section>
+<section id="modifying-demographics" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="modifying-demographics"><span class="header-section-number">3</span> Modifying Demographics</h2>
+<p>By default, Synthea is configured to run with the demographics and health care providers of the United States, but may be configured to run with other demographics such as other countries as well. A set of demographics files and other geographical information is available for many countries at <a href="https://github.com/synthetichealth/synthea-international">the synthea-international repository</a>.</p>
+<p>Beyond just other countries, the same approach can be use to create demographics files representing any population of interest. For research purposes, the most common changes are likely to be to the demographics of the desired population.</p>
+<p>For instance, a research effort may want patients with a particular age and racial distribution. One approach to generate a population in Synthea with a specific demographic mix is to identify a city or state with the desired characteristics and generate a population in that location. Alternatively, if there is no such city or state, one could create or modify the demographics file so that it contains a line for a location with the desired characteristics. The default demographics file is available at <code>./src/main/resources/geography/demographics.csv</code> - this file may be modified directly, or you may point Synthea at an alternative demographics file with the configuration property <code>generate.demographics.default_file</code>. Details on the demographics file format are available <a href="https://github.com/synthetichealth/synthea/wiki/Demographics-for-Other-Areas">on the Synthea wiki</a>.</p>
+<p>Other types of information which can be modified or replaced to meet various needs are zip codes, time zones, providers, names, and costs.</p>
+<p>Full details for customizing Synthea to generate other areas are available <a href="https://github.com/synthetichealth/synthea/wiki/Other-Areas">on the Synthea wiki</a>.</p>
+</section>
+<section id="module-overrides" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="module-overrides"><span class="header-section-number">4</span> Module Overrides</h2>
+<p>Module Overrides allow you to set specific values in a module, such as transition probabilities, without having to edit and replace the entire module. This makes it suitable for use with the Basic setup of Synthea.</p>
+<p>Module overrides are defined using a Java properties file, where each key is the path to a specific field within a module, and the value is the new value to set for that field.</p>
+<pre><code>(module file path)\:\:(json path to value) = (new value)</code></pre>
+<p>For instance, to change the prevalence of Appendicitis among males from the default 8.6% to 100% (imagine an example use case of “a population of all patients who have had an appendectomy”), you could use an override file containing the following line:</p>
+<pre><code>appendicitis.json\:\:$['states']['Male']['distributed_transition'][0]['distribution'] = 1.0</code></pre>
+<p>This sequence of field names and indices uniquely identifies the field in the module JSON, and corresponds to setting the highlighted transition on the Appendicitis module to 100%: <img src="images/module_override.png" class="img-fluid"></p>
+<p>An overrides file may be saved anywhere, but for ease of use we recommend placing it directly in the base synthea folder or a subfolder, with the extension <code>.properties</code>.</p>
+<p>Assuming the file <code>overrides.properties</code> is in the subfolder <code>output</code>, run Synthea as follows:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">run_synthea</span> <span class="at">--module_override</span><span class="op">=</span>./output/overrides.properties</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If using the Developer setup of Synthea, you can generate a template of a module override file with the “overrides” gradle task, for instance:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradlew</span> overrides <span class="at">-PincludeModules</span><span class="op">=</span>appendicitis.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Note: if running on Windows, use <code>.\gradlew.bat</code> instead of <code>./gradlew</code></strong>. <code>gradlew</code> here is a reference to the <a href="https://gradle.org/">Gradle</a> build tool which Synthea uses.</p>
+<p>This creates an overrides file at <code>./output/overrides.properties</code> containing the following:</p>
+<pre><code>appendicitis.json\:\:$['states']['Male']['distributed_transition'][0]['distribution'] = 0.086
+appendicitis.json\:\:$['states']['Male']['distributed_transition'][1]['distribution'] = 0.914
+appendicitis.json\:\:$['states']['Female']['distributed_transition'][0]['distribution'] = 0.067
+appendicitis.json\:\:$['states']['Female']['distributed_transition'][1]['distribution'] = 0.933
+appendicitis.json\:\:$['states']['Pre_appendicitis']['distributed_transition'][0]['distribution'] = 0.263
+appendicitis.json\:\:$['states']['Pre_appendicitis']['distributed_transition'][1]['distribution'] = 0.423
+appendicitis.json\:\:$['states']['Pre_appendicitis']['distributed_transition'][2]['distribution'] = 0.221
+appendicitis.json\:\:$['states']['Pre_appendicitis']['distributed_transition'][3]['distribution'] = 0.093
+appendicitis.json\:\:$['states']['Appendicitis']['distributed_transition'][0]['distribution'] = 0.7
+appendicitis.json\:\:$['states']['Appendicitis']['distributed_transition'][1]['distribution'] = 0.3</code></pre>
+<p>Any lines may be modified, or freely removed if the field value is not meant to change.</p>
+<p>More detail on creating and using overrides files is available <a href="https://github.com/synthetichealth/synthea/wiki/Module-Overrides">on the Synthea wiki</a>.</p>
+</section>
+<section id="flexporter" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="flexporter"><span class="header-section-number">5</span> Flexporter</h2>
+<p>The Flexible Exporter, aka “Flexporter” is an experimental feature that allows for arbitrary customizations in Synthea.</p>
+<p>The Flexporter works using a <a href="https://yaml.org/">YAML</a>-based mapping file to define transformations that are applied to each patient record. Transformations generally contain a location, represented in <a href="https://hl7.org/fhir/fhirpath.html">FHIRPath</a>, and a value to put at that location.</p>
+<p>As with other customization features built into Synthea, the Flexporter is intended to tweak Synthea data, not radically transform it. Common situations where the Flexporter will be most valuable are situations where specific fields or resource types are needed but not exported. (For instance, imagine a use case that requires an <code>Appointment</code> resource prior to every <code>Encounter</code>. Synthea out of the box supports <code>Encounter</code> resources but not <code>Appointment</code>.) The Flexporter is intended to support a number of different use cases, but since it is impossible to predict every possible use case in advance, there are things that are outside the capability of the Flexporter.</p>
+<p>As of June 2023, the Flexporter supports the following types of actions:</p>
+<ul>
+<li><code>apply_profiles</code>: Adds a given profile URI to the <code>meta.profile</code> field on resources matching the given FHIRPath</li>
+<li><code>set_values</code>: Set values on fields on resources that already exist within the <code>Bundle</code></li>
+<li><code>create_resource</code>: Create new resources with specific values and add them to the <code>Bundle</code>.</li>
+<li><code>keep_resources</code>: Keep only resources matching certain FHIRPath. Other resources will be filtered out</li>
+<li><code>delete_resources</code>: Delete resources matching certain FHIRPath.</li>
+<li><code>execute_script</code>: Execute arbitrary JavaScript against either the entire <code>Bundle</code> or against individual resources of specific types. Note that the provided JavaScript may be arbitrarily complex, but loading libraries such as from npm is not supported.</li>
+</ul>
+<p>Sample Flexporter Mapping File:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># name is just a friendly name for this mapping</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> Random Testing</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># applicability determines whether this mapping applies to a given patient record</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">applicability</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">actions</span><span class="kw">:</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Set Immunization.recorded = Immunization.occurrenceDateTime</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="at">   </span><span class="fu">set_values</span><span class="kw">:</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="at">     </span><span class="kw">-</span><span class="at"> </span><span class="fu">applicability</span><span class="kw">:</span><span class="at"> Immunization</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="at">       </span><span class="fu">fields</span><span class="kw">:</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="at">         </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> Immunization.recorded</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="at">           </span><span class="fu">value</span><span class="kw">:</span><span class="at"> $getField([Immunization.occurrence])</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="at"> </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Create ServiceRequest for every Procedure</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="at">   </span><span class="fu">create_resource</span><span class="kw">:</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="at">     </span><span class="kw">-</span><span class="at"> </span><span class="fu">resourceType</span><span class="kw">:</span><span class="at"> ServiceRequest</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="at">       </span><span class="fu">based_on</span><span class="kw">:</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="at">         </span><span class="fu">resource</span><span class="kw">:</span><span class="at"> Procedure</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="at">       </span><span class="fu">fields</span><span class="kw">:</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="at">         </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> ServiceRequest.intent</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="at">           </span><span class="fu">value</span><span class="kw">:</span><span class="at"> plan</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="at">         </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> ServiceRequest.encounter.reference</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="at">           </span><span class="fu">value</span><span class="kw">:</span><span class="at"> $getField([Procedure.encounter.reference])</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="at">         </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> ServiceRequest.subject.reference</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="at">           </span><span class="fu">value</span><span class="kw">:</span><span class="at"> $findRef([Patient])</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="at">         </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> ServiceRequest.code</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="at">           </span><span class="fu">value</span><span class="kw">:</span><span class="at"> $getField([Procedure.code])</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="at">       </span><span class="fu">writeback</span><span class="kw">:</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="at">         </span><span class="kw">-</span><span class="at"> </span><span class="fu">location</span><span class="kw">:</span><span class="at"> Procedure.basedOn.reference</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="at">           </span><span class="fu">value</span><span class="kw">:</span><span class="at"> $setRef([ServiceRequest])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This example mapping does the following:</p>
+<ol type="1">
+<li>For every instance of <code>Immunization</code>:</li>
+</ol>
+<ul>
+<li>Copy the value from <code>Immunization.occurrence[x]</code> (note as of April 2023 in Synthea this will always be a <code>dateTime</code>) into the field <code>Immunization.recorded</code></li>
+</ul>
+<ol start="2" type="1">
+<li>For every instance of <code>Procedure</code>:</li>
+</ol>
+<ul>
+<li>Create a new instance of <code>ServiceRequest</code> and add it to the <code>Bundle</code>.</li>
+<li>Set the following values on the created <code>ServiceRequest</code>:
+<ul>
+<li>Set <code>ServiceRequest.intent</code> to the fixed value “plan”</li>
+<li>Copy the value from the source <code>Procedure.encounter.reference</code> into the field <code>ServiceRequest.encounter.reference</code></li>
+<li>Find the first resource matching <code>Patient</code> in the Bundle, create a reference to it, and set that on the field <code>ServiceRequest.subject.reference</code></li>
+<li>Copy the value from the source <code>Procedure.code</code> into the field <code>ServiceRequest.code</code></li>
+</ul></li>
+<li>Set the following values on the source <code>Procedure</code>:
+<ul>
+<li>Create a reference to the created <code>ServiceRequest</code> and set that on the field <code>Procedure.basedOn.reference</code></li>
+</ul></li>
+</ul>
+<p>Because the Flexporter is still experimental, to use it you must be working off the <code>flexporter</code> branch of the Synthea repository.</p>
+<p>To run Synthea with Flexporter mappings enabled, use the <code>-fm</code> flag to specify a path to a mapping file. Multiple Flexporter mappings may be used at the same time, in which case they will be applied in the order listed in the command, for example:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">run_synthea</span> <span class="at">-fm</span> ./src/test/resources/flexporter/qicore_common.yaml <span class="at">-fm</span> additional_fields.yaml<span class="kw">`</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Full detail on the mapping file specification and using the Flexporter is available <a href="https://github.com/synthetichealth/synthea/wiki/Flexporter">on the Synthea wiki</a></p>
+</section>
+<section id="other-tools" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="other-tools"><span class="header-section-number">6</span> Other Tools</h2>
+<p>Finally, if all else fails, other languages such as Python, JavaScript, or R can allow you to write your own scripts and tools to filter and modify the data created by Synthea as you see fit. The ecosystem is too broad to get into detail here, but some libraries of note that may be helpful are:</p>
+<ul>
+<li>JavaScript
+<ul>
+<li><a href="https://github.com/standardhealth/fhir-mapper">fhir-mapper: https://github.com/standardhealth/fhir-mapper</a></li>
+</ul></li>
+<li>Python
+<ul>
+<li><a href="https://github.com/nazrulworld/fhir.resources">fhir.resources: https://github.com/nazrulworld/fhir.resources</a></li>
+<li><a href="https://github.com/UMEssen/FHIR-PYrate">FHIR-PYrate: https://github.com/UMEssen/FHIR-PYrate</a> (see also: the <a href="../modules/tabular-python">module on using Python to work with FHIR data</a></li>
+</ul></li>
+<li>R
+<ul>
+<li><a href="https://github.com/POLAR-fhiR/fhircrackr">fhircrackr: https://github.com/POLAR-fhiR/fhircrackr</a> (see also: the <a href="../modules/tabular-r">module on using R to work with FHIR data</a></li>
+</ul></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<!-- scripts.html -->
+<!-- any content in this file is inserted right before </body> -->
+
+<!-- Append index.html to any links ending with '/'
+
+Example:
+
+<a href="https://example.org/workshops/bulk-data/">
+
+will turn into:
+
+<a href="https://example.org/workshops/bulk-data/index.html">
+
+This ensures consistent behavior across different deployment platforms
+and enables other scripts like role-based module highlighting.
+-->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("a[href]").forEach(link => {
+      if( link.getAttribute("href").endsWith("/") ) {
+        link.setAttribute("href", link.getAttribute("href") + "index.html");
+      }
+    })
+  });
+</script>
+
+<!-- Fix a11y issues with side menu -->
+<script>
+const elements = document.querySelectorAll('.sidebar-menu-container a.sidebar-item-text[data-bs-toggle="collapse"], .sidebar-menu-container a.sidebar-item-toggle[data-bs-toggle="collapse"]')
+
+elements.forEach(element => {
+    element.setAttribute('role', 'group');
+});
+</script>
+
+<!-- JSON Viewer
+Intercept all instances of:
+
+``` json
+```
+
+and replace it with a fancy JSON viewer. If the content is
+invalid JSON then the default Quarto rendering will occur.
+-->
+<script type="text/javascript" src="https://unpkg.com/dompurify@3.0.1/dist/purify.min.js"></script> <!-- load JS Sanitizer -->
+<script>
+    function jsonViewer(json, collapsible=false) {
+        let TEMPLATES = {
+            item: '<div class="json_view__item"><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--%TYPE%">%VALUE%</div></div>',
+            itemCollapsible: '<label class="json_view__item json_view__item--collapsible"><input type="checkbox" class="json_view__toggle"/><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--type-%TYPE%">%VALUE%</div>%CHILDREN%</label>',
+            itemCollapsibleOpen: '<label class="json_view__item json_view__item--collapsible"><input type="checkbox" checked class="json_view__toggle"/><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--type-%TYPE%">%VALUE%</div>%CHILDREN%</label>'
+        };
+
+        function createItem(key, value, type){
+            let element = TEMPLATES.item.replace('%KEY%', key);
+
+            if((key == 'div') && (type=='string')) { // Removes Resource.text.div value (looks bloated)
+                element = element.replace('%VALUE%', '...');
+            } else if(type == 'string') {
+                element = element.replace('%VALUE%', '"' + value + '"');
+            } else {
+                element = element.replace('%VALUE%', value);
+            }
+
+            element = element.replace('%TYPE%', type);
+
+            return element;
+        }
+
+        function createCollapsibleItem(key, value, type, children){
+            let tpl = 'itemCollapsible';
+
+            if(collapsible) {
+                tpl = 'itemCollapsibleOpen';
+            }
+
+            let element = TEMPLATES[tpl].replace('%KEY%', key);
+
+            element = element.replace('%VALUE%', type);
+            element = element.replace('%TYPE%', type);
+            element = element.replace('%CHILDREN%', children);
+
+            return element;
+        }
+
+        function handleChildren(key, value, type) {
+            let html = '';
+
+            for(let item in value) { 
+                let _key = item,
+                    _val = value[item];
+
+                html += handleItem(_key, _val);
+            }
+
+            return createCollapsibleItem(key, value, type, html);
+        }
+
+        function handleItem(key, value) {
+            let type = typeof value;
+ 
+            if( Array.isArray( value ) ) {
+                return handleChildren(key, value, "array");
+            }
+
+            if(typeof value === 'object') {        
+                return handleChildren(key, value, type);
+            }
+
+            return createItem(key, value, type);
+        }
+
+        function parseObject(obj) {
+            _result = '<div class="json_view">';
+
+            for(let item in obj) { 
+                let key = item,
+                    value = obj[item];
+
+                _result += handleItem(key, value);
+            }
+
+            _result += '</div>';
+
+            return _result;
+        }
+        
+        try {
+            return parseObject(JSON.parse(json));
+        }
+        catch(err) {
+            console.log("Could not render JSON viewer: ", err);
+            console.log("for string: ", json);
+            return null;
+        }
+
+    };
+
+
+    function parseHTML(string) {
+        let sanitized = DOMPurify.sanitize(string);
+        let parser = new DOMParser();
+        return parser.parseFromString(sanitized, "text/html").body.firstChild;
+    }
+
+    let jsonCodeBlocks = document.querySelectorAll("code.sourceCode.json");
+    jsonCodeBlocks.forEach((jsonCode) => {
+        let json = jsonCode.innerText;
+        let codeBlock = jsonCode.parentNode.parentNode;
+        let uid = codeBlock.id;
+        let documentLocation = codeBlock.parentNode;
+        let viewerHTML = jsonViewer(json, true);
+
+        let tabContainer = parseHTML(`
+          <div>
+            <ul class="nav nav-tabs" id="${uid}Tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="${uid}ViewerTab" data-bs-toggle="tab" data-bs-target="#${uid}Viewer" type="button" role="tab" aria-controls="${uid}Viewer" aria-selected="true">Viewer</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="${uid}JsonTab" data-bs-toggle="tab" data-bs-target="#${uid}Json" type="button" role="tab" aria-controls="${uid}Json" aria-selected="false">JSON</button>
+              </li>
+            </ul>
+            <div class="tab-content" id="${uid}TabContent" style="height:50vh;overflow:scroll;">
+              <div class="tab-pane fade show active" id="${uid}Viewer" role="tabpanel" aria-labelledby="${uid}ViewerTab"></div>
+              <div class="tab-pane fade" id="${uid}Json" role="tabpanel" aria-labelledby="${uid}JsonTab"></div>
+            </div>
+          </div>
+        `)
+
+        if( viewerHTML != null ) {
+            documentLocation.replaceChild(tabContainer, codeBlock);
+
+            tabContainer.querySelector(`div#${uid}TabContent div#${uid}Viewer`).appendChild( parseHTML(viewerHTML) );
+            tabContainer.querySelector(`div#${uid}TabContent div#${uid}Json`).appendChild(codeBlock);
+        }
+    });
+</script>
+
+<!-- Role-based Module Highlighting
+
+For any *.qmd file with roles defined in frontmatter,
+running script/update-module-role-map will generate
+modules/mappings.js. Then any markup with class .highlight-by-role, i.e:
+
+:::{.highlight-by-role}
+ - [mod1](/mod1)
+ - [mod2](/mod2)
+ - [mod3](/mod3)
+:::
+
+will highlight the links in the list assigned to the users roles.
+
+The user can select a role by pressing a button with data-role=*
+attribute. The possible roles are:
+
+Possible Roles:
+  investigator
+  research-leader
+  informaticist
+  software-engineer
+  clinician-scientist
+-->
+<script>
+const all_modules = document.querySelectorAll(".highlight-by-role ul li");
+
+/* highlights modules corresponding to role via role_module_map
+ * @param: string - role name in lower kebab case
+ */
+function select_modules(string) {
+    // remove all highlights
+    all_modules.forEach((li_node) => {
+        var mark_node = li_node.firstChild;
+        var a_node = mark_node.firstChild;
+
+        if( mark_node.nodeName == "MARK" ) {
+            li_node.removeChild(mark_node);
+            li_node.appendChild(a_node);
+        }
+    });
+
+    // add highlights based on role_module_map
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == string ) {
+            mapping.modules.forEach((interest_module) => {
+                document.querySelectorAll(`li [href*="${interest_module.slug}"]`).forEach((interest_a_node) => {
+
+                    //console.log("selecting module ", interest_a_node);
+
+                    var interest_li_node = interest_a_node.parentNode;
+                    var mark_node = document.createElement("mark");
+                    interest_li_node.appendChild(mark_node);
+                    mark_node.appendChild(interest_a_node);
+
+                    //console.log("appended ", interest_a_node, " to ", mark_node);
+                });
+            });
+            return;
+        }
+    })
+}
+
+
+// clears previously selected roles, highlights the selected role, and sets "role" in local storage
+function select_role(role) {
+    store.setItem("role", role);
+
+    document.querySelectorAll("[data-role]").forEach((a_node) => {
+        a_node.classList.remove("btn", "btn-sm", "btn-secondary", "fw-bold", "rounded");
+        a_node.classList.add("btn-role");
+    });
+
+    var selected_a_node = document.querySelector(`[data-role="${role}"]`);
+    selected_a_node.classList.add("btn", "btn-sm", "btn-secondary", "fw-bold", "rounded");
+    selected_a_node.classList.remove("btn-role");
+}
+
+
+// trigger role selection on clicking <a data-role=...>
+document.querySelectorAll("a[data-role]").forEach((role_link) => {
+    role_link.addEventListener("click", (e) => {
+        var role = e.target.dataset.role;
+        select_role(role);
+        select_modules(role);
+    });
+});
+
+// set default role and execute select_role and select_modules once to make sure feature is working
+window.addEventListener("load", () => {
+    if( store.getItem("role") ) {
+        select_role(store.getItem("role"));
+        select_modules(store.getItem("role"));
+    }
+    else {
+        const DEFAULT_ROLE = "research-leader";
+
+        select_role(DEFAULT_ROLE);
+        select_modules(DEFAULT_ROLE);
+    }
+});
+</script>
+
+<!-- Navigation Override
+
+Overwrite Quarto's Next/Previous buttons to point to modules
+for the user's role
+-->
+<script>
+// Below function is usable by CC BY-SA 3.0 from https://stackoverflow.com/a/6475125
+String.prototype.toTitleCase = function() {
+  let i, j, str, lowers, uppers;
+  str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+
+  // Certain minor words should be left lowercase unless 
+  // they are the first or last words in the string
+  lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At', 
+  'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'Onto', 'To', 'With'];
+  for (i = 0, j = lowers.length; i < j; i++)
+    str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'), 
+      function(txt) {
+        return txt.toLowerCase();
+      });
+
+  // Certain words such as initialisms or acronyms should be left uppercase
+  uppers = ['ID', 'TV', 'FHIR'];
+  for (i = 0, j = uppers.length; i < j; i++)
+    str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'), 
+      uppers[i].toUpperCase());
+
+  return str;
+}
+
+// Custom Hack to overwrite Quarto's built in navigators
+document.addEventListener("DOMContentLoaded", function() {
+    // Get current module and role
+    const current_module_slug = window.location.toString().split('/').pop().split('.')[0];
+    const role = store.getItem("role");
+
+    // Get next and prev modules data
+    let prev_href, prev_text;
+    let next_href, next_text;
+
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == role ) {
+            for(let i=0; i<mapping.modules.length; i++) {
+                if( mapping.modules[i].slug == current_module_slug ) {
+                    function slug_to_url(slug) {
+                        if( window.location.pathname.includes('modules') ) {
+                            // replace "modules/*" in current URL with "modules/<slug>.html"
+                            return window.location.toString().replace(/modules\/.*/, "modules/" + slug + ".html");
+                        }
+                        else {
+                            // this case is irrelevant since prev/next buttons are only role-based in modules
+                            return window.location.toString() + "/modules/" + slug + ".html";
+                        }
+                    }
+
+                    prev_href = (i > 0) ? slug_to_url(mapping.modules[i-1].slug) : null;
+                    prev_text = (i > 0) ? mapping.modules[i-1].text : null;
+
+                    next_href = (i+1 < mapping.modules.length) ? slug_to_url(mapping.modules[i+1].slug) : null;
+                    next_text = (i+1 < mapping.modules.length) ? mapping.modules[i+1].text : null;
+                }
+            }
+        }
+    });
+
+
+    // Overwrite prev link
+    if( prev_href ) {
+        const prev_link_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link");
+        const prev_text_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link .nav-page-text");
+        if( prev_link_elmt ) {
+
+            prev_link_elmt.href = prev_href
+            //prev_link_elmt.classList.add("btn", "btn-outline-custom", "rounded");
+            //prev_link_elmt.parentNode.classList.toggle("nav-page");
+            prev_text_elmt.innerText = prev_text;
+        }
+    }
+
+    // Overwrite next link
+    if( next_href ) {
+        const next_link_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link");
+        const next_text_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link .nav-page-text");
+
+        if( next_link_elmt ) {
+            next_link_elmt.href = next_href;
+            //next_link_elmt.classList.add("btn", "btn-outline-custom", "rounded");
+            //next_link_elmt.parentNode.classList.toggle("nav-page");
+            next_text_elmt.innerText = next_text;
+        }
+    }
+
+    // if document has #key-points then move pagination to next after it
+    key_points = document.querySelector("#key-points");
+    if( key_points ) {
+        let page_nav = document.querySelector("nav.page-navigation");
+        key_points.insertAdjacentElement("afterend", page_nav);
+    }
+
+});
+
+
+// Override style of Quarto page navigation (prev/next buttons)
+document.addEventListener("DOMContentLoaded", function() {
+
+    const page_navigators = document.querySelectorAll(".pagination-link");
+    page_navigators.forEach((node) => {
+
+        node.classList.add("btn", "btn-outline-custom", "rounded");
+        node.parentNode.classList.remove("nav-page");
+        node.parentNode.parentNode.style.gridRow = "initial";
+    });
+});
+
+// Set external links to open in a new tab
+document.addEventListener("DOMContentLoaded", function() {
+    var all_links = document.querySelectorAll('a');
+    for (var i = 0; i < all_links.length; i++){
+        var a = all_links[i];
+        if(a.hostname != location.hostname) {
+                a.target = '_blank';
+        }
+    }
+})
+
+</script>
+
+<!-- Lightbox 
+
+Intercept all instances of:
+
+:::{#id .mermaid-lightbox data-caption='my caption'}
+```{mermaid}
+mermaid markdown content...
+```
+:::
+
+and overwrite it with a popup lightbox for easy viewing of diagram.
+Powered by GLightbox: https://github.com/biati-digital/glightbox
+-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.1/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox@3.3.1/dist/js/glightbox.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const mermaidElements = document.querySelectorAll('.mermaid-lightbox');
+
+    mermaidElements.forEach(element => {
+      const id = element.id;
+      const caption = element.getAttribute('data-caption');
+
+      const lightboxFigure = document.createElement('a');
+      lightboxFigure.setAttribute('href', '#' + id);
+      lightboxFigure.className = 'glightbox';
+      lightboxFigure.setAttribute('data-description', caption);
+      lightboxFigure.setAttribute('data-width', "90%");
+      lightboxFigure.setAttribute('data-height', "90%");
+
+      const clonedElement = element.cloneNode(true);
+      lightboxFigure.appendChild(clonedElement);
+
+      const figcaption = document.createElement('figcaption');
+      figcaption.textContent = 'Click diagram to enlarge';
+      lightboxFigure.appendChild(figcaption);
+
+      element.parentNode.replaceChild(lightboxFigure, element);
+    });
+
+    // Initialize GLightbox
+    const lightbox = GLightbox({
+        selector: '.glightbox'
+    });
+  })
+</script>
+
+<!-- This script dynamically updates the copyright year in the footer -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get the current year
+    var currentYear = new Date().getFullYear();
+    
+    // Find the span element where we'll put the year
+    var span = document.getElementById('current-year');
+    
+    if (span) {
+        // If the span exists, update its content with the current year
+        span.textContent = currentYear;
+    }
+    });
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/nih-odss\.github\.io\/fhir-for-research\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../modules/synthea-running" class="pagination-link" aria-label="Running Synthea">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Running Synthea</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../modules/new-bulk-fhir" class="pagination-link" aria-label="Bulk Data Access">
+        <span class="nav-page-text">Bulk Data Access</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/README.md">License information</a><br>Approved for Public Release / Case #24-3701<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

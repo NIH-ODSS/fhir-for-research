@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>CDS Hooks Technical Example – FHIR® for Research</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../modules/redcap-intro.html" rel="next">
+<link href="../modules/new-cds-hooks-types.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dece3bd051e391dd7205a6b15f93dc59.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-ed04999718f06b735b1f8009dce43b94.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-416da0712179dc1ff0278a6ba892b12c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-360c049c7bc2ff2c1f0b1e1328e2ba2f.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<!-- head.html -->
+<!-- any content in this file is inserted into <head></head> -->
+
+<script src="../modules/mappings.js"></script>
+
+<script>
+// test if local storage is available and inititilize global variable store, code adapted from:
+// https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+function initLocalStorage() {
+  let storage;
+  try {
+    storage = window["localStorage"];
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return storage;
+  } catch (e) {
+    console.log("Error: local storage unavailable.");
+    return (
+      e instanceof DOMException &&
+      // everything except Firefox
+      (e.code === 22 ||
+        // Firefox
+        e.code === 1014 ||
+        // test name field too, because code might not be present
+        // everything except Firefox
+        e.name === "QuotaExceededError" ||
+        // Firefox
+        e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+          // acknowledge QuotaExceededError only if there's something already stored
+          storage &&
+          storage.length !== 0
+    );
+  }
+}
+
+var store = initLocalStorage();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Yantramanav:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="../styles.css">
+<meta property="og:title" content="CDS Hooks Technical Example – FHIR® for Research">
+<meta property="og:description" content="">
+<meta property="og:image" content="https://nih-odss.github.io/fhir-for-research/modules/images/cds-hook-sandbox-2.png">
+<meta property="og:site_name" content="FHIR® for Research">
+<meta property="og:image:alt" content="Screenshot showing patient record in the CDS Hooks Sandbox without the retinoblastoma CDS Hook card displayed.">
+<meta property="og:image:height" content="839">
+<meta property="og:image:width" content="2140">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="..">
+    <span class="navbar-title">FHIR® for Research</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/introduction"> 
+<span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../sections/advanced-topics" aria-current="page"> 
+<span class="menu-text">Advanced Topics</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hands-on-practice"> 
+<span class="menu-text">Hands-on Practice</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../sections/hosting-your-own-workshop"> 
+<span class="menu-text">Hosting Your Own Workshop</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../contribute"> 
+<span class="menu-text">Questions &amp; Contributions</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/NIH-ODSS/fhir-for-research"> <i class="bi bi-github" role="img" aria-label="View the GitHub repository for this site">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../modules/new-cds-hooks-intro">CDS Hooks</a></li><li class="breadcrumb-item"><a href="../modules/new-cds-hooks-tech">Technical Example</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../sections/advanced-topics" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Advanced Topics</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">SMART on FHIR</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-smart-on-fhir-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-smart-on-fhir-tech" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Technical Details</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">CDS Hooks</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-cds-hooks-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-cds-hooks-types" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Types of CDS Hooks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-cds-hooks-tech" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Technical Example</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">REDCap</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/redcap-intro" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/redcap-fhir" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">REDCap on FHIR</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Synthea</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-overview" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Synthea Overview</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-running" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Running Synthea</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/synthea-customizing" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Customizing Synthea</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Bulk Data</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/new-bulk-fhir" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bulk Data Access</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../webinars/bulk-data" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Webinar</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">Emerging Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/fhir-emerging-innovations" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Emerging Use Cases</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/fhir-research" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Real World Research</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../modules/genomics" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Genomics Data Standardization</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#example-overview-facilitating-retinoblastoma-research" id="toc-example-overview-facilitating-retinoblastoma-research" class="nav-link active" data-scroll-target="#example-overview-facilitating-retinoblastoma-research"><span class="header-section-number">1</span> Example Overview: Facilitating Retinoblastoma Research</a>
+  <ul class="collapse">
+  <li><a href="#problem-statement" id="toc-problem-statement" class="nav-link" data-scroll-target="#problem-statement"><span class="header-section-number">1.1</span> Problem Statement</a></li>
+  <li><a href="#objective" id="toc-objective" class="nav-link" data-scroll-target="#objective"><span class="header-section-number">1.2</span> Objective</a></li>
+  </ul></li>
+  <li><a href="#synthetic-data-sets" id="toc-synthetic-data-sets" class="nav-link" data-scroll-target="#synthetic-data-sets"><span class="header-section-number">2</span> Synthetic Data Sets</a></li>
+  <li><a href="#exercise-steps" id="toc-exercise-steps" class="nav-link" data-scroll-target="#exercise-steps"><span class="header-section-number">3</span> Exercise Steps</a></li>
+  <li><a href="#approach-solution" id="toc-approach-solution" class="nav-link" data-scroll-target="#approach-solution"><span class="header-section-number">4</span> Approach &amp; Solution</a></li>
+  <li><a href="#other-research-applications" id="toc-other-research-applications" class="nav-link" data-scroll-target="#other-research-applications"><span class="header-section-number">5</span> Other Research Applications</a></li>
+  <li><a href="#additional-information" id="toc-additional-information" class="nav-link" data-scroll-target="#additional-information"><span class="header-section-number">6</span> Additional Information</a>
+  <ul class="collapse">
+  <li><a href="#security-and-privacy" id="toc-security-and-privacy" class="nav-link" data-scroll-target="#security-and-privacy"><span class="header-section-number">6.1</span> Security and Privacy</a></li>
+  <li><a href="#design" id="toc-design" class="nav-link" data-scroll-target="#design"><span class="header-section-number">6.2</span> Design</a></li>
+  <li><a href="#resources" id="toc-resources" class="nav-link" data-scroll-target="#resources"><span class="header-section-number">6.3</span> Resources</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../modules/new-cds-hooks-intro">CDS Hooks</a></li><li class="breadcrumb-item"><a href="../modules/new-cds-hooks-tech">Technical Example</a></li></ol></nav><h1 class="title display-7">CDS Hooks Technical Example</h1></header>
+
+<header id="title-block-header">
+<!--
+-->
+
+
+
+</header>
+
+<!-- Begin learning objectives block -->
+
+
+<div class="callout-note callout callout-style-simple no-icon callout-captioned" id="relevant-roles">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Relevant roles:
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul class="target-roles list-inline">
+    <li class="list-inline-item">Software Engineer</li>
+</ul>
+</div>
+</div>
+<!-- End learning objectives block -->
+
+<!-- Hack to add key points block at end of page-->
+<!-- End hack to add key points block at end of page-->
+
+<!-- Reading time logic -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  
+    // Step 1: Count words in parent document
+    let totalWords = 0;
+    const mainContent = document.querySelector('#quarto-document-content');
+    if (mainContent) {
+      const parentWords = mainContent.innerText.trim().split(/\s+/).length;
+      totalWords += parentWords;
+    }
+  
+    // We'll update the badge once we've processed ALL iframes (or there are none)
+    function updateReadingTimeBadge(wordCount) {
+      const wpm = 200;
+      const readingTime = Math.ceil(wordCount / wpm);
+  
+      let displayText;
+      if (readingTime === 1) {
+        displayText = 'Estimated reading time: 1 minute';
+      } else {
+        displayText = 'Estimated reading time: ' + readingTime + ' minutes';
+      }
+  
+      // Create the badge
+      const timeBadge = document.createElement('span');
+      timeBadge.classList.add('reading-time-badge');
+      timeBadge.textContent = displayText;
+
+      const titleBlockHeader = document.querySelector('#title-block-header');
+      if (titleBlockHeader) {
+        titleBlockHeader.appendChild(timeBadge);
+      }
+    }
+  
+    // Step 2: Gather iframes
+    const iframes = document.querySelectorAll('iframe');
+    
+    // If there are no iframes, just show the reading time for parent content
+    if (iframes.length === 0) {
+      updateReadingTimeBadge(totalWords);
+      return;
+    }
+  
+    // We only update after ALL iframes have loaded or errored
+    let pending = iframes.length;
+  
+    // Helper to decrement pending count and update once done
+    function iframeDone() {
+      pending--;
+      if (pending === 0) {
+        // All iframes processed
+        updateReadingTimeBadge(totalWords);
+      }
+    }
+  
+    // Step 3: Iterate through each iframe
+    iframes.forEach(iframe => {
+      // Listen for 'load' (fires whether same-origin or cross-origin)
+      iframe.addEventListener('load', function() {
+        try {
+          // Attempt to read the iframe's text (works only if same-origin)
+          const iframeDoc = iframe.contentWindow.document;
+          const iframeText = (iframeDoc.body.innerText || "").trim();
+          const iframeWords = iframeText.split(/\s+/).filter(Boolean).length;
+  
+          totalWords += iframeWords;
+        } catch (err) {
+          // Cross-origin or any other error
+          console.warn("Could not read iframe content (possibly cross-origin):", err);
+          // No addition to totalWords
+        }
+        // Mark this iframe as processed
+        iframeDone();
+      }, { once: true });
+  
+      // Listen for 'error' in case the iframe fails to load
+      iframe.addEventListener('error', function() {
+        console.warn("Iframe failed to load:", iframe.src);
+        // Just move on (no addition to totalWords)
+        iframeDone();
+      }, { once: true });
+    });
+  
+  });
+  </script>
+
+
+
+<p>This module is meant for technical users who are interested understanding the architecture of CDS Hooks by reviewing an example CDS Service. Please be familiar with <a href="../modules/new-smart-on-fhir-intro">SMART on FHIR</a> and read the <a href="../modules/new-cds-hooks-intro">CDS Hooks introduction</a> before continuing.</p>
+<section id="example-overview-facilitating-retinoblastoma-research" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="example-overview-facilitating-retinoblastoma-research"><span class="header-section-number">1</span> Example Overview: Facilitating Retinoblastoma Research</h2>
+<p>In this scenario, clinical care teams are prompted to offer enrollment into a research recruitment registry to parents and guardians of retinoblastoma patients who are interested in participating in clinical trials.</p>
+<p>CDS Hooks will enable integrated, automated prompts. When a healthcare provider opens the chart of a patient diagnosed with retinoblastoma, a decision support card containing recruitment registry information and a link to an enrollment website will appear. This application will guide interested patient families through the process of signing up for inclusion in the research recruitment registry.</p>
+<p>We will then consider the case where there is a prioritized clinical trial needing to recruit retinoblastoma patients within a certain age range, and demonstrate how CDS Hooks can be used to leverage patient age data from the EHR to more selectively identify patients meeting the desired eligibility criteria.</p>
+<section id="problem-statement" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="problem-statement"><span class="header-section-number">1.1</span> Problem Statement</h3>
+<p>Retinoblastoma is a rare pediatric cancer, making it difficult to recruit enough patients for research. Without automated prompts in clinical workflows, enrollment rates may be low, impacting the development of robust registries and research studies.</p>
+</section>
+<section id="objective" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="objective"><span class="header-section-number">1.2</span> Objective</h3>
+<p>Learn how to implement CDS Hooks to trigger clinical decision support (CDS) interventions that leverage the <code>patient-view</code> hook to appropriately launch a SMART on FHIR app within a clinician’s EHR workflow.</p>
+</section>
+</section>
+<section id="synthetic-data-sets" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="synthetic-data-sets"><span class="header-section-number">2</span> Synthetic Data Sets</h2>
+<p>You will use synthetic FHIR data sets that include:</p>
+<ul>
+<li>Pediatric patients diagnosed with retinoblastoma.</li>
+<li>Pediatric patients without retinoblastoma.</li>
+</ul>
+<p>The data for this use case can be accessed <a href="https://github.com/NIH-NEI/fhir-for-research-smart-example/tree/main/synthetic_data/cds-retinoblastoma">here</a> in two different formats:</p>
+<ol type="1">
+<li>JSON files containing FHIR Bundles, which can be used to manually populate a test FHIR server.</li>
+<li>A pre-loaded <a href="https://hapifhir.io/">HAPI</a> FHIR server database, which can be run using the HAPI FHIR server instructions in <a href="https://github.com/NIH-NEI/fhir-for-research-smart-example/tree/main/example_cds_hook_service/README.md#hapi-fhir-server">this README</a>.</li>
+</ol>
+</section>
+<section id="exercise-steps" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="exercise-steps"><span class="header-section-number">3</span> Exercise Steps</h2>
+<ol type="1">
+<li><p><strong>Create a CDS Service:</strong></p>
+<ul>
+<li>Set up a CDS service that is called when the <code>patient-view</code> hook fires, triggered whenever a healthcare provider accesses a patient’s EHR record.</li>
+<li>Configure the CDS service to filter patients and identify those diagnosed with retinoblastoma by examining relevant FHIR resources, such as <code>Condition</code> resources with retinoblastoma diagnosis codes.</li>
+<li>Use the <code>prefetch</code> feature in CDS Hooks to load the necessary FHIR resource instances without making a separate request to the FHIR server.</li>
+</ul></li>
+<li><p><strong>Create CDS Card:</strong></p>
+<ul>
+<li>Create a link card that provides succinct decision support verbiage, urging the clinician to consider asking the patient’s parents or guardians if they would be interested in enrolling the patient into a research recruitment registry. The card should include a brief description and any relevant details about the registry, and end with a link to enroll in the registry. The enrollment process could be via a third-party registry website (i.e., any arbitrary website, as implemented in the example code below) or a SMART on FHIR application.</li>
+</ul></li>
+<li><p><strong>Test the Workflow:</strong></p>
+<ul>
+<li>Simulate the workflow using the <a href="https://sandbox.cds-hooks.org/">CDS Hooks Sandbox</a> to observe how <code>patient-view</code> hooks trigger CDS cards for the appropriate patient cohort (e.g., pediatric patients with retinoblastoma).</li>
+</ul></li>
+<li><p><strong>Additional Steps to Refine CDS Selectivity:</strong></p>
+<ul>
+<li><strong>Integrate Additional Criteria:</strong> Modify the CDS service to include additional eligibility criteria, such as patient age, to refine the selectivity of CDS interventions. For instance, include logic to identify only retinoblastoma patients within a certain age range (e.g., older than 1 month and less than 18 years of age).</li>
+</ul></li>
+</ol>
+</section>
+<section id="approach-solution" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="approach-solution"><span class="header-section-number">4</span> Approach &amp; Solution</h2>
+<p>After ensuring you have access to a test FHIR server with the synthetic data described above, create a web application that responds to the following endpoints:</p>
+<ol type="1">
+<li><p><code>GET /cds-services</code>, which provides a list of available CDS Service endpoints to the EHR like this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="er">services</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      <span class="er">id</span><span class="fu">:</span> <span class="st">"retinoblastoma"</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      <span class="er">hook</span><span class="fu">:</span> <span class="st">"patient-view"</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      <span class="er">title</span><span class="fu">:</span> <span class="st">"Retinoblastoma CDS Service"</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="er">description</span><span class="fu">:</span> <span class="st">"Provides decision support for retinoblastoma cases."</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="er">prefetch</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="er">conditions</span><span class="fu">:</span> <span class="st">"Condition?patient={{context.patientId}}"</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="er">patient</span><span class="fu">:</span> <span class="st">"Patient/{{context.patientId}}"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Multiple <code>services</code> values can be included if the server supports more than one CDS Service.</p></li>
+<li><p><code>POST /cds-services/retinoblastoma</code>, which is the CDS Service that runs when the <code>patient-view</code> hook is called.</p>
+<p>The request body to this endpoint will include information on the hook itself, the <code>context</code> (e.g., the patient’s id for a <code>patient-view</code> hook), and any <code>prefetch</code> data. The <a href="https://cds-hooks.org/quickstart/#support-fhir-resource-on-cds-requests-context-or-pre-fetch">CDS Hooks documentation provides an example</a>.</p>
+<p>This endpoint contains the business logic for the CDS hook. For this use case, this includes identifying when a given patient meets the criteria for displaying the retinoblastoma card: do they have a Condition resource instance with the retinoblastoma SNOMED code (<code>19906005</code>) and meet the age criteria?</p>
+<p>If the patient meets the criteria, the appropriate card(s) are returned in JSON format. For example:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="er">summary</span><span class="fu">:</span> <span class="st">"Enrollment Link"</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="er">indicator</span><span class="fu">:</span> <span class="st">"info"</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="er">detail</span><span class="fu">:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"This patient is diagnosed with retinoblastoma. Please consider referring them to the retinoblastoma recruitment registry if their parents or guardians are interested in being contacted about research opportunities.</span><span class="ch">\n\n</span><span class="st">Click below to guide the patient’s family through the signing up for the Retinoblastoma Research Recruitment Registry."</span><span class="fu">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="er">source</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="er">label</span><span class="fu">:</span> <span class="st">"Enrollment App"</span><span class="fu">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="er">links</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="er">label</span><span class="fu">:</span> <span class="st">"Enroll Patient →"</span><span class="fu">,</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="er">url</span><span class="fu">:</span> <span class="st">"http://example.com/enrollment-smart-app"</span><span class="fu">,</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="er">type</span><span class="fu">:</span> <span class="st">"smart"</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Multiple cards can be returned if needed. If you want to link to a URL for a non-SMART on FHIR application, use <code>type: "absolute"</code> instead of <code>type: "smart"</code>.</p></li>
+</ol>
+<p>There are a multitude of approaches for implementing such a server. An example <a href="https://github.com/NIH-NEI/fhir-for-research-smart-example/tree/main/example_cds_hook_service/">is provided on GitHub</a> implemented using JavaScript. To run the example:</p>
+<ol type="1">
+<li><p>Clone <a href="https://github.com/NIH-NEI/fhir-for-research-smart-example/">the GitHub repository</a> locally.</p></li>
+<li><p>Unzip the <code>synthetic_data/cds-retinoblastoma/database-cds-retinoblastoma.zip</code> file and move the enclosed <code>h2.mv.db</code> file into a new folder called <code>hapi_db</code>. This <code>.db</code> file is the pre-loaded database for the HAPI FHIR server that includes the synthetic data for this use case.</p>
+<p>Run the following Docker command to start HAPI with this database:</p>
+<pre class="shell"><code>docker run -it -p 8080:8080 -v ${PWD}/hapi_db:/usr/local/tomcat/target/database smartonfhir/hapi-5:r4-empty</code></pre>
+<p>Once the server has started, you should be able to get a JSON response with this cURL command:</p>
+<pre class="shell"><code>curl localhost:8080/hapi-fhir-jpaserver/fhir/Patient/86</code></pre>
+<p>The output should look like:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"resourceType"</span><span class="fu">:</span> <span class="st">"Patient"</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"id"</span><span class="fu">:</span> <span class="st">"86"</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"meta"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"versionId"</span><span class="fu">:</span> <span class="st">"1"</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"lastUpdated"</span><span class="fu">:</span> <span class="st">"2024-09-27T14:14:10.772+00:00"</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"source"</span><span class="fu">:</span> <span class="st">"#nEQKUSDEs9Q1J8i8"</span><span class="fu">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"profile"</span><span class="fu">:</span> <span class="ot">[</span> <span class="st">"http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient"</span> <span class="ot">]</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="er">...</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Start the CDS Service example using the following Docker command:</p>
+<pre class="shell"><code>cd example_cds_hook_service
+docker build -t example-cds-hooks-service-image .
+docker run -it -p 3000:3000 -v ${PWD}:/usr/src/app example-cds-hooks-service-image</code></pre>
+<p>This will mount the <code>example_cds_hook_service</code> folder inside the Docker container so any changes to <code>app.js</code> will be reflected immediately. See <a href="https://github.com/NIH-NEI/fhir-for-research-smart-example/tree/main/example_cds_hook_service">this README</a> for more information.</p></li>
+<li><p>Go to the following URL to launch the CDS Hooks Sandbox using your <code>localhost</code> HAPI server and CDS Service:</p>
+<p><a href="https://sandbox.cds-hooks.org/?fhirServiceUrl=http%3A//localhost%3A8080/hapi-fhir-jpaserver/fhir/&amp;serviceDiscoveryURL=http%3A//localhost%3A3000/cds-services&amp;patientId=86" class="uri">https://sandbox.cds-hooks.org/?fhirServiceUrl=http%3A//localhost%3A8080/hapi-fhir-jpaserver/fhir/&amp;serviceDiscoveryURL=http%3A//localhost%3A3000/cds-services&amp;patientId=86</a></p>
+<p>The <code>patientId</code> value (<code>86</code>) refers to a synthetic patient who meets the criteria for the retinoblastoma CDS Card described above. You should see the card displayed:</p>
+<p>For a patient who does not meet the criteria, try this URL:</p>
+<p><a href="https://sandbox.cds-hooks.org/?fhirServiceUrl=http%3A//localhost%3A8080/hapi-fhir-jpaserver/fhir/&amp;serviceDiscoveryURL=http%3A//localhost%3A3000/cds-services&amp;patientId=642" class="uri">https://sandbox.cds-hooks.org/?fhirServiceUrl=http%3A//localhost%3A8080/hapi-fhir-jpaserver/fhir/&amp;serviceDiscoveryURL=http%3A//localhost%3A3000/cds-services&amp;patientId=642</a></p>
+<p>You should see the CDS Hooks Sandbox without the retinoblastoma card for this patient.</p>
+<p><img src="images/cds-hook-sandbox-2.png" class="img-fluid" alt="Screenshot showing patient record in the CDS Hooks Sandbox without the retinoblastoma CDS Hook card displayed."></p></li>
+</ol>
+</section>
+<section id="other-research-applications" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="other-research-applications"><span class="header-section-number">5</span> Other Research Applications</h2>
+<p>This use case showcases just a fraction of what CDS Hooks can offer to FHIR research application developers. By leveraging different types of hooks, such as the <code>patient-view</code> used above or <a href="../modules/new-cds-hooks-types">hook types</a> like <code>encounter-start</code> hooks, developers can achieve a high degree of flexibility in integrating clinical decision support (CDS) into various points of the clinical workflow. Here are some additional ways CDS Hooks can further enhance research application development:</p>
+<section id="tailored-user-interaction" class="level4">
+<h4 class="anchored" data-anchor-id="tailored-user-interaction">Tailored User Interaction</h4>
+<ul>
+<li><strong>Dynamic Card Content:</strong> Implement logic in your CDS service to dynamically generate content on decision support cards based on real-time patient data. For example, if a patient matches the specific eligibility criteria for a clinical trial (e.g., age, diagnosis, comorbidities), the CDS card can display tailored information about the trial, including eligibility requirements, study location, and contact details. This dynamic approach allows for more personalized and contextually relevant prompts, improving the likelihood of clinician engagement.</li>
+</ul>
+</section>
+<section id="enhancing-user-engagement-and-feedback" class="level4">
+<h4 class="anchored" data-anchor-id="enhancing-user-engagement-and-feedback">Enhancing User Engagement and Feedback</h4>
+<ul>
+<li><p><strong>User Feedback Mechanism:</strong> Integrate a mechanism within the CDS cards that allows clinicians to provide feedback directly from the EHR interface. For instance, clinicians can mark whether the decision support was useful, not relevant, or suggest improvements. This feedback loop can be invaluable for iteratively refining the CDS service and enhancing the relevance and accuracy of future interventions. It also fosters a sense of collaboration between the developers and end-users, leading to a more user-centered design.</p></li>
+<li><p><strong>Track Engagement Metrics:</strong> Implement analytics to collect data on CDS card interactions, such as display frequency, click-through rates, and subsequent actions taken by clinicians (e.g., initiating a research registry enrollment). By analyzing these engagement metrics, developers can assess the effectiveness of the CDS interventions, identify patterns of use, and make data-driven decisions for optimizing the CDS service. This continuous feedback process ensures that the decision support system evolves to better meet clinician needs and improve patient care.</p></li>
+</ul>
+</section>
+<section id="advanced-considerations-for-research-integration" class="level4">
+<h4 class="anchored" data-anchor-id="advanced-considerations-for-research-integration">Advanced Considerations for Research Integration</h4>
+<ul>
+<li><p><strong>Condition-Specific Hooks:</strong> Beyond the <code>patient-view</code> hook, explore the use of condition-specific hooks such as <code>order-select</code> or <code>order-sign</code> hooks. These hooks allow for CDS interventions at the moment of clinical decision-making, such as when a clinician is placing an order for a medication or test. For example, an <code>order-sign</code> hook could be used to prompt a clinician to consider enrolling a patient in a research study before finalizing a treatment order.</p></li>
+<li><p><strong>Contextual Data Integration:</strong> Utilize the context provided by hooks, such as encounter information, patient demographics, and clinical context, to deliver highly specific and actionable CDS interventions. For instance, the <code>encounter-start</code> hook can be used to identify eligible patients for a study based on the reason for their visit, ensuring that research opportunities are presented at the most relevant clinical moments.</p></li>
+</ul>
+</section>
+<section id="leveraging-fhir-resources" class="level4">
+<h4 class="anchored" data-anchor-id="leveraging-fhir-resources">Leveraging FHIR Resources</h4>
+<ul>
+<li><p><strong>Advanced FHIR Queries:</strong> CDS services can perform advanced FHIR queries to gather detailed patient information, such as lab results, medication history, and imaging reports. These queries can be used to enrich the decision support content and provide clinicians with a comprehensive view of the patient’s status, enhancing the quality of the CDS intervention.</p></li>
+<li><p><strong>Patient-Specific Interventions:</strong> Use FHIR resources to tailor interventions based on patient-specific factors, such as genetic markers, social determinants of health, or prior treatment responses. For example, a CDS card could suggest a clinical trial based on a patient’s genetic profile, leveraging FHIR Genomics resources to identify potential matches for precision medicine studies.</p></li>
+</ul>
+<p>By exploring the capabilities and potential use cases of CDS Hooks, FHIR research application developers can create more sophisticated and effective tools to support clinical research. These tools not only streamline the integration of research into clinical practice but also ensure that patients receive the most current and personalized care options. As you continue to develop and refine your CDS services, keep these considerations in mind to maximize the impact of your clinical decision support and research efforts.</p>
+</section>
+</section>
+<section id="additional-information" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="additional-information"><span class="header-section-number">6</span> Additional Information</h2>
+<section id="security-and-privacy" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="security-and-privacy"><span class="header-section-number">6.1</span> Security and Privacy</h3>
+<p>When developing software applications involving exchange of health data, it is important to appropriately address security and privacy requirements for sensitive patient information. Use reputable open-source software libraries to save development time and avoid common security pitfalls.</p>
+<p>Strong data protection measures should be employed to safeguard patient information. This includes ensuring patient data exchange complies with relevant regulations to protect sensitive personal health information (PHI). For instance, requirements may include compliance with regulations such as Health Insurance Portability and Accountability Act (HIPAA) in the United States, as well as with your institution’s local Institutional Review Board (IRB) and privacy rules.</p>
+<p>Note that leveraging SMART on FHIR with CDS Hooks can helpful for addressing authorization and authentication. It is important to ensure that your CDS service handles these correctly, typically using OAuth 2.0 to authenticate with the EHR system and restrict access based on user roles.</p>
+</section>
+<section id="design" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="design"><span class="header-section-number">6.2</span> Design</h3>
+<p>Because CDS Hooks enables integration into user workflows, thoughtful design can help ensure good user experience and avoid risks of resulting in a product with limited effectiveness due to alert fatigue, unnecessary workflow changes, etc. Avoid this by considering <a href="https://en.wikipedia.org/wiki/Human-centered_design">human-centered design</a>.</p>
+</section>
+<section id="resources" class="level3" data-number="6.3">
+<h3 data-number="6.3" class="anchored" data-anchor-id="resources"><span class="header-section-number">6.3</span> Resources</h3>
+<p>There are many open-source software libraries and resources for helping developers work with FHIR and CDS Hooks. <a href="http://docs.smarthealthit.org/">docs.smarthealthit.org</a> lists helpful resources on software libraries, vendor sandboxes, synthetic data, etc.</p>
+<p>Additional resources that are specifically helpful related to CDS Hooks include:</p>
+<ul>
+<li><p><a href="https://cds-hooks.org/">CDS Hooks Specification</a>: This site provides the CDS Hooks specification as well as helpful resources and best practices on CDS Hooks development, a <a href="https://cds-hooks.org/cheat-sheet/Cheat%20Sheet%20-%20Sept%202019.pdf">cheat sheet</a>, <a href="https://cds-hooks.org/examples/">examples</a>, and more.</p></li>
+<li><p><a href="https://github.com/cds-hooks/sandbox">CDS Hooks Sandbox</a>: This is the source code for the sandbox used above for testing CDS Hooks.</p></li>
+<li><p><a href="https://github.com/cds-hooks/sandbox-cds-services">Sandbox CDS Services</a>: This is the source code for the sample CDS Services used by the CDS Hooks Sandbox.</p></li>
+</ul>
+<p>CDS Hooks is a standard for integrating clinical decision support (CDS) into Electronic Health Record (EHR) systems using web-based APIs. It allows external CDS services to be invoked within the clinician’s workflow, offering real-time guidance based on the patient’s context.</p>
+<p>Some additional resources include:</p>
+<ul>
+<li><p><strong>Reference Documentation</strong></p>
+<ul>
+<li><a href="https://cds-hooks.org/">CDS Hooks</a> official documentation.</li>
+<li><a href="https://docs.smarthealthit.org/">SMART on FHIR</a> for SMART on FHIR documentation.</li>
+</ul></li>
+<li><p><strong>Software Libraries</strong>:</p>
+<ul>
+<li><a href="https://github.com/smart-on-fhir/client-js">FHIR.js</a> for using SMART on FHIR with JavaScript applications.</li>
+</ul></li>
+<li><p><strong>Discussion Forums</strong>:</p>
+<ul>
+<li><p><a href="https://chat.fhir.org/#narrow/stream/197610-cds-hooks">HL7 CDS Hooks Zulip</a> <a href="https://chat.fhir.org/#narrow/stream/179159-cds-hooks/">Chat</a> for community support.</p></li>
+<li><p><a href="https://groups.google.com/g/smart-on-fhir">SMART on FHIR Google Group</a> for discussions related to SMART on FHIR and CDS Hooks.</p></li>
+</ul></li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<!-- scripts.html -->
+<!-- any content in this file is inserted right before </body> -->
+
+<!-- Append index.html to any links ending with '/'
+
+Example:
+
+<a href="https://example.org/workshops/bulk-data/">
+
+will turn into:
+
+<a href="https://example.org/workshops/bulk-data/index.html">
+
+This ensures consistent behavior across different deployment platforms
+and enables other scripts like role-based module highlighting.
+-->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("a[href]").forEach(link => {
+      if( link.getAttribute("href").endsWith("/") ) {
+        link.setAttribute("href", link.getAttribute("href") + "index.html");
+      }
+    })
+  });
+</script>
+
+<!-- Fix a11y issues with side menu -->
+<script>
+const elements = document.querySelectorAll('.sidebar-menu-container a.sidebar-item-text[data-bs-toggle="collapse"], .sidebar-menu-container a.sidebar-item-toggle[data-bs-toggle="collapse"]')
+
+elements.forEach(element => {
+    element.setAttribute('role', 'group');
+});
+</script>
+
+<!-- JSON Viewer
+Intercept all instances of:
+
+``` json
+```
+
+and replace it with a fancy JSON viewer. If the content is
+invalid JSON then the default Quarto rendering will occur.
+-->
+<script type="text/javascript" src="https://unpkg.com/dompurify@3.0.1/dist/purify.min.js"></script> <!-- load JS Sanitizer -->
+<script>
+    function jsonViewer(json, collapsible=false) {
+        let TEMPLATES = {
+            item: '<div class="json_view__item"><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--%TYPE%">%VALUE%</div></div>',
+            itemCollapsible: '<label class="json_view__item json_view__item--collapsible"><input type="checkbox" class="json_view__toggle"/><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--type-%TYPE%">%VALUE%</div>%CHILDREN%</label>',
+            itemCollapsibleOpen: '<label class="json_view__item json_view__item--collapsible"><input type="checkbox" checked class="json_view__toggle"/><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--type-%TYPE%">%VALUE%</div>%CHILDREN%</label>'
+        };
+
+        function createItem(key, value, type){
+            let element = TEMPLATES.item.replace('%KEY%', key);
+
+            if((key == 'div') && (type=='string')) { // Removes Resource.text.div value (looks bloated)
+                element = element.replace('%VALUE%', '...');
+            } else if(type == 'string') {
+                element = element.replace('%VALUE%', '"' + value + '"');
+            } else {
+                element = element.replace('%VALUE%', value);
+            }
+
+            element = element.replace('%TYPE%', type);
+
+            return element;
+        }
+
+        function createCollapsibleItem(key, value, type, children){
+            let tpl = 'itemCollapsible';
+
+            if(collapsible) {
+                tpl = 'itemCollapsibleOpen';
+            }
+
+            let element = TEMPLATES[tpl].replace('%KEY%', key);
+
+            element = element.replace('%VALUE%', type);
+            element = element.replace('%TYPE%', type);
+            element = element.replace('%CHILDREN%', children);
+
+            return element;
+        }
+
+        function handleChildren(key, value, type) {
+            let html = '';
+
+            for(let item in value) { 
+                let _key = item,
+                    _val = value[item];
+
+                html += handleItem(_key, _val);
+            }
+
+            return createCollapsibleItem(key, value, type, html);
+        }
+
+        function handleItem(key, value) {
+            let type = typeof value;
+ 
+            if( Array.isArray( value ) ) {
+                return handleChildren(key, value, "array");
+            }
+
+            if(typeof value === 'object') {        
+                return handleChildren(key, value, type);
+            }
+
+            return createItem(key, value, type);
+        }
+
+        function parseObject(obj) {
+            _result = '<div class="json_view">';
+
+            for(let item in obj) { 
+                let key = item,
+                    value = obj[item];
+
+                _result += handleItem(key, value);
+            }
+
+            _result += '</div>';
+
+            return _result;
+        }
+        
+        try {
+            return parseObject(JSON.parse(json));
+        }
+        catch(err) {
+            console.log("Could not render JSON viewer: ", err);
+            console.log("for string: ", json);
+            return null;
+        }
+
+    };
+
+
+    function parseHTML(string) {
+        let sanitized = DOMPurify.sanitize(string);
+        let parser = new DOMParser();
+        return parser.parseFromString(sanitized, "text/html").body.firstChild;
+    }
+
+    let jsonCodeBlocks = document.querySelectorAll("code.sourceCode.json");
+    jsonCodeBlocks.forEach((jsonCode) => {
+        let json = jsonCode.innerText;
+        let codeBlock = jsonCode.parentNode.parentNode;
+        let uid = codeBlock.id;
+        let documentLocation = codeBlock.parentNode;
+        let viewerHTML = jsonViewer(json, true);
+
+        let tabContainer = parseHTML(`
+          <div>
+            <ul class="nav nav-tabs" id="${uid}Tabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="${uid}ViewerTab" data-bs-toggle="tab" data-bs-target="#${uid}Viewer" type="button" role="tab" aria-controls="${uid}Viewer" aria-selected="true">Viewer</button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="${uid}JsonTab" data-bs-toggle="tab" data-bs-target="#${uid}Json" type="button" role="tab" aria-controls="${uid}Json" aria-selected="false">JSON</button>
+              </li>
+            </ul>
+            <div class="tab-content" id="${uid}TabContent" style="height:50vh;overflow:scroll;">
+              <div class="tab-pane fade show active" id="${uid}Viewer" role="tabpanel" aria-labelledby="${uid}ViewerTab"></div>
+              <div class="tab-pane fade" id="${uid}Json" role="tabpanel" aria-labelledby="${uid}JsonTab"></div>
+            </div>
+          </div>
+        `)
+
+        if( viewerHTML != null ) {
+            documentLocation.replaceChild(tabContainer, codeBlock);
+
+            tabContainer.querySelector(`div#${uid}TabContent div#${uid}Viewer`).appendChild( parseHTML(viewerHTML) );
+            tabContainer.querySelector(`div#${uid}TabContent div#${uid}Json`).appendChild(codeBlock);
+        }
+    });
+</script>
+
+<!-- Role-based Module Highlighting
+
+For any *.qmd file with roles defined in frontmatter,
+running script/update-module-role-map will generate
+modules/mappings.js. Then any markup with class .highlight-by-role, i.e:
+
+:::{.highlight-by-role}
+ - [mod1](/mod1)
+ - [mod2](/mod2)
+ - [mod3](/mod3)
+:::
+
+will highlight the links in the list assigned to the users roles.
+
+The user can select a role by pressing a button with data-role=*
+attribute. The possible roles are:
+
+Possible Roles:
+  investigator
+  research-leader
+  informaticist
+  software-engineer
+  clinician-scientist
+-->
+<script>
+const all_modules = document.querySelectorAll(".highlight-by-role ul li");
+
+/* highlights modules corresponding to role via role_module_map
+ * @param: string - role name in lower kebab case
+ */
+function select_modules(string) {
+    // remove all highlights
+    all_modules.forEach((li_node) => {
+        var mark_node = li_node.firstChild;
+        var a_node = mark_node.firstChild;
+
+        if( mark_node.nodeName == "MARK" ) {
+            li_node.removeChild(mark_node);
+            li_node.appendChild(a_node);
+        }
+    });
+
+    // add highlights based on role_module_map
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == string ) {
+            mapping.modules.forEach((interest_module) => {
+                document.querySelectorAll(`li [href*="${interest_module.slug}"]`).forEach((interest_a_node) => {
+
+                    //console.log("selecting module ", interest_a_node);
+
+                    var interest_li_node = interest_a_node.parentNode;
+                    var mark_node = document.createElement("mark");
+                    interest_li_node.appendChild(mark_node);
+                    mark_node.appendChild(interest_a_node);
+
+                    //console.log("appended ", interest_a_node, " to ", mark_node);
+                });
+            });
+            return;
+        }
+    })
+}
+
+
+// clears previously selected roles, highlights the selected role, and sets "role" in local storage
+function select_role(role) {
+    store.setItem("role", role);
+
+    document.querySelectorAll("[data-role]").forEach((a_node) => {
+        a_node.classList.remove("btn", "btn-sm", "btn-secondary", "fw-bold", "rounded");
+        a_node.classList.add("btn-role");
+    });
+
+    var selected_a_node = document.querySelector(`[data-role="${role}"]`);
+    selected_a_node.classList.add("btn", "btn-sm", "btn-secondary", "fw-bold", "rounded");
+    selected_a_node.classList.remove("btn-role");
+}
+
+
+// trigger role selection on clicking <a data-role=...>
+document.querySelectorAll("a[data-role]").forEach((role_link) => {
+    role_link.addEventListener("click", (e) => {
+        var role = e.target.dataset.role;
+        select_role(role);
+        select_modules(role);
+    });
+});
+
+// set default role and execute select_role and select_modules once to make sure feature is working
+window.addEventListener("load", () => {
+    if( store.getItem("role") ) {
+        select_role(store.getItem("role"));
+        select_modules(store.getItem("role"));
+    }
+    else {
+        const DEFAULT_ROLE = "research-leader";
+
+        select_role(DEFAULT_ROLE);
+        select_modules(DEFAULT_ROLE);
+    }
+});
+</script>
+
+<!-- Navigation Override
+
+Overwrite Quarto's Next/Previous buttons to point to modules
+for the user's role
+-->
+<script>
+// Below function is usable by CC BY-SA 3.0 from https://stackoverflow.com/a/6475125
+String.prototype.toTitleCase = function() {
+  let i, j, str, lowers, uppers;
+  str = this.replace(/([^\W_]+[^\s-]*) */g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+
+  // Certain minor words should be left lowercase unless 
+  // they are the first or last words in the string
+  lowers = ['A', 'An', 'The', 'And', 'But', 'Or', 'For', 'Nor', 'As', 'At', 
+  'By', 'For', 'From', 'In', 'Into', 'Near', 'Of', 'On', 'Onto', 'To', 'With'];
+  for (i = 0, j = lowers.length; i < j; i++)
+    str = str.replace(new RegExp('\\s' + lowers[i] + '\\s', 'g'), 
+      function(txt) {
+        return txt.toLowerCase();
+      });
+
+  // Certain words such as initialisms or acronyms should be left uppercase
+  uppers = ['ID', 'TV', 'FHIR'];
+  for (i = 0, j = uppers.length; i < j; i++)
+    str = str.replace(new RegExp('\\b' + uppers[i] + '\\b', 'g'), 
+      uppers[i].toUpperCase());
+
+  return str;
+}
+
+// Custom Hack to overwrite Quarto's built in navigators
+document.addEventListener("DOMContentLoaded", function() {
+    // Get current module and role
+    const current_module_slug = window.location.toString().split('/').pop().split('.')[0];
+    const role = store.getItem("role");
+
+    // Get next and prev modules data
+    let prev_href, prev_text;
+    let next_href, next_text;
+
+    role_module_map.forEach((mapping) => {
+        if( mapping.role == role ) {
+            for(let i=0; i<mapping.modules.length; i++) {
+                if( mapping.modules[i].slug == current_module_slug ) {
+                    function slug_to_url(slug) {
+                        if( window.location.pathname.includes('modules') ) {
+                            // replace "modules/*" in current URL with "modules/<slug>.html"
+                            return window.location.toString().replace(/modules\/.*/, "modules/" + slug + ".html");
+                        }
+                        else {
+                            // this case is irrelevant since prev/next buttons are only role-based in modules
+                            return window.location.toString() + "/modules/" + slug + ".html";
+                        }
+                    }
+
+                    prev_href = (i > 0) ? slug_to_url(mapping.modules[i-1].slug) : null;
+                    prev_text = (i > 0) ? mapping.modules[i-1].text : null;
+
+                    next_href = (i+1 < mapping.modules.length) ? slug_to_url(mapping.modules[i+1].slug) : null;
+                    next_text = (i+1 < mapping.modules.length) ? mapping.modules[i+1].text : null;
+                }
+            }
+        }
+    });
+
+
+    // Overwrite prev link
+    if( prev_href ) {
+        const prev_link_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link");
+        const prev_text_elmt = document.querySelector(".page-navigation .nav-page-previous .pagination-link .nav-page-text");
+        if( prev_link_elmt ) {
+
+            prev_link_elmt.href = prev_href
+            //prev_link_elmt.classList.add("btn", "btn-outline-custom", "rounded");
+            //prev_link_elmt.parentNode.classList.toggle("nav-page");
+            prev_text_elmt.innerText = prev_text;
+        }
+    }
+
+    // Overwrite next link
+    if( next_href ) {
+        const next_link_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link");
+        const next_text_elmt = document.querySelector(".page-navigation .nav-page-next .pagination-link .nav-page-text");
+
+        if( next_link_elmt ) {
+            next_link_elmt.href = next_href;
+            //next_link_elmt.classList.add("btn", "btn-outline-custom", "rounded");
+            //next_link_elmt.parentNode.classList.toggle("nav-page");
+            next_text_elmt.innerText = next_text;
+        }
+    }
+
+    // if document has #key-points then move pagination to next after it
+    key_points = document.querySelector("#key-points");
+    if( key_points ) {
+        let page_nav = document.querySelector("nav.page-navigation");
+        key_points.insertAdjacentElement("afterend", page_nav);
+    }
+
+});
+
+
+// Override style of Quarto page navigation (prev/next buttons)
+document.addEventListener("DOMContentLoaded", function() {
+
+    const page_navigators = document.querySelectorAll(".pagination-link");
+    page_navigators.forEach((node) => {
+
+        node.classList.add("btn", "btn-outline-custom", "rounded");
+        node.parentNode.classList.remove("nav-page");
+        node.parentNode.parentNode.style.gridRow = "initial";
+    });
+});
+
+// Set external links to open in a new tab
+document.addEventListener("DOMContentLoaded", function() {
+    var all_links = document.querySelectorAll('a');
+    for (var i = 0; i < all_links.length; i++){
+        var a = all_links[i];
+        if(a.hostname != location.hostname) {
+                a.target = '_blank';
+        }
+    }
+})
+
+</script>
+
+<!-- Lightbox 
+
+Intercept all instances of:
+
+:::{#id .mermaid-lightbox data-caption='my caption'}
+```{mermaid}
+mermaid markdown content...
+```
+:::
+
+and overwrite it with a popup lightbox for easy viewing of diagram.
+Powered by GLightbox: https://github.com/biati-digital/glightbox
+-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.1/dist/css/glightbox.min.css">
+<script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox@3.3.1/dist/js/glightbox.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const mermaidElements = document.querySelectorAll('.mermaid-lightbox');
+
+    mermaidElements.forEach(element => {
+      const id = element.id;
+      const caption = element.getAttribute('data-caption');
+
+      const lightboxFigure = document.createElement('a');
+      lightboxFigure.setAttribute('href', '#' + id);
+      lightboxFigure.className = 'glightbox';
+      lightboxFigure.setAttribute('data-description', caption);
+      lightboxFigure.setAttribute('data-width', "90%");
+      lightboxFigure.setAttribute('data-height', "90%");
+
+      const clonedElement = element.cloneNode(true);
+      lightboxFigure.appendChild(clonedElement);
+
+      const figcaption = document.createElement('figcaption');
+      figcaption.textContent = 'Click diagram to enlarge';
+      lightboxFigure.appendChild(figcaption);
+
+      element.parentNode.replaceChild(lightboxFigure, element);
+    });
+
+    // Initialize GLightbox
+    const lightbox = GLightbox({
+        selector: '.glightbox'
+    });
+  })
+</script>
+
+<!-- This script dynamically updates the copyright year in the footer -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get the current year
+    var currentYear = new Date().getFullYear();
+    
+    // Find the span element where we'll put the year
+    var span = document.getElementById('current-year');
+    
+    if (span) {
+        // If the span exists, update its content with the current year
+        span.textContent = currentYear;
+    }
+    });
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/nih-odss\.github\.io\/fhir-for-research\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../modules/new-cds-hooks-types" class="pagination-link" aria-label="Types of CDS Hooks">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Types of CDS Hooks</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../modules/redcap-intro" class="pagination-link" aria-label="Introduction">
+        <span class="nav-page-text">Introduction</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/README.md">License information</a><br>Approved for Public Release / Case #24-3701<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/nih-odss/fhir-for-research/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
