@@ -5,7 +5,7 @@ toc: false
 number-sections: false
 ---
 
-If you want to [edit this website](../contribute.qmd) locally on your Mac, here are the setup instructions:
+If you want to [edit this website](../contribute.qmd) locally on Windows, here are the setup instructions:
 
 1.  Create a free [GitHub](https://github.com) if you don't have one already. Enabling [2fa](https://docs.github.com/en/authentication/securing-your-account-with-two-factor-authentication-2fa) is recommended (and may be required by your organization.)
 2.  Follow the [Quarto "Get Started" instructions](https://quarto.org/docs/get-started/) to install Quarto on your system.
