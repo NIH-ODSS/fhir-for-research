@@ -40,7 +40,7 @@ This would retrieve a FHIR instance of [Patient](https://www.hl7.org/fhir/patien
 The general structure of a FHIR API request includes the following:
 
 -   `GET` = HTTP "verb", which tells the server whether you are asking for data or performing another operation (see [the FHIR documentation](https://www.hl7.org/fhir/http.html#trules) for details)
--   `https://hapi.fhir.org/baseR4/` = URL to the FHIR API
+-   `https://hapi.fhir.org/baseR4` = URL to the FHIR API
 -   `Patient` = FHIR resource type you want
 -   `591702` = The ID for the resource you want (note that an ID is not needed for some types of API requests)
 
@@ -332,7 +332,10 @@ If you are interested in using the FHIR API to access data, you may want to revi
       `;
       return false;
     }
-    let url = baseUriInput.value + "/" + resourceInput.value + "/" + idInput.value;
+    let baseUri = baseUriInput.value.replace(/\/+$/, ''); 
+    let url = baseUri + "/" + resourceInput.value + "/" + idInput.value;
+    
+    console.log(url);
 
 
     // fetch request and construct response view
@@ -352,7 +355,7 @@ If you are interested in using the FHIR API to access data, you may want to revi
       else {
         outputNode.innerHTML = `
           <div>
-            <h4>Live response from <code>${baseUriInput.value}</code>:</h4>
+            <h4>Live response from <code>${url}</code>:</h4>
             <ul class="nav nav-tabs" id="outputTabs" role="tablist">
               <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="outputViewerTab" data-bs-toggle="tab" data-bs-target="#outputViewer" type="button" role="tab" aria-controls="outputViewer" aria-selected="true">Viewer</button>
