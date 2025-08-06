@@ -80,11 +80,11 @@ Read our Style Guide for this website and how to reference FHIR standards and sp
 :::
 
 ::: topic
-#### AI for FHIR Resources {.guide}
+#### FHIR and Generative AI Tools and Resources {.guide}
 
-Discover curated resources and best practices to help you integrate AI with FHIR standards. This guide offers insights, tools, and references to support developers, researchers, and communicators working at the intersection of AI and healthcare interoperability.
+Discover curated resources and best practices to support the integration of AI with FHIR standards. This collection includes FHIR and generative AI resources, NIH-supported FHIR tools, and resources for common data model (CDM) and FHIR harmonization.
 
-[View AI Resources »](/style-guide.qmd){.learn-more}
+[View AI Resources »](/fhir-ai-resources.qmd){.learn-more}
 :::
 :::
 :::
