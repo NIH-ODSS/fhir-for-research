@@ -334,8 +334,6 @@ If you are interested in using the FHIR API to access data, you may want to revi
     }
     let baseUri = baseUriInput.value.replace(/\/+$/, ''); 
     let url = baseUri + "/" + resourceInput.value + "/" + idInput.value;
-    
-    console.log(url);
 
 
     // fetch request and construct response view
