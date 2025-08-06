@@ -64,6 +64,14 @@ Do-it-yourself workshops on tabular data analysis, Bulk Data access, and more.
 
 ::: topics-list
 ::: topic
+#### FHIR and Generative AI Tools and Resources {.guide}
+
+Discover curated resources and best practices to support the integration of AI with FHIR standards. This collection includes FHIR and generative AI resources, NIH-supported FHIR tools, and resources for common data model (CDM) and FHIR harmonization.
+
+[View AI Resources »](/fhir-ai-resources.qmd){.learn-more}
+:::
+
+::: topic
 #### Hosting Your Own Workshop {.workshop}
 
 Hosting a workshop is a great way to learn and share experiences working with FHIR. View our recommendations for setting up and running a successful workshop.
@@ -77,14 +85,6 @@ Hosting a workshop is a great way to learn and share experiences working with FH
 Read our Style Guide for this website and how to reference FHIR standards and specifications in your own communications.
 
 [View the Style Guide »](/style-guide.qmd){.learn-more}
-:::
-
-::: topic
-#### FHIR and Generative AI Tools and Resources {.guide}
-
-Discover curated resources and best practices to support the integration of AI with FHIR standards. This collection includes FHIR and generative AI resources, NIH-supported FHIR tools, and resources for common data model (CDM) and FHIR harmonization.
-
-[View AI Resources »](/fhir-ai-resources.qmd){.learn-more}
 :::
 :::
 :::
