@@ -17,9 +17,9 @@ format:
       - index.css
 ---
 
-:::::: column-screen
-::::: hero
-:::: hero-background
+::: column-screen
+::: hero
+::: hero-background
 ::: hero-content
 # A Guide to Using FHIR® for Research
 
@@ -27,12 +27,12 @@ Learn how FHIR can be used to exchange health data, and how to incorporate it in
 
 [Get Started →](sections/introduction.qmd){.button}
 :::
-::::
-:::::
-::::::
+:::
+:::
+:::
 
-::::::: content-block
-:::::: features
+::: content-block
+::: features
 ::: feature
 ### Introduction
 
@@ -56,13 +56,13 @@ Do-it-yourself workshops on tabular data analysis, Bulk Data access, and more.
 
 [Learn more »](sections/hands-on-practice.qmd){.learn-more}
 :::
-::::::
-:::::::
+:::
+:::
 
-:::::: topics
+::: topics
 ### Other Topics
 
-::::: topics-list
+::: topics-list
 ::: topic
 #### Hosting Your Own Workshop {.workshop}
 
@@ -78,13 +78,23 @@ Read our Style Guide for this website and how to reference FHIR standards and sp
 
 [View the Style Guide »](/style-guide.qmd){.learn-more}
 :::
-:::::
-::::::
 
-:::::: audience
+::: topic
+#### AI for FHIR Resources {.guide}
+
+Discover curated resources and best practices to help you integrate AI with FHIR standards. This guide offers insights, tools, and references to support developers, researchers, and communicators working at the intersection of AI and healthcare interoperability.
+
+[View AI Resources »](/style-guide.qmd){.learn-more}
+:::
+:::
+:::
+
+::::: ::::::
+
+::: audience
 ### Who is This Guide For?
 
-::::: guide
+::: guide
 ::: description
 This guide is suitable for a wide range of technical and domain roles. Working with FHIR and health data will almost always require a broad range of skills and expertise.
 
@@ -99,5 +109,5 @@ This guide is suitable for a wide range of technical and domain roles. Working w
 -   Clinical Scientist
 -   Trainer
 :::
-:::::
-::::::
+:::
+:::
