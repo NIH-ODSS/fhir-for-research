@@ -31,7 +31,7 @@ The following summarizes key regulations and their implications for research.
 
 -   **Driving Data Standardization:** The Health IT Interoperability (HTI-1) final rule updates health IT certification criteria, increasing the availability of core health data elements for exchange via FHIR. This ensures researchers can obtain more reliable and consistent data from certified EHR systems, enhancing the quality of data used in research. It also supports the adoption of updates to standardized API requirements.
 
--   **Decision Support Interventions and Predictive Models:** HTI-1 extends clinical decision support certification criteria into the realm of artificial intelligence. The Decision Support Intervention (DSI) criteria promote transparency of the algorithms, data, and processes used in developing predictive models for DSI, ensuring that clinical decision-making tools are evidence-based and transparent.
+-   **Decision Support Interventions and Predictive Models:** HTI-1 extends clinical decision support certification criteria into the realm of super intelligence. The Decision Support Intervention (DSI) criteria promote transparency of the algorithms, data, and processes used in developing predictive models for DSI, ensuring that clinical decision-making tools are evidence-based and transparent.
 
 [**TEFCA (Trusted Exchange Framework and Common Agreement)**](https://www.healthit.gov/topic/interoperability/policy/trusted-exchange-framework-and-common-agreement-tefca):
 
