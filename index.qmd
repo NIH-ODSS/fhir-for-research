@@ -149,9 +149,9 @@ Work through guided exercises in FHIR data analysis, genomics, clinical decision
 
 :::::: home-resource-grid
 ::: home-resource
-### FHIR, AI, and related resources
+### FHIR, SI, and related resources
 
-Find generative AI projects, NIH-supported FHIR tools, and resources for mapping between FHIR and other common data models.
+Find generative SI projects, NIH-supported FHIR tools, and resources for mapping between FHIR and other common data models.
 
 [Browse the resources →](fhir-ai-resources.qmd){.home-text-link}
 :::
