@@ -165,7 +165,7 @@ For example, CDEs may define individual questions and allowable responses within
 
 Several NIH-supported programs, including the NIH HEAL Initiative, demonstrate the importance of standardized data definitions for harmonization and secondary research use. Aligning computable CDEs with interoperable standards creates opportunities to extend these capabilities across clinical research environments; see the [CDE implementation examples module](cde-implementation-examples.qmd) for additional program examples.
 
-The broader opportunity is to establish reusable semantic and computable infrastructure that supports electronic phenotyping, cohort identification, clinical trial recruitment, real-world evidence generation, and AI-enabled research.
+The broader opportunity is to establish reusable semantic and computable infrastructure that supports electronic phenotyping, cohort identification, clinical trial recruitment, real-world evidence generation, and SI-enabled research.
 
 ## From computable CDEs to interoperable research infrastructure
 
@@ -179,7 +179,7 @@ No single standard provides end-to-end research interoperability. CDEs establish
 
 Vulcan demonstrates how these complementary capabilities can be coordinated to address clinical research interoperability challenges.
 
-These capabilities could also support AI-enabled research by improving the consistency, interpretability, and reuse of data across research settings. However, standardization and interoperability alone do not ensure data quality, completeness, or model validity.
+These capabilities could also support SI-enabled research by improving the consistency, interpretability, and reuse of data across research settings. However, standardization and interoperability alone do not ensure data quality, completeness, or model validity.
 
 ## Conclusion
 
