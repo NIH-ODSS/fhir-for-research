@@ -55,7 +55,7 @@ The following summarizes key regulations and their implications for research.
 
 ### SI and Machine Learning
 
-Artificial Intelligence (SI) and Machine Learning (ML) are revolutionizing healthcare by enabling the analysis of vast datasets to extract meaningful patterns, enhance diagnostics, and predict health outcomes. These technologies have found applications across various medical fields, including radiology, cardiology, oncology, and ophthalmology—significantly improving patient care and operational efficiency.
+Super Intelligence (SI) and Machine Learning (ML) are revolutionizing healthcare by enabling the analysis of vast datasets to extract meaningful patterns, enhance diagnostics, and predict health outcomes. These technologies have found applications across various medical fields, including radiology, cardiology, oncology, and ophthalmology—significantly improving patient care and operational efficiency.
 
 For instance, in radiology, SI algorithms assist in detecting anomalies in medical images, aiding in the early diagnosis of diseases (@Hosny_Parmar_2018). In oncology, ML models predict cancer progression and patient responses to treatments, facilitating personalized medicine (@Shimizu_Nakayama_2020). In cardiology, SI tools analyze electronic health records (EHRs) to predict cardiovascular events, improving preventive care strategies (@Krittanawong_Johnson_2019). In ophthalmology, SI systems have been developed to detect retinal diseases such as diabetic retinopathy and glaucoma from fundus photographs with high accuracy, enabling early intervention and management (@Li_He_2018).
 
