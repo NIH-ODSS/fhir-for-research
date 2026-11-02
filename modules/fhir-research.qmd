@@ -13,6 +13,8 @@ learning_objectives:
     answer: Researchers have used FHIR to extract data from EHRs, define phenotypes that are portable across systems and institutions, and enable research that requires integration with clinical workflows.
 
 reading_time: true
+date: 2026-10-26
+
 ---
 
 Researchers have published work using FHIR in a number of areas, usually related to:
@@ -27,7 +29,7 @@ Below are summaries of recent published research in each of these areas. At the 
 
 -   @cheng2023 used FHIR to automatically populate clinical trial case report forms. In a COVID-19-related trial at Vanderbilt University Medical Center, they populated 10,081 of 11,952 values (84%) using FHIR, with 89% agreement with human entry. Manual review indicated that disagreement with human entry was often due to errors in manual data entry, suggesting that the FHIR-based approach could improve accuracy over manual chart abstraction.
 
--   @zong2021 evaluated using FHIR to automatically populate case report forms for a colorectal cancer clinical trial. The were able to successfully extract a portion of the data needed to fill case report forms with 98.5% positive predictive value and 96.2% sensitivity using clinical records from 331 Mayo Clinic patients.
+-   @zong2021 evaluated using FHIR to automatically populate case report forms for a colorectal cancer clinical trial. They were able to successfully extract a portion of the data needed to fill case report forms with 98.5% positive predictive value and 96.2% sensitivity using clinical records from 331 Mayo Clinic patients.
 
 -   @Lenert_2021 describes a way of using FHIR to replace custom data pipelines for extracting COVID-19 data from EHRs. They used FHIR to populate [PCORnet](https://pcornet.org/) and [OMOP](https://www.ohdsi.org/data-standardization/) databases with significantly less delay than previous approaches. (For more information on PCORnet and OMOP, please see [Common Data Models](cdms.qmd).) This approach should be portable across EHRs and institutions.
 
@@ -77,7 +79,7 @@ Below is a list of studies that used FHIR in some way. These may help you come u
     -   @Jiang_2017b
 -   Environmental health and spatiotemporal data
     -   @Xu_Cox_Stillwell_Pfaff_Champion_Ahalt_Fecho_2020
--   Findable, Accessible, Interoperable, and Resusabe ([FAIR](https://www.go-fair.org/fair-principles/)) data principles
+-   Findable, Accessible, Interoperable, and Reusable ([FAIR](https://www.go-fair.org/fair-principles/)) data principles
     -   @Sinaci_Nunez_2020
 -   Multi-site research
     -   @Garza_2020

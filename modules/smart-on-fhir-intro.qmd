@@ -15,13 +15,20 @@ learning_objectives:
     answer: SMART on FHIR has been used to integrate new CDS systems into EHRs and integrate additional data sources like patient-reported outcomes into EHRs.
 
 reading_time: true
+
+date: 2026-05-13
+
+aliases:
+  - new-smart-on-fhir-intro.html
 ---
 
-[SMART on FHIR](https://smarthealthit.org)[^1] was introduced in 2016 "to enable medical applications to be written once and run unmodified across different healthcare IT systems." [@Mandel_Kreda_Mandl_Kohane_Ramoni_2016]
+Health information systems such as Electronic Health Record (EHR) systems contain data useful to a wide variety of healthcare applications, but they often lack the support for developing sophisticated applications which can use that data. Third-party application developers need a solution which allows healthcare applications to securely integrate and exchange data with these systems. [SMART on FHIR](https://smarthealthit.org)[^1] was introduced in 2016 "to enable medical applications to be written once and run unmodified across different healthcare IT systems." [@Mandel_Kreda_Mandl_Kohane_Ramoni_2016]
 
 [^1]: SMART stands for Substitutable Medical Applications and Reusable Technologies.
 
 To enable "write once, run anywhere" applications, [SMART on FHIR](http://docs.smarthealthit.org) uses FHIR along with common web technologies, such as [OAuth 2](https://oauth.net/2/) and [OpenID Connect](https://openid.net/connect/). Many EHRs--including those from [Cerner](https://fhir.cerner.com), [Epic](https://fhir.epic.com), and [MEDITECH](https://ehr.meditech.com/ehr-solutions/greenfield-workspace)--support SMART on FHIR applications. Researchers have successfully used SMART on FHIR applications across multiple EHRs [@Wesley_2021], though implementation differences may require additional work to resolve.
+
+The primary goal of SMART on FHIR was to provide a common interface that allowed applications to connect seamlessly and securely to a FHIR API, ensuring applications could provide access only to authorized users. Applications can be developed for a variety of platforms (web, desktop, mobile) and use the same secure method to connect to a variety of EHR systems.
 
 ## Research use cases
 
@@ -37,13 +44,19 @@ Researchers also use SMART on FHIR to add data to EHR workflows. For example, a 
 
 SMART on FHIR can also help researchers integrate data into an EHR that the EHR does not natively support. For example, @watkins2020 discuss how genetic testing could be better-integrated with EHRs using SMART on FHIR and CDS Hooks ([see below](#cds-hooks)).
 
+Other common uses for SMART on FHIR applications include gathering [Questionnaire responses](https://hl7.org/fhir/questionnaireresponse.html). These are frequently used to gather information from patients such as family medical history, mental health, diet and nutrition, and social determinants of health.
+
 ### Accessing bulk data
 
 SMART on FHIR facilitated [Bulk Data Access](http://hl7.org/fhir/uv/bulkdata/) ([see below](#bulk-data-access)) may provide a new way for researchers to access population-level data. A researcher may want to gather population data from multiple institutions that do not store their data using a shared [common data model](cdms.qmd). However, if these EHRs use FHIR, they likely use the widely implemented [US Core FHIR Implementation Guide](https://www.hl7.org/fhir/us/core/). SMART on FHIR with Bulk Data Access would enable researchers to access the data as US Core-conforming FHIR resource instances across these institutions.
 
 Note, SMART on FHIR used for Bulk Data Access is relatively new and has not yet appeared in peer-reviewed research publications.
 
-### SMART on FHIR app gallary
+### Data Analytics
+
+SMART on FHIR interacts with the EHR's FHIR server API using standard HTTP methods. This means that data analytics applications created using common data analysis tools for R or Python can also integrate SMART on FHIR connectivity, allowing health data from an EHR to be accessed directly.
+
+### SMART on FHIR App Gallery
 
 The [SMART App Gallery](https://apps.smarthealthit.org/apps) lists a number of SMART on FHIR applications, which may provide additional ideas on how SMART on FHIR could be used for research.
 
@@ -59,8 +72,8 @@ SMART on FHIR pulls together existing standards to enable third-party applicatio
 | Profiles | [US Core Data Profiles](https://www.hl7.org/fhir/us/core/) or other FHIR Implementation Guides can be used to provide additional customization on top of the standard FHIR resources. |
 | Data access | Once a third-party application is authenticated and authorized, the standard [FHIR REST API](https://www.hl7.org/fhir/http.html) is used to exchange data. |
 | Data format | Data are formatted using the standard FHIR [JSON](https://www.hl7.org/fhir/json.html) or [XML](https://www.hl7.org/fhir/xml.html) formats. |
-| EHR UI integration | third-party applications can be launched from within an EHR using [SMART App Launch](http://hl7.org/fhir/smart-app-launch/index.html). |
-| EHR backend integration | third-party applications can launch in an EHR without an EHR user interacting directly with it using [SMART Backend Services](https://hl7.org/fhir/uv/bulkdata/authorization/index.html). |
+| EHR UI integration | Third-party applications can be launched from within an EHR using [SMART App Launch](http://hl7.org/fhir/smart-app-launch/index.html). |
+| EHR backend integration | Third-party applications can launch in an EHR without an EHR user interacting directly with it using [SMART Backend Services](https://hl7.org/fhir/uv/bulkdata/authorization/index.html). |
 
 : SMART on FHIR capabilities, adapted from @Mandel_Kreda_Mandl_Kohane_Ramoni_2016. {tbl-colwidths="\[25,75\]"}
 
@@ -100,6 +113,8 @@ The standard includes ways for the third-party application to get contextual inf
 
 -   @thiess2022 provides more details on how CDS Hooks can be integrated with an EHR and a SMART on FHIR application.
 
+-   The [CDS Hooks module on this website](cds-hooks-intro.qmd).
+
 ## Implementation considerations
 
 If you have a research use case that is a good fit with SMART on FHIR, you will likely work with a software engineer and your institution's IT experts to investigate integrating with the relevant EHR(s). If your institution has staff with experience integrating SMART on FHIR applications, consult with them early when developing your research approach.
@@ -108,6 +123,16 @@ SMART on FHIR applications that integrate with an EHR's user interface via SMART
 
 Integrating SMART on FHIR backend applications with EHRs is often less complex than integrating SMART on FHIR web applications. However, in both cases, there may be EHR-specific requirements including administrative approval.
 
+### Security and Privacy
+
+Consider security and privacy early when developing your research approach. Take steps to ensure proper data storage and access as you would with any software that handles sensitive data. Patient data should not be stored or exchanged with additional services outside of the program or application, such as cloud-based computing, storage, or AI services, unless those services are explicitly authorized by your organization and accredited to handle sensitive data.
+
 Also, consider security and privacy early when developing your research approach. Take steps to ensure proper data storage and access as you would with any software that handles sensitive data. In addition to [IRB](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4631034/) approval, you may need approval related to privacy and information security. If your institution has not worked with SMART on FHIR before, it may not have a well-defined process for getting the appropriate approvals. In this case, it may be helpful to identify researchers from other institutions who have used SMART on FHIR in a similar context, and cite their work to demonstrate prior successful use of this technology when discussing with the IRB and decision-makers at your institution.
 
-Please see [SMART on FHIR Technical Details](smart-on-fhir-tech.qmd) for more technical implementation on using SMART on FHIR and related standards.
+### Data Access and Performance
+
+While SMART on FHIR provides the functionality to unlock and exchange data with an EHR, you must consider that this access comes at a performance cost. FHIR-formatted patient data can be computationally expensive to generate, and FHIR patient bundles can easily contain thousands of resources, resulting in hundreds of megabytes of data if you are not selective about which patient resources are required for your purpose. Your application should make requests for only the necessary data required for your functionality, and be careful to limit the breadth and depth of requests, whether made intentionally or not.
+
+In addition, some EHR vendors provide FHIR APIs via a subscription or tiered-licensing fee to access data directly from an EHR instance, particularly for high-volume or rate-limited services. If you are working on developing a SMART on FHIR application which is intended to connect to a production ('live') EHR instance, be sure to discuss potential costs with your EHR vendor support services.
+
+Please see [SMART on FHIR Technical Details](smart-on-fhir-tech.qmd) for more technical implementation details on using SMART on FHIR and related standards.

@@ -3,17 +3,17 @@ title: FHIR for Research Capability Assessment Survey
 
 ---
 
-The below survey has examples of topics and questions that might be useful to explore when completing a capability assessment. These questions were intended for researchers and research leaders in multi-institution conglomerates with a wide range of experience with FHIR so the questions may need ot be tweaked for different audiences.
+The survey below has examples of topics and questions that might be useful to explore when completing a capability assessment. These questions were intended for researchers and research leaders in multi-institution conglomerates with a wide range of experience with FHIR, so the questions may need to be tweaked for different audiences.
 
 ### Instructions
-Please fill out the document below and email your response to <font color="red">*insert email*</font> If you have any questions, please email this address.
+Please fill out the document below and email your response to <font color="red">*insert email*</font>. If you have any questions, please email this address.
 
 ### Background
 NIH is interested in understanding how you might be using Fast Healthcare Interoperability Resources (FHIR, pronounced “fire”) for research, and how NIH can assist in increasing your capacity to use it.
 
 FHIR is a widely used standard that enables portability and accessibility of clinical data across institutions and applications. FHIR is designed to enable health data, including clinical and administrative data, to be quickly and efficiently exchanged.
 
-FHIR may be useful across many types of research involving clinical data, including research that requires direct/real time access to clinical data stored in EHRs, spans multiple data sources that can benefit from a common FHIR data model and interface, or integrates directly with an EHR (e.g., clinical decision support; clinical trial matching/registration).
+FHIR may be useful across many types of research involving clinical data, including research that requires direct/real-time access to clinical data stored in EHRs, spans multiple data sources that can benefit from a common FHIR data model and interface, or integrates directly with an EHR (e.g., clinical decision support; clinical trial matching/registration).
 
 More information on FHIR: https://bit.ly/2021-fhir-fact-sheet.
 
@@ -25,7 +25,7 @@ The purpose of this survey is to help us understand how you used FHIR previously
 
 1.b. Are you currently considering FHIR for any new research uses, and if so, can you briefly describe these use cases?
   
-1.c. What is the most significant obstacle to utilizing FHIR for research in your work? For example: access to FHIR APIs, difficulty in approval process, staff knowledge of FHIR, EHR capabilities, etc.
+1.c. What is the most significant obstacle to utilizing FHIR for research in your work? For example: access to FHIR APIs, difficulty in the approval process, staff knowledge of FHIR, EHR capabilities, etc.
 
 1.d. Do you have any other initiatives using FHIR that have built technology, infrastructure, or staff skills that may be applicable to research? If so, please describe.
 
@@ -39,9 +39,9 @@ The purpose of this survey is to help us understand how you used FHIR previously
 |        |        |
 |        |        |
              
-2.b. How do you currently access **deidentified** clinical data, and what is the typical deidentification process? E.g., do you have an existing common data model, do one-off data pulls, use a data lake provided by your EHR vendor, and/or etc.?
+2.b. How do you currently access **deidentified** clinical data, and what is the typical deidentification process? For example, do you have an existing common data model, do one-off data pulls, or use a data lake provided by your EHR vendor?
 
-2.c. How do you currently access **identified** clinical data? E.g., do you have an existing common data model, do one-off data pulls, use a data lake provided by your EHR vendor, and/or etc.?
+2.c. How do you currently access **identified** clinical data? For example, do you have an existing common data model, do one-off data pulls, or use a data lake provided by your EHR vendor?
 
 2.d. Do you use any common data models that are not mentioned in (2.b.) or (2.c.)?
 
@@ -56,7 +56,7 @@ The purpose of this survey is to help us understand how you used FHIR previously
 | Building cohorts consisting of patients among multiple medical centers       |    |   |
 | Create patient-facing FHIR applications for communication or education       |    |   |
 | Practice-based research with practitioners (e.g., clinical decision support) |    |   |
-| Access particular parts of patients’ EHRs records       |        |     |
+| Access particular parts of patients’ EHR records       |        |     |
 | Convert FHIR resources into tabular data for analysis in R or Python       |      |   |
 | *add rows for additional use cases of interest*  |        |     |
 
@@ -66,7 +66,7 @@ The purpose of this survey is to help us understand how you used FHIR previously
 
 4.b. Who else should we talk to to learn more about FHIR for research needs or existing professional development efforts related to FHIR?
 
-4.c. Are there people/groups who have hands-on experience with using FHIR in a research context, and would be willing to provide additional input? If so, please list their contact information.
+4.c. Are there people/groups who have hands-on experience with using FHIR in a research context and would be willing to provide additional input? If so, please list their contact information.
 
 4.d. What else do you want us to know?
 

@@ -1,13 +1,25 @@
 project:
   type: website
   output-dir: public
-  pre-render: sh pre-render.sh # this script only runs on full rendering and not development mode
+  post-render: sh post-render.sh # Refresh role maps after full builds without rescanning inputs.
   render:
     - "*.qmd"
-    - "workshops/bulk-data/notebook.ipynb"
     - "!cache/" # naming this _cache should work instead, but did not in testing https://community.rstudio.com/t/quarto-equivalent-to-exclude-yaml-command-in-distill/148758/2
     - "!README.md"
     - "!script/"
+  resources:
+    - /pyproject.toml
+    - /workshops/bulk-data/synthea_10.ndjson
+    - "/modules/**/*.ipynb"
+    - "/workshops/**/*.ipynb"
+
+  preview:
+    watch-inputs: true # Only rebuild when inputs change
+    navigate: true # Navigate without full reloads
+    port: 1414 # Fixed port avoids re‑starts
+    browser: false # Don’t auto‑open browser each time
+
+csl: ieee.csl
 
 website:
   title: "FHIR® for Research"
@@ -22,21 +34,21 @@ website:
     left:
       - text: Introduction
         file: sections/introduction.qmd
-      - text: Advanced Topics
-        file: sections/advanced-topics.qmd
-      - text: Hands-on Practice
+      - text: Technologies
+        file: sections/technologies.qmd
+      - text: Hands-on <span class="collapse-lg-xl">Practice</span>
         file: sections/hands-on-practice.qmd
       - text: Hosting Your Own Workshop
         file: sections/hosting-your-own-workshop.qmd
 
-
     right:
       - href: contribute.qmd
-        text: Questions & Contributions
+        text: <span class="collapse-lg-xl">Questions & Contributions</span>
+        icon: question-circle-fill
       - icon: github
         href: https://github.com/NIH-ODSS/fhir-for-research
+        text: <span class="collapse-sm">View on GitHub</span>
         aria-label: View the GitHub repository for this site
-
 
   sidebar:
     - id: Introduction
@@ -50,56 +62,70 @@ website:
           text: "Introduction"
         - section: "FHIR for Research"
           contents:
-            - section: "What is FHIR"
+            - section: "What is FHIR?"
               contents:
                 - modules/fhir-from-10000-ft.qmd
                 - modules/fhir-from-1000-ft.qmd
                 - modules/fhir-history.qmd
-            - section: "What does FHIR look like"
+                - modules/onc-certification-program.qmd
+            - section: "Core FHIR Concepts"
               contents:
-                - file: modules/key-fhir-resources.qmd
-                  text: Key FHIR Resources
+                - file: modules/fhir-resources-intro.qmd
+                  text: Introduction to FHIR Resources
+                - file: modules/fhir-resources-in-depth.qmd
+                  text: FHIR Resources in Depth
                 - modules/terminology.qmd
+                - modules/fhir-specification.qmd
+            - section: "The FHIR Community"
+              contents:
                 - file: modules/fhir-community.qmd
                   text: FHIR Community & Documentation
                 - modules/cdms.qmd
                 - modules/fhir-versions.qmd
-            - section: "FHIR Implementation Guides"
-              contents:
-                - file: modules/data-modeling-reading-igs.qmd
-                  text: Reading IGs
-                - file: modules/data-modeling-real-world-igs.qmd
-                  text: Real World IGs
-                - file: modules/data-modeling-writing-igs.qmd
-                  text: Writing IGs
-            - section: "How to use FHIR"
+            - section: "Using FHIR"
               contents:
                 - file: modules/fhir-accessing-data.qmd
                   text: Using the FHIR API to access data
                 - file: webinars/intro/index.qmd
                   text: Introductory Webinar
-    - id: advanced-topics
-      title: Advanced Topics
+    - id: technologies
+      title: Technologies
       style: floating
       search: false
       align: left
       collapse-level: 2
       contents:
-        - file: sections/advanced-topics.qmd
-          text: Advanced Topics
+        - file: sections/technologies.qmd
+          text: Technologies
+        - section: "FHIR Implementation Guides"
+          contents:
+            - file: modules/data-modeling-what-is-fhir-ig.qmd
+              text: "What is a FHIR IG?"
+            - file: modules/data-modeling-reading-igs.qmd
+              text: "Reading IGs"
+            - file: modules/data-modeling-real-world-igs.qmd
+              text: "Real World IGs"
+            - file: modules/data-modeling-writing-igs.qmd
+              text: "Writing IGs"
         - section: "SMART on FHIR"
           contents:
-            - file: modules/new-smart-on-fhir-intro.qmd
+            - file: modules/smart-on-fhir-intro.qmd
               text: "Introduction"
-            - file: modules/new-smart-on-fhir-tech.qmd
+            - file: modules/smart-on-fhir-tech.qmd
               text: "Technical Details"
         - section: "CDS Hooks"
           contents:
-            - file: modules/new-cds-hooks-intro.qmd
+            - file: modules/cds-hooks-intro.qmd
               text: "Introduction"
-            - file: modules/new-cds-hooks-types.qmd
+            - file: modules/cds-hooks-types.qmd
               text: "Types of CDS Hooks"
-            - file: modules/new-cds-hooks-tech.qmd
+            - file: modules/cds-hooks-tech.qmd
+              text: "Technical Example"
+        - section: "Clinical Quality Language"
+          contents:
+            - file: modules/clinical-quality-language-intro.qmd
+              text: "Introduction"
+            - file: modules/clinical-quality-language-example.qmd
               text: "Technical Example"
         - section: "REDCap"
           contents:
@@ -117,8 +143,10 @@ website:
               text: Customizing Synthea
         - section: "Bulk Data"
           contents:
-            - file: modules/new-bulk-fhir.qmd
+            - file: modules/bulk-fhir-intro.qmd
               text: "Bulk Data Access"
+            - file: modules/bulk-fhir-tech.qmd
+              text: "Technical Example"
             - file: webinars/bulk-data/index.qmd
               text: Webinar
         - section: "Emerging Topics"
@@ -129,6 +157,18 @@ website:
               text: "Real World Research"
             - file: modules/genomics.qmd
               text: Genomics Data Standardization
+        - section: "Common Data Elements (CDEs)"
+          contents:
+            - file: modules/cde-introduction.qmd
+              text: "Introduction"
+            - file: modules/cde-harmonization.qmd
+              text: "Harmonization"
+            - file: modules/cde-fhir.qmd
+              text: "CDEs & FHIR"
+            - file: modules/cde-implementation-examples.qmd
+              text: "Implementation Examples"
+            - file: modules/cde-vulcan-accelerator.qmd
+              text: "HL7 Vulcan Accelerator"
     - id: hands-on-practice
       title: "Hands-on Practice"
       style: floating
@@ -136,7 +176,9 @@ website:
       align: left
       collapse-level: 2
       contents:
-        - section: "FHIR Analysis, CDS and Genomics Workshop"
+        - file: sections/hands-on-practice.qmd
+          text: "Workshops"
+        - section: "FHIR Analysis, CDS and Genomics"
           contents:
             - file: workshops/data-analysis-cds/index.qmd
               text: Introduction
@@ -144,16 +186,16 @@ website:
               text: "Part 1: FHIR Data Analysis"
             - file: workshops/data-analysis-cds/02-genomics-cds.qmd
               text: "Part 2: Genomics CDS"
+        - file: workshops/bulk-data/index.qmd
+          text: FHIR Bulk Data
+        - file: workshops/sql-on-fhir.qmd
+          text: SQL on FHIR
+        - file: workshops/smart-on-fhir/index.qmd
+          text: SMART on FHIR
         - text: "---"
-        - section: "SMART on FHIR"
-          contents:
-            - file: workshops/smart-on-fhir/index.qmd
-              text: Workshop
-        - text: "---"
-        - section: "FHIR Bulk Data"
-          contents:
-            - file: workshops/bulk-data/index.qmd
-              text: Workshop
+        - file: workshops/running-notebooks.qmd
+          text: "Running Workshop Notebooks"
+
     - id: hosting-your-own-workshop
       title: "Hosting Your Own Workshop"
       style: floating
@@ -163,28 +205,31 @@ website:
       contents:
         - section: Hosting Your Own Workshop
           contents:
-          - file: webinars/workshop-recommendations/index.qmd
-            text: "Recommendations for Conducting Workshops"
-          - file: modules/synthea-test-server.qmd
-            text: "FHIR Server Setup"
-          - file: modules/synthetic-data.qmd
-            text: "Synthetic Data"
+            - file: webinars/workshop-recommendations/index.qmd
+              text: "Recommendations for Conducting Workshops"
+            - file: modules/synthea-test-server.qmd
+              text: "FHIR Server Setup"
+            - file: modules/synthetic-data.qmd
+              text: "Synthetic Data"
 
   page-footer: |
-    &copy; <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/README.md">License information</a><br>Approved for Public Release / Case #24-3701<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.
+    &copy; <span id="current-year"></span> The MITRE Corporation / <a href="https://github.com/NIH-ODSS/fhir-for-research/?tab=readme-ov-file#license">License information</a><br>Approved for Public Release / Case #25-3098<br><br>HL7® and FHIR® are the registered trademarks of <a href="https://hl7.org">Health Level Seven International (HL7)</a>.<br>Use of the HL7 and FHIR trademarks does not constitute an HL7 endorsement of this website.
 
   page-navigation: true
 
-
 format:
   html:
+    filters:
+      - lua/modules-flag.lua
+      - lua/environment-banner.lua
     theme:
       light: [cosmo, custom.scss]
-      dark: [darkly, custom.scss]      
+      dark: [darkly, custom.scss]
     highlight-style: a11y
     css: styles.css
     toc: true
     include-in-header: head.html
-    include-after-body: scripts.html
+    include-after-body:
+      - scripts.html
     template-partials:
       - title-block.html

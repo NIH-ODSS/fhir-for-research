@@ -1,5 +1,6 @@
 ---
 title: FHIR Genomics Analysis for Clinical Decision Support
+date: 2026-09-16
 jupyter: python3
 error: true
 execute:
@@ -17,20 +18,15 @@ format:
 reading_time: true
 ---
 
-::: {.content-hidden when-format="ipynb"}
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/{{< env COLLAB_BINDER_PATH >}}/blob/main/workshops/data-analysis-cds/data/02-genomics-cds.ipynb)
-[![View in NBViewer](https://raw.githubusercontent.com/jupyter/design/refs/heads/main/logos/Badges/nbviewer_badge.svg)](https://nbviewer.jupyter.org/github/{{< env COLLAB_BINDER_PATH>}}/blob/main/workshops/data-analysis-cds/data/02-genomics-cds.ipynb) <!-- Force download instead of opening the notebook as a page-->
-<a href="./02-genomics-cds.ipynb" download><img src="https://img.shields.io/badge/download-notebook-F37626?logo=jupyter" alt="Download Notebook"></a>
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/{{< env COLLAB_BINDER_PATH >}}/HEAD?urlpath=%2Fdoc%2Ftree%2Fworkshops%2Fdata-analysis-cds%2F02-genomics-cds.ipynb)
-:::
+{{< notebook-buttons >}}
 
 ## Introduction
 
-For the best learning experience, run this tutorial interactively, via one of the environment setup options. Use the above button depending on your chosen [setup option](index.qmd#environment-setup).
+For the best learning experience, run this tutorial interactively. See [Running Workshop Notebooks](https://fhir-for-research.pages.mitre.org/web/workshops/running-notebooks.html) for supported setup options.
 
-This tutorial explores how to work with genomic data in FHIR for clinical decision support (CDS) applications. We'll use the [Synthea Coherent Data Set](index.qmd#synthetic-data) to retrieve and analyze genomic reports and observations, ultimately implementing a CDS service that provides actionable recommendations based on a patient's genetic profile.
+This tutorial explores how to work with genomic data in FHIR for clinical decision support (CDS) applications. We'll use the [Synthea Coherent Data Set](https://fhir-for-research.pages.mitre.org/web/workshops/data-analysis-cds/index.html#synthetic-data) to retrieve and analyze genomic reports and observations, ultimately implementing a CDS service that provides actionable recommendations based on a patient's genetic profile.
 
-In this tutorial, we're using a FHIR server located at **{{< env FHIR_SERVER >}}**, but any FHIR server loaded with appropriate data can be used. For instructions on setting up your own test server, see [Standing up a FHIR Testing Server](../../modules/synthea-test-server.qmd).
+In this tutorial, we're using a FHIR server located at **{{< env FHIR_SERVER >}}**, but any FHIR server loaded with appropriate data can be used. For instructions on setting up your own test server, see [Standing Up a FHIR Testing Server](https://fhir-for-research.pages.mitre.org/web/modules/synthea-test-server.html).
 
 ::: {.content-hidden when-format="ipynb"}
 ## Learning Paths
@@ -314,7 +310,7 @@ Now that we've analyzed genetic variants and generated recommendations, let's ex
 
 CDS Hooks is a standard for integrating clinical decision support into electronic health record (EHR) systems at the point of care. It allows our genomic analysis recommendations to be delivered to clinicians at the right time and in the right context.
 
-For a comprehensive introduction to CDS Hooks, please refer to [CDS Hooks Introduction](/modules/new-cds-hooks-intro.qmd), which covers the fundamental concepts, workflow, and implementation details.
+For a comprehensive introduction to CDS Hooks, please refer to [CDS Hooks Introduction](/modules/cds-hooks-intro.qmd), which covers the fundamental concepts, workflow, and implementation details.
 
 :::: {.content-hidden when-format="ipynb"}
 ::: {#cds-hooks-overview .callout-note}
@@ -324,7 +320,7 @@ CDS Hooks provides a framework for:
 
 1.  **Event-Driven Integration**: Hooks trigger at specific points in clinical workflow
 2.  **Standard API**: Consistent way for EHRs to communicate with CDS services
-3.  **Card-Based Interface**: Recommendations delivered as "cards" within EHR UI
+3.  **Card-Based Interface**: Recommendations delivered as "cards" within the EHR UI
 4.  **Context-Aware**: Services receive patient context to provide relevant advice
 
 **Common Hook Points:**
@@ -339,8 +335,8 @@ When integrated into a real clinical environment, the CDS Hooks workflow would l
 
 1.  **Trigger**: A clinician opens a patient's record, triggering the `patient-view` hook
 2.  **Request**: The EHR sends a request to a CDS service with the patient context
-3.  **Analysis**: CDS service queries the FHIR server for relevant genomic data and analyzes variants
-4.  **Response**: CDS service returns CDS Hooks cards with clinical recommendations
+3.  **Analysis**: The CDS service queries the FHIR server for relevant genomic data and analyzes variants
+4.  **Response**: The CDS service returns CDS Hooks cards with clinical recommendations
 5.  **Display**: The EHR displays these recommendations to the clinician within their workflow
 :::
 ::::
@@ -349,7 +345,7 @@ When integrated into a real clinical environment, the CDS Hooks workflow would l
 
 Now, let's create a CDS Hooks service to serve our genomic recommendations. This service will:
 
-1.  Analyze a patient's genetic data in real-time
+1.  Analyze a patient's genetic data in real time
 2.  Generate appropriate clinical recommendations
 3.  Return these recommendations as CDS Hooks cards
 
@@ -752,11 +748,11 @@ Moving a prototype CDS service to production involves significant security, comp
 To extend this work in a production environment, you would need to:
 
 1.  **Host the Service**:
-    -   Deploy on a secure, HIPAA-compliant infrastructure with HTTPS and appropriate security measures
+    -   Deploy on secure, HIPAA-compliant infrastructure with HTTPS and appropriate security measures
 2.  **Implement Authentication**:
     -   Use industry-standard authentication protocols supported by your EHR
 3.  **Update Clinical Knowledge**:
-    -   Store clinical recommendations in a database rather than hardcoded values
+    -   Store clinical recommendations in a database rather than hard-coded values
     -   Establish a regular review cycle with clinical experts
 4.  **Add Robust Error Handling**:
     -   Implement comprehensive exception handling, logging, and monitoring
@@ -776,6 +772,6 @@ For more information, see:
 -   [FHIR Genomics Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/)
 -   [CDS Hooks Documentation](https://cds-hooks.org/)
 -   [LOINC Genetic Variant Terms](https://loinc.org/genetic-variant/)
--   [Learn more about CDS Hooks](/modules/new-cds-hooks-intro.qmd)
+-   [Learn more about CDS Hooks](/modules/cds-hooks-intro.qmd)
 
 ::::

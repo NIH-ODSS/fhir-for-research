@@ -1,0 +1,131 @@
+---
+title: "Harmonization of CDEs & Other Standards"
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Describe the relationship of CDEs to other standards, systems, and data models.
+  - Locate USCDI and USCDI+ information through the Interoperability Standards Platform (ISP).
+  - Distinguish common data elements (CDEs) from unique data elements (UDEs) in the NIH Biomedical Research Informatics Computing System (BRICS).
+  - Explain how ICH M11 and the CDISC Unified Study Definitions Model (USDM) support the exchange and reuse of clinical study definitions.
+
+reading_time: true
+
+date: 2026-10-26
+---
+
+## Introduction
+
+Common data elements (CDEs) do not operate in isolation. Research data move among data-collection platforms, electronic health records (EHRs), research repositories, common data models, clinical trial systems, and regulatory environments. The boundaries between care and research data are continuing to blur.
+
+Effective harmonization requires understanding how CDEs relate to other standards and infrastructure to advance interoperability.
+
+- **CDEs** standardize the meaning and representation of individual research variables.
+- **[Clinical terminologies](terminology.qmd)** provide standardized codes for concepts, values, and units.
+- **FHIR** supports standardized representation and exchange of health information.
+- **[Common data models (CDMs)](cdms.qmd)** organize data into structures designed for particular analytical or operational purposes.
+- **Protocol and study-definition standards** such as [ICH M11](https://database.ich.org/sites/default/files/ICH%20M11%20Explainer_May2026.pdf) and [CDISC USDM](https://www.cdisc.org/ddf) structure information about clinical studies.
+
+A CDE provides a standardized definition, but interoperability also requires mechanisms to map, transform, validate, and exchange data collected using that definition across systems.
+
+For researchers, the goal is not to select one standard to replace the others, but to align complementary standards so that meaning is preserved as information moves across systems and workflows. This learning module describes the relationship of CDEs to other standards, systems, and data models.
+
+## CDEs, USCDI, and USCDI+
+
+The [United States Core Data for Interoperability (USCDI)](https://isp.healthit.gov/united-states-core-data-interoperability-uscdi) establishes a standardized set of health data classes and elements for nationwide health information exchange. [USCDI+](https://healthit.gov/standards-and-technology/uscdi-plus/) extends this approach by supporting domain- and program-specific data requirements.
+
+These efforts are led by the [Office of the National Coordinator for Health Information Technology (ONC)](https://healthit.gov/). Its [Interoperability Standards Platform (ISP)](https://isp.healthit.gov/) brings together standards initiatives and links to USCDI and the [USCDI+ platform](https://uscdiplus.healthit.gov/). Use these sites to review data-element definitions, applicable vocabulary standards, and domain-specific requirements when assessing alignment with research CDEs.
+
+ONC publishes draft USCDI versions in January and final versions in July, as described in its [Standards Bulletin 2026-2](https://healthit.gov/standards-and-technology/onc-standards-bulletin/onc-standards-bulletin-2026-2/). The [Standards Version Advancement Process (SVAP)](https://isp.healthit.gov/standards-version-advancement-process) allows developers to voluntarily adopt approved newer versions of standards ahead of the version adopted in regulation. For example, as of October 2026, USCDI v3 is adopted in regulation while SVAP allows for adoption of USCDI v6.
+
+CDEs and USCDI serve related but different purposes. CDEs define research variables at the level needed for studies or research domains, while USCDI establishes a core set of data for interoperable health information exchange.
+
+Where research CDEs correspond to USCDI or applicable USCDI+ elements, alignment can help:
+
+- Reduce unnecessary differences between clinical and research representations;
+- Support reuse of EHR data for research;
+- Improve consistency in terminology and value sets; and
+- Simplify mappings between clinical and research systems.
+
+Not every research CDE will have a corresponding USCDI element. The objective is appropriate alignment and reuse, not one-to-one equivalence. USCDI provides a core set of data for health information exchange rather than a comprehensive catalog of biomedical research variables.
+
+Research instruments may specify questions, response options, scoring, and assessment timeframes in more detail than a corresponding USCDI element. Examples of research measures and protocols with CDEs that do not clearly align to USCDI data elements include:
+
+- [NIH HEAL Initiative CDEs](https://www.nih.gov/heal/heal-initiative-requirements/data-sharing-policy/common-data-elements-cdes-program), including pain intensity, pain interference, and substance use screening measures;
+- [PhenX Toolkit](https://www.phenxtoolkit.org/domains) protocols for environmental exposures and nutrition;
+- [Patient-Reported Outcomes Measurement Information System (PROMIS)](https://healthmeasures.net/promis-basics/promis-domains/adult-domains/) measures of fatigue, depression, sleep disturbance, and social participation; and
+- [NIH NINDS stroke CDEs](https://www.commondataelements.ninds.nih.gov/sites/nindscde/files/Doc/Stroke/CDEStartupResource_Stroke.pdf), including the Modified Rankin Scale and NIH Stroke Scale.
+
+::: callout-note
+## Assessing CDE mappings
+
+A crosswalk must specify which CDEs, target data elements, and standard versions it covers. For example, [NCI Code Map Services](https://wiki.nci.nih.gov/spaces/CAD/pages/553713749/Overview%2Bof%2Bthe%2BCode%2BMap%2BProject) uses CDEs and semantic annotations from NCI's Cancer Data Standards Registry and Repository (caDSR) to map among selected data models and standards, including USCDI via alignment to [US Core](fhir-from-1000-ft.qmd#example-customizing-patient-in-us-core) (note that US Core is the FHIR implementation of USCDI). Such mappings still need review for the study's definitions, permissible values, and intended use.
+
+There is not currently an authoritative, comprehensive crosswalk mapping between NIH CDEs and USCDI data classes and elements. Most mapping occurs within individual projects (e.g., the NCI Code Map Service described above, [NIH National Clinical Cohort Collaborative (N3C)](http://ncats.nih.gov/research/research-activities/n3c/overview), [NIH HEAL Initiative](https://www.nih.gov/heal), [HL7 Vulcan Accelerator](https://hl7vulcan.org/), [NIH Cloud Platform Interoperability (NCPI)](https://datascience.nih.gov/nih-cloud-platform-interoperability-effort) program, or other disease-specific efforts).
+:::
+
+## CDEs and the NIH Biomedical Research Informatics Computing System
+
+The [NIH Biomedical Research Informatics Computing System (BRICS)](https://brics.cit.nih.gov/) provides infrastructure for organizing, collecting, and sharing research data using standardized data elements. The [BRICS data-element guide](https://brics.cit.nih.gov/sites/brics/files/2025-07/data-elements-thor-minor.pdf) distinguishes between:
+
+- **Common data elements (CDEs)** — intended for consistent reuse across multiple studies; and
+- **Unique data elements (UDEs)** — created for a particular study or project when an appropriate reusable element is not available.
+
+BRICS illustrates an important challenge in CDE implementation: incoming research data do not always use the same definitions, structures, or terminology. Harmonization may therefore require mappings and transformations between CDEs and standards or systems such as FHIR, UMLS, CDISC, OMOP, REDCap, LOINC, and other controlled terminologies.
+
+BRICS documents [mapping tools](https://brics.cit.nih.gov/visualization) for FHIR-to-CDE, UMLS, and CDISC-to-CDE mappings. Its [AI-enhanced tools](https://brics.cit.nih.gov/ai-enhanced-tools) include data mapping and transformation into BRICS-compatible files and a beta semantic-search tool for finding standardized data elements related to study variables. Candidate mappings still require review to confirm that definitions and permissible values align.
+
+## CDEs and ICH M11 CeSHarP
+
+The [International Council for Harmonisation of Technical Requirements for Pharmaceuticals for Human Use (ICH) M11: Clinical Electronic Structured Harmonised Protocol (CeSHarP)](https://database.ich.org/sites/default/files/ICH%20M11%20Explainer_May2026.pdf) standardizes the structure, content, terminology, and electronic representation of protocols for interventional clinical trials of medicinal products. It combines a protocol guideline, standardized template, and technical specification for structured protocol information.
+
+M11 addresses the **protocol side** of interoperability. By representing information such as study design, population, interventions, objectives, and eligibility-related content more consistently, it can reduce reliance on extracting information from heterogeneous narrative protocol documents.
+
+For CDEs, the important connection is that structured protocols and standardized research variables can complement one another. A protocol describes what a study plans to measure, while CDEs can define the corresponding variables and allowable responses. Linking those definitions to the protocol can support consistent data collection and exchange.
+
+M11 does not standardize the entire clinical research data lifecycle and is not itself a patient-to-trial matching standard. Other standards remain necessary for representing patient data, research observations, and system-to-system exchange.
+
+ICH M11 reached Step 4, when ICH adopted the harmonized guideline, on November 19, 2025. Regional implementation followed; for example, the [FDA issued final M11 guidance in May 2026](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/m11-clinical-electronic-structured-harmonised-protocol). This represents an important transition from specification development toward regulatory implementation.
+
+## CDEs and CDISC Unified Study Definitions Model (USDM)
+
+The [Unified Study Definitions Model (USDM)](https://www.cdisc.org/ddf), developed by the Clinical Data Interchange Standards Consortium (CDISC) in collaboration with TransCelerate's Digital Data Flow initiative, is a standardized, machine-readable model for representing the design and definition of a clinical study. It structures information traditionally embedded in protocol documents so that it can be exchanged and reused across clinical research systems.
+
+USDM can represent study information such as:
+
+- Study identifiers and versions;
+- Populations, and inclusion and exclusion criteria;
+- Arms, epochs (study periods), and interventions;
+- Objectives and endpoints; and
+- Schedules of activities.
+
+Its core principle is to define study information once and reuse it throughout the clinical trial lifecycle, rather than requiring multiple systems to independently interpret the same protocol document.
+
+M11 and USDM are complementary, not interchangeable.
+
+- **ICH M11** standardizes the clinical trial protocol and its structured electronic representation.
+- **USDM** provides a machine-readable model for representing and exchanging the underlying study definition.
+
+[USDM development includes alignment with M11](https://www.cdisc.org/ddf), providing a potential bridge between standardized protocol content and downstream computable research workflows.
+
+USDM does not provide the complete matching solution. Patient characteristics still need to be represented and semantically aligned — for example, through FHIR and clinical terminologies — and an additional rules or matching layer must determine whether a patient satisfies the trial criteria.
+
+## Bringing the standards together
+
+No single standard provides end-to-end research interoperability. Different standards address complementary layers of the research ecosystem. Additional implementation and logic layers connect these components into operational research workflows. The following table summarizes the interoperability roles of the standards, models, and platforms discussed in this module.
+
+| Standard, model, or platform | Interoperability role |
+|----|----|
+| **CDEs** | Define research variables and their allowable representations |
+| **Clinical terminologies** | Encode meaning, values, and units |
+| **USCDI / USCDI+** | Define interoperable health data requirements |
+| **FHIR** | Represent and exchange patient and research data |
+| **BRICS** | Support standardized research data collection, management, and sharing |
+| **ICH M11** | Standardize clinical trial protocol content, structure, and electronic representation |
+| **CDISC USDM** | Represent machine-readable clinical study definitions |
+| **Common data models** | Organize data for specific downstream analysis or operational uses |

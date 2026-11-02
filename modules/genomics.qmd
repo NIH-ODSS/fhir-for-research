@@ -23,7 +23,7 @@ The HL7 genomics community aspires to address the entire clinical genomics data 
 
 ### FHIR Genomics Reporting Implementation Guide (GRIG)
 
-The [HL7 FHIR Genomics Reporting Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/index.html) (GRIG) provides guidance for a standardized representation of genomics data elements leveraging the FHIR framework of resources and operations, optimized for the genomic data exchange for clinical and research-oriented genomic use cases. The GRIG is a HL7 project under the [HL7 Clinical Genomics Workgroup](https://confluence.hl7.org/display/CGW) (CGWG).
+The [HL7 FHIR Genomics Reporting Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/index.html) (GRIG) provides guidance for a standardized representation of genomics data elements leveraging the FHIR framework of resources and operations, optimized for genomic data exchange for clinical and research-oriented genomic use cases. The GRIG is an HL7 project under the [HL7 Clinical Genomics Workgroup](https://confluence.hl7.org/display/CGW) (CGWG).
 
 The GRIG is very broad in that it tries to meet both the provider and research needs, covering many aspects of genomics reporting, including:
 
@@ -47,13 +47,13 @@ An [artifact index](http://hl7.org/fhir/uv/genomics-reporting/artifacts.html) su
 
 -   retrieving cohorts of patients with specific variants, phenotypes, genotypes, study metadata
 
-**Note:** full specification of FHIR genomic operations are in development with a target ballot date in early 2024.
+**Note:** the full specification of FHIR genomic operations is in development with a target ballot date in early 2024.
 
 ### Genomic base FHIR resources
 
 The focus of the [GRIG](http://hl7.org/fhir/uv/genomics-reporting/index.html) is on genomics reporting that mostly occurs after annotation and interpretation in a bioinformatics pipeline. There are however additional research-driven needs for more granular data which merited the release of FHIR base resources. These include:
 
-[**MolecularSequence**](http://hl7.org/fhir/molecularsequence.html) - designed for representing molecular sequences. This resource is not be used for other entities such as variant, variant annotations, genotypes, haplotypes, etc. Those entities will be captured in [Observation](http://hl7.org/fhir/observation.html) profiles found in the [Genomics Reporting Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/index.html).
+[**MolecularSequence**](http://hl7.org/fhir/molecularsequence.html) - designed for representing molecular sequences. This resource is not to be used for other entities such as variants, variant annotations, genotypes, haplotypes, etc. Those entities will be captured in [Observation](http://hl7.org/fhir/observation.html) profiles found in the [Genomics Reporting Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/index.html).
 
 [**GenomicStudy**](http://hl7.org/fhir/genomicstudy.html) - New with FHIR 5.0, the GenomicStudy resource specifies relevant information found in a genomic study, which includes one or more analyses, each serving a specific purpose. These analyses may vary in method (e.g., karyotyping, CNV, or SNV detection), performer, software, devices used, or regions targeted. The use of this resource differs from the Genomics Report profile from the GRIG in that detailed information about the results of the analyses in [GenomicStudy](http://hl7.org/fhir/genomicstudy.html) may be represented by [Observations](http://hl7.org/fhir/observation.html) and gathered in a [DiagnosticReport](http://hl7.org/fhir/diagnosticreport.html). Both resources may refer back to the originating GenomicStudy to allow navigation.
 
@@ -65,7 +65,7 @@ The mCODE standards specifications team works closely with the HL7 CGWG to ensur
 
 ### Phenopackets
 
-The [Global Alliance for Genomics and Health](https://www.ga4gh.org/) (GA4GH) [Phenopacket standard](https://www.ga4gh.org/news_item/phenopackets-standardizing-and-exchanging-patient-phenotypic-data/) is not a native FHIR-based standard. Rather it is a lightweight specification that intends to support global exchange of computable case-level phenotypic information for all types of disease diagnosis and research. However, the specification was ported to a [GA4GH Phenopacket FHIR Implementation Guide](http://phenopackets.org/core-ig/ig/branch/master/index.html) and is currently under development. The Phenopackets designers are working closely with the CCWG to align both standards.
+The [Global Alliance for Genomics and Health](https://www.ga4gh.org/) (GA4GH) [Phenopacket standard](https://www.ga4gh.org/news_item/phenopackets-standardizing-and-exchanging-patient-phenotypic-data/) is not a native FHIR-based standard. Rather it is a lightweight specification that intends to support global exchange of computable case-level phenotypic information for all types of disease diagnosis and research. However, the specification was ported to a [GA4GH Phenopacket FHIR Implementation Guide](https://phenopacket-schema.readthedocs.io/en/latest/fhir.html) and is currently under development. The Phenopackets designers are working closely with the CCWG to align both standards.
 
 ### Other genomics-related HL7 specifications
 
@@ -93,9 +93,9 @@ The IG was initially released in 2013 and is based on the [HL7 Clinical Document
 
 ### HL7 Clinical Genomics Working Group
 
-The [HL7 Clinical Genomics Workgroup](https://confluence.hl7.org/display/CGW) (CGWG) comprise of a diverse community of researchers, providers, and non-profit specialty organizations primarily focused standards development that supports the semantically meaningful exchange of data between parties interested in clinical, personal, and population genomic information and family health history.
+The [HL7 Clinical Genomics Workgroup](https://confluence.hl7.org/display/CGW) (CGWG) comprises a diverse community of researchers, providers, and non-profit specialty organizations primarily focused on standards development that supports the semantically meaningful exchange of data between parties interested in clinical, personal, and population genomic information and family health history.
 
-CGWG is is the author and steward of the [FHIR Genomics Reporting Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/STU2/) (discussed above), a FHIR-based specification for the exchange of genomics reporting elements.
+CGWG is the author and steward of the [FHIR Genomics Reporting Implementation Guide](http://hl7.org/fhir/uv/genomics-reporting/STU2/) (discussed above), a FHIR-based specification for the exchange of genomics reporting elements.
 
 ### CodeX FHIR Accelerator domain: GenomeX
 

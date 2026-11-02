@@ -5,11 +5,11 @@ roles:
   - Informaticist
 
 learning_objectives2:
-  - Understand the high-level approaches for converting FHIR-formatted data into tabular for analysis in R.
-  - Learn how the fhircrackr library facilitates requesting data from a FHIR server, and creating tidy tabular data tables.
+  - Understand the high-level approaches for converting FHIR-formatted data into a tabular format for analysis in R.
+  - Learn how the fhircrackr library facilitates requesting data from a FHIR server and creating tidy tabular data tables.
 
 execute:
-  cache: false # caching seems to unexpectedly break dependencies between chunks on full render
+  cache: false # caching seems to unexpectedly break dependencies between chunks on full renders
   error: true
 
 # Print data frames
@@ -19,26 +19,28 @@ format:
      code-overflow: wrap
 
 reading_time: true
+date: 2026-10-26
+
 ---
 
-Data analysis approaches in R typically uses [data frames](https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Data-frames-1) to store tabular data. There are two primary approaches to loading FHIR-formatted data into Pandas DataFrames:
+Data analysis approaches in R typically use [data frames](https://cran.r-project.org/doc/manuals/r-release/R-intro.html#Data-frames-1) to store tabular data. There are two primary approaches to loading FHIR-formatted data into data frames:
 
 1.  Writing R code to manually convert FHIR instances in JSON format into data frames.
 
 2.  Using a purpose-built library like [fhircrackr](https://polar-fhir.github.io/fhircrackr/) to automatically convert FHIR instances into DataFrames.
 
-    It is recommended to try this approach first. If it is not possible to use fhircrackr for your use case, it may be easier to convert the data from FHIR to tabular format [using Python](tabular-python.qmd) and then export it to R format compared to doing this completely in R. The [Reticulate package](https://rstudio.github.io/reticulate/) may facilitate this by allowing Python and R code to share data objects within [RStduio](https://support.posit.co/hc/en-us/articles/1500007929061-Using-Python-with-the-RStudio-IDE).
+    It is recommended to try this approach first. If it is not possible to use fhircrackr for your use case, it may be easier to convert the data from FHIR to tabular format [using Python](tabular-python.qmd) and then export it to R format compared to doing this completely in R. The [Reticulate package](https://rstudio.github.io/reticulate/) may facilitate this by allowing Python and R code to share data objects within [RStudio](https://docs.posit.co/ide/user/ide/guide/environments/py/python.html).
 
-To use fhircrackr, you will need a [R](https://www.r-project.org) runtime with fhircrackr installed. Typically R users work in the [RStudio IDE](https://posit.co/products/open-source/rstudio/) but this is not strictly necessary.
+To use fhircrackr, you will need an [R](https://www.r-project.org) runtime with fhircrackr installed. Typically R users work in the [RStudio IDE](https://posit.co/products/open-source/rstudio/) but this is not strictly necessary.
 
 ::: callout-info
 ## FHIR testing server
 
-The examples in this module use a FHIR testing server populated with [Synthea data in FHIR R4 format](https://synthea.mitre.org/downloads) via [public HAPI Test Server](https://hapi.fhir.org/) operated by [HAPI FHIR](https://hapifhir.io/).
+The examples in this module use a FHIR testing server populated with [Synthea data in FHIR R4 format](https://synthea.mitre.org/downloads) via the [public HAPI Test Server](https://hapi.fhir.org/) operated by [HAPI FHIR](https://hapifhir.io/).
 
 The endpoint for this testing server is:
 
-```         
+```
 https://hapi.fhir.org/baseR4
 ```
 
@@ -77,6 +79,9 @@ table_desc_patient <- fhir_table_description(
 
 # Convert to R data frame
 df_patient <- fhir_crack(bundles = patient_bundle, design = table_desc_patient, verbose = 0)
+
+# Exclude `photo.data`, which is a base64-encoded photo and doesn't display well in dataframes
+df_patient <- df_patient %>% select(-any_of("photo.data"))
 
 df_patient %>% head(5)
 ```
@@ -129,7 +134,7 @@ df_patient <- fhir_crack(bundles = patient_bundle, design = table_desc_patient, 
 df_patient %>% head(5)
 ```
 
-While XPath expressions can be quite complex, thier use in fhircrackr is often straight-forward. Nested elements are separated with `/`, and elements with multiple sub-values are identified by `[N]` where `N` is an integer starting at 1.
+While XPath expressions can be quite complex, their use in fhircrackr is often straightforward. Nested elements are separated with `/`, and elements with multiple sub-values are identified by `[N]` where `N` is an integer starting at 1.
 
 There are two approaches to identifying element paths to construct XPath expressions:
 
@@ -138,9 +143,9 @@ There are two approaches to identifying element paths to construct XPath express
 2.  Print out the raw data returned by the FHIR server. Fhircrackr uses XML-formatted data, and the following code will print out one of the instances of Patient requested above:
 
 ```{r}
-xml2::xml_find_first(x = patient_bundle[[1]], xpath = "./entry[1]/resource") %>%
-    paste0() %>%
-    cat()
+resource <- xml2::xml_find_first(x = patient_bundle[[1]], xpath = "./entry[1]/resource")
+xml2::xml_find_all(resource, ".//photo") %>% xml2::xml_remove() # Suppress the photo element - prints out a bunch of base64-encoded data that makes it hard to read the rest of the XML
+resource %>% paste0() %>% cat()
 ```
 
 In some cases, you may need to construct more complex expressions like the one to extract `marital_status` from `Patient.maritalStatus.coding.code`. You can use a tool like [this XPath tester](https://extendsclass.com/xpath-tester.html) to help generate XPath expressions, though online tools such as these should not be used with real patient data. For more information on XPath, see [this guide](https://www.w3schools.com/xml/xpath_intro.asp).
@@ -250,7 +255,7 @@ df_observation <- fhir_crack(bundles = response, design = table_desc_observation
 df_observation %>% glimpse()
 ```
 
-This includes many different kinds of observations. The `Observation.code` element identifies the type of Observation. In this case,`http://loinc.org|72166-2` is the LOINC for smoking status. To get smoking status records identified by this LOINC:
+This includes many different kinds of observations. The `Observation.code` element identifies the type of Observation. In this case, `http://loinc.org|72166-2` is the LOINC for smoking status. To get smoking status records identified by this LOINC:
 
 ```{r}
 request <- fhir_url(

@@ -3,25 +3,26 @@ title: Analyzing FHIR Data in a Tabular Format With Python
 roles:
   - Informaticist
 learning_objectives2:
-  - Understand the high-level approaches for converting FHIR-formatted data into tabular for analysis in Python.
-  - 'Learn how the FHIR-PYrate library facilitates requesting data from a FHIR server, and creating tidy tabular data tables.'
+  - Understand the high-level approaches for converting FHIR-formatted data into a tabular format for analysis in Python.
+  - 'Learn how the FHIR-PYrate library facilitates requesting data from a FHIR server and creating tidy tabular data tables.'
 execute:
   cache: true
   error: true
 jupyter: python3
 
-format: 
+format:
   html: default
   ipynb: default
 
 reading_time: true
+date: 2025-05-20
 ---
 
 Data analysis approaches in Python often use [Pandas DataFrames](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html) to store tabular data. There are two primary approaches to loading FHIR-formatted data into Pandas DataFrames:
 
 1.  Writing Python code to manually convert FHIR instances in JSON format into DataFrames.
 
-    This does not require any special skills beyond data manipulation in Python, but in practice can be laborious (especially with large number of data elements) and prone to bugs.
+    This does not require any special skills beyond data manipulation in Python, but in practice can be laborious (especially with a large number of data elements) and prone to bugs.
 
 2.  Using a purpose-built library like [FHIR-PYrate](https://github.com/UMEssen/FHIR-PYrate) to automatically convert FHIR instances into DataFrames.
 
@@ -32,11 +33,11 @@ To use FHIR-PYrate, you will need a [Python 3](https://docs.python.org/3/tutoria
 ::: callout-info
 ## FHIR testing server
 
-The examples in this module use a FHIR testing server populated with [Synthea data in FHIR R4 format](https://synthea.mitre.org/downloads) via [public HAPI Test Server](https://hapi.fhir.org/) operated by [HAPI FHIR](https://hapifhir.io/).
+The examples in this module use a FHIR testing server populated with [Synthea data in FHIR R4 format](https://synthea.mitre.org/downloads) via the [public HAPI Test Server](https://hapi.fhir.org/) operated by [HAPI FHIR](https://hapifhir.io/).
 
 The endpoint for this testing server is:
 
-```         
+```
 https://hapi.fhir.org/baseR4
 ```
 
@@ -87,7 +88,11 @@ pd.set_option("display.max_rows", 100)  # Show all rows
 df.head(1).T
 ```
 
-If you look at the output above, you can see FHIR-PYrate collapsed the hierarchical FHIR data structure into DataFrame columns. FHIR-PYrate does this by taking an element from the FHIR-formatted data like `Patient.identifier[0].value` and converting to an underscore-delimited column name like `identifier_0_value`. (Note that `Patient.identifier` has multiple values in the FHIR data, so there are multiple `identifier_N_...` columns in the DataFrame.)
+If you look at the output above, you can see FHIR-PYrate collapsed the hierarchical FHIR data structure into DataFrame columns. FHIR-PYrate does this by taking an element from the FHIR-formatted data like `Patient.identifier[0].value` and converting it to an underscore-delimited column name like `identifier_0_value`. (Note that `Patient.identifier` has multiple values in the FHIR data, so there are multiple `identifier_N_...` columns in the DataFrame.)
+
+::: callout-tip
+[SQL on FHIR](../workshops/sql-on-fhir.qmd) is an alternative to FHIR-PYrate that offers a more standardized approach to converting FHIR data into a tabular format.
+:::
 
 ## Selecting specific columns
 
@@ -123,7 +128,7 @@ df = search.steal_bundles_to_dataframe(
 df
 ```
 
-While FHIRPath can be quite complex, its use in FHIR-PYrate is often straight forward. Nested elements are separated with `.`, and elements with multiple sub-values are identified by `[N]` where `N` is an integer starting at 0. The element paths can typically be constructed by loading all elements into a DataFrame and then manually deriving the FHIRPaths from the column names, or by looking at the hierarchy resource pages in the FHIR specification (see [Key FHIR Resources](key-fhir-resources.qmd) for more information on reading the FHIR specification).
+While FHIRPath can be quite complex, its use in FHIR-PYrate is often straightforward. Nested elements are separated with `.`, and elements with multiple sub-values are identified by `[N]` where `N` is an integer starting at 0. The element paths can typically be constructed by loading all elements into a DataFrame and then manually deriving the FHIRPaths from the column names, or by looking at the hierarchy on resource pages in the FHIR specification (see [FHIR Resources in Depth](fhir-resources-in-depth.qmd) for more information on reading the FHIR specification).
 
 ## Elements with multiple sub-values
 

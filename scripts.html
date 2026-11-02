@@ -33,150 +33,6 @@ elements.forEach(element => {
 });
 </script>
 
-<!-- JSON Viewer
-Intercept all instances of:
-
-``` json
-```
-
-and replace it with a fancy JSON viewer. If the content is
-invalid JSON then the default Quarto rendering will occur.
--->
-<script type="text/javascript" src="https://unpkg.com/dompurify@3.0.1/dist/purify.min.js"></script> <!-- load JS Sanitizer -->
-<script>
-    function jsonViewer(json, collapsible=false) {
-        let TEMPLATES = {
-            item: '<div class="json_view__item"><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--%TYPE%">%VALUE%</div></div>',
-            itemCollapsible: '<label class="json_view__item json_view__item--collapsible"><input type="checkbox" class="json_view__toggle"/><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--type-%TYPE%">%VALUE%</div>%CHILDREN%</label>',
-            itemCollapsibleOpen: '<label class="json_view__item json_view__item--collapsible"><input type="checkbox" checked class="json_view__toggle"/><div class="json_view__key">%KEY%</div><div class="json_view__value json_view__value--type-%TYPE%">%VALUE%</div>%CHILDREN%</label>'
-        };
-
-        function createItem(key, value, type){
-            let element = TEMPLATES.item.replace('%KEY%', key);
-
-            if((key == 'div') && (type=='string')) { // Removes Resource.text.div value (looks bloated)
-                element = element.replace('%VALUE%', '...');
-            } else if(type == 'string') {
-                element = element.replace('%VALUE%', '"' + value + '"');
-            } else {
-                element = element.replace('%VALUE%', value);
-            }
-
-            element = element.replace('%TYPE%', type);
-
-            return element;
-        }
-
-        function createCollapsibleItem(key, value, type, children){
-            let tpl = 'itemCollapsible';
-
-            if(collapsible) {
-                tpl = 'itemCollapsibleOpen';
-            }
-
-            let element = TEMPLATES[tpl].replace('%KEY%', key);
-
-            element = element.replace('%VALUE%', type);
-            element = element.replace('%TYPE%', type);
-            element = element.replace('%CHILDREN%', children);
-
-            return element;
-        }
-
-        function handleChildren(key, value, type) {
-            let html = '';
-
-            for(let item in value) { 
-                let _key = item,
-                    _val = value[item];
-
-                html += handleItem(_key, _val);
-            }
-
-            return createCollapsibleItem(key, value, type, html);
-        }
-
-        function handleItem(key, value) {
-            let type = typeof value;
- 
-            if( Array.isArray( value ) ) {
-                return handleChildren(key, value, "array");
-            }
-
-            if(typeof value === 'object') {        
-                return handleChildren(key, value, type);
-            }
-
-            return createItem(key, value, type);
-        }
-
-        function parseObject(obj) {
-            _result = '<div class="json_view">';
-
-            for(let item in obj) { 
-                let key = item,
-                    value = obj[item];
-
-                _result += handleItem(key, value);
-            }
-
-            _result += '</div>';
-
-            return _result;
-        }
-        
-        try {
-            return parseObject(JSON.parse(json));
-        }
-        catch(err) {
-            console.log("Could not render JSON viewer: ", err);
-            console.log("for string: ", json);
-            return null;
-        }
-
-    };
-
-
-    function parseHTML(string) {
-        let sanitized = DOMPurify.sanitize(string);
-        let parser = new DOMParser();
-        return parser.parseFromString(sanitized, "text/html").body.firstChild;
-    }
-
-    let jsonCodeBlocks = document.querySelectorAll("code.sourceCode.json");
-    jsonCodeBlocks.forEach((jsonCode) => {
-        let json = jsonCode.innerText;
-        let codeBlock = jsonCode.parentNode.parentNode;
-        let uid = codeBlock.id;
-        let documentLocation = codeBlock.parentNode;
-        let viewerHTML = jsonViewer(json, true);
-
-        let tabContainer = parseHTML(`
-          <div>
-            <ul class="nav nav-tabs" id="${uid}Tabs" role="tablist">
-              <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="${uid}ViewerTab" data-bs-toggle="tab" data-bs-target="#${uid}Viewer" type="button" role="tab" aria-controls="${uid}Viewer" aria-selected="true">Viewer</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="${uid}JsonTab" data-bs-toggle="tab" data-bs-target="#${uid}Json" type="button" role="tab" aria-controls="${uid}Json" aria-selected="false">JSON</button>
-              </li>
-            </ul>
-            <div class="tab-content" id="${uid}TabContent" style="height:50vh;overflow:scroll;">
-              <div class="tab-pane fade show active" id="${uid}Viewer" role="tabpanel" aria-labelledby="${uid}ViewerTab"></div>
-              <div class="tab-pane fade" id="${uid}Json" role="tabpanel" aria-labelledby="${uid}JsonTab"></div>
-            </div>
-          </div>
-        `)
-
-        if( viewerHTML != null ) {
-            documentLocation.replaceChild(tabContainer, codeBlock);
-
-            tabContainer.querySelector(`div#${uid}TabContent div#${uid}Viewer`).appendChild( parseHTML(viewerHTML) );
-            tabContainer.querySelector(`div#${uid}TabContent div#${uid}Json`).appendChild(codeBlock);
-        }
-    });
-</script>
-
 <!-- Role-based Module Highlighting
 
 For any *.qmd file with roles defined in frontmatter,
@@ -204,62 +60,63 @@ Possible Roles:
 <script>
 const all_modules = document.querySelectorAll(".highlight-by-role ul li");
 
-/* highlights modules corresponding to role via role_module_map
- * @param: string - role name in lower kebab case
- */
-function select_modules(string) {
-    // remove all highlights
-    all_modules.forEach((li_node) => {
-        var mark_node = li_node.firstChild;
-        var a_node = mark_node.firstChild;
+function slugify(str) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
-        if( mark_node.nodeName == "MARK" ) {
-            li_node.removeChild(mark_node);
-            li_node.appendChild(a_node);
-        }
+/* highlights modules corresponding to role via role_module_map
+ * @param: role_name - role name in lower kebab case
+ */
+function select_modules(role_name) {
+    // Remove existing highlights
+    document.querySelectorAll('mark[data-role]').forEach(mark => {
+      mark.replaceWith(...mark.childNodes);
     });
 
-    // add highlights based on role_module_map
-    role_module_map.forEach((mapping) => {
-        if( mapping.role == string ) {
-            mapping.modules.forEach((interest_module) => {
-                document.querySelectorAll(`li [href*="${interest_module.slug}"]`).forEach((interest_a_node) => {
+    // What modules should be highlighted based on the selected role?
+    var highlighted_module_slugs = role_module_map.filter(x => x.role === role_name).map(x => x.modules)[0].map(x => x.slug);
 
-                    //console.log("selecting module ", interest_a_node);
-
-                    var interest_li_node = interest_a_node.parentNode;
-                    var mark_node = document.createElement("mark");
-                    interest_li_node.appendChild(mark_node);
-                    mark_node.appendChild(interest_a_node);
-
-                    //console.log("appended ", interest_a_node, " to ", mark_node);
+    // Add in highlights of the currently selected role, just in the containers where
+    // there should be highlights.
+    [
+        '.sidebar-menu-container', // On module pages (left sidebar)
+        '.highlight-by-role' // On section pages (list of modules)
+    ].forEach((container_css_path) => {
+        document.querySelectorAll(container_css_path).forEach(container => {
+            highlighted_module_slugs.forEach((slug) => {
+                container.querySelectorAll(`li a[href*="${slug}"]`).forEach((ahref) => {
+                    var li = ahref.parentNode;
+                    var mark = document.createElement("mark");
+                    mark.dataset.role = role_name;
+                    li.appendChild(mark);
+                    mark.appendChild(ahref);
                 });
             });
-            return;
+        });
+    });
+
+    // For module pages, highlight the currently active role
+    document.querySelectorAll(".role-tags .role-tag").forEach((el) => {
+        if (slugify(el.textContent.trim()) === role_name) {
+          el.style.fontWeight = "bold";
         }
-    })
+      });
 }
 
 
 // clears previously selected roles, highlights the selected role, and sets "role" in local storage
 function select_role(role) {
     store.setItem("role", role);
-
-    document.querySelectorAll("[data-role]").forEach((a_node) => {
-        a_node.classList.remove("btn", "btn-sm", "btn-secondary", "fw-bold", "rounded");
-        a_node.classList.add("btn-role");
-    });
-
-    var selected_a_node = document.querySelector(`[data-role="${role}"]`);
-    selected_a_node.classList.add("btn", "btn-sm", "btn-secondary", "fw-bold", "rounded");
-    selected_a_node.classList.remove("btn-role");
+    document.querySelector(`.roles-select-list input[data-role="${role}"]`).checked = true;
 }
 
-
-// trigger role selection on clicking <a data-role=...>
-document.querySelectorAll("a[data-role]").forEach((role_link) => {
+// trigger role selection on clicking <input data-role=...>
+document.querySelectorAll(".roles-select-list input[data-role]").forEach((role_link) => {
     role_link.addEventListener("click", (e) => {
-        var role = e.target.dataset.role;
+        const role = e.target.dataset.role;
         select_role(role);
         select_modules(role);
     });
@@ -267,16 +124,9 @@ document.querySelectorAll("a[data-role]").forEach((role_link) => {
 
 // set default role and execute select_role and select_modules once to make sure feature is working
 window.addEventListener("load", () => {
-    if( store.getItem("role") ) {
-        select_role(store.getItem("role"));
-        select_modules(store.getItem("role"));
-    }
-    else {
-        const DEFAULT_ROLE = "research-leader";
-
-        select_role(DEFAULT_ROLE);
-        select_modules(DEFAULT_ROLE);
-    }
+  const role = store.getItem("role") || "research-leader";
+  select_role(role);
+  select_modules(role);
 });
 </script>
 
@@ -315,8 +165,12 @@ String.prototype.toTitleCase = function() {
 // Custom Hack to overwrite Quarto's built in navigators
 document.addEventListener("DOMContentLoaded", function() {
     // Get current module and role
-    const current_module_slug = window.location.toString().split('/').pop().split('.')[0];
+    const current_module_slug = window.location.pathname.split('.')[0].trim(1).split('/').slice(1).join('/');
     const role = store.getItem("role");
+
+    function slug_to_url(slug) {
+       return `${window.location.origin}/${slug}.html`
+    }
 
     // Get next and prev modules data
     let prev_href, prev_text;
@@ -326,16 +180,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if( mapping.role == role ) {
             for(let i=0; i<mapping.modules.length; i++) {
                 if( mapping.modules[i].slug == current_module_slug ) {
-                    function slug_to_url(slug) {
-                        if( window.location.pathname.includes('modules') ) {
-                            // replace "modules/*" in current URL with "modules/<slug>.html"
-                            return window.location.toString().replace(/modules\/.*/, "modules/" + slug + ".html");
-                        }
-                        else {
-                            // this case is irrelevant since prev/next buttons are only role-based in modules
-                            return window.location.toString() + "/modules/" + slug + ".html";
-                        }
-                    }
 
                     prev_href = (i > 0) ? slug_to_url(mapping.modules[i-1].slug) : null;
                     prev_text = (i > 0) ? mapping.modules[i-1].text : null;
@@ -355,8 +199,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if( prev_link_elmt ) {
 
             prev_link_elmt.href = prev_href
-            //prev_link_elmt.classList.add("btn", "btn-outline-custom", "rounded");
-            //prev_link_elmt.parentNode.classList.toggle("nav-page");
             prev_text_elmt.innerText = prev_text;
         }
     }
@@ -368,8 +210,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if( next_link_elmt ) {
             next_link_elmt.href = next_href;
-            //next_link_elmt.classList.add("btn", "btn-outline-custom", "rounded");
-            //next_link_elmt.parentNode.classList.toggle("nav-page");
             next_text_elmt.innerText = next_text;
         }
     }

@@ -3,10 +3,47 @@ title: Hosting Your Own Workshop
 sidebar: false
 ---
 
-If you are interested in **hosting your own workshop**, the following guides will be useful. These are based on NIH/ODSS's experience conducting the [FHIR Bulk Data Access](/workshops/bulk-data/index.qmd) and [SMART on FHIR](/workshops/smart-on-fhir/index.qmd) workshops.
+::: {.home-page .section-page .column-screen}
+::: {.home-container}
+::: {.section-intro}
+[Help your team learn]{.home-eyebrow}
 
-*Recommended: complete the [hands-on practice](/sections/hands-on-practice.qmd) workshops for reviewing your FHIR skills and inspiring your own workshop.*
+# Hosting Your Own Workshop
 
-1. Review these [recommendations for conducting workshops](/webinars/workshop-recommendations/index.qmd).
-2. Setup your own [FHIR Test Server](/modules/synthea-test-server.qmd)
-3. Procure privacy-compliant [synthetic data](/modules/synthetic-data.qmd)
+[Bring FHIR learning to your research community.]{.home-lead}
+
+Plan a workshop using lessons from NIH/ODSS [FHIR Bulk Data](/workshops/bulk-data/index.qmd) and [SMART on FHIR](/workshops/smart-on-fhir/index.qmd) training events. Adapt the materials to your audience, prepare a testing environment, and choose synthetic data for hands-on exercises.
+
+::: {.section-next}
+Recommended: try the [hands-on practice workshops](hands-on-practice.qmd) before planning your own event.
+:::
+:::
+
+::: {.section-grid}
+
+::: {.section-card}
+## Plan your workshop
+
+Adapt existing training materials to your audience using capability assessments, learning objectives, and instructional design guidance. Review recommendations for prerequisites, participant support, compute environments, and evaluation, drawing on experience from earlier NIH FHIR webinars and workshops.
+
+- [Recommendations for conducting workshops](/webinars/workshop-recommendations/index.qmd)
+:::
+
+::: {.section-card}
+## Set up a FHIR test server
+
+Compare public, local, and hosted options for FHIR testing and training. Learn to start a HAPI FHIR server, load Synthea records in the required order, and find additional cloud and interoperability testing resources for your workshop.
+
+- [FHIR test server setup](/modules/synthea-test-server.qmd)
+:::
+
+::: {.section-card}
+## Choose synthetic data
+
+Find downloadable synthetic FHIR datasets for testing and training, including general patient histories and ophthalmology examples with images. Explore options for generating your own Synthea data and making selected datasets available through a FHIR test server.
+
+- [Synthetic data resources](/modules/synthetic-data.qmd)
+:::
+:::
+:::
+:::

@@ -1,0 +1,153 @@
+---
+title: "Introduction to CDEs for Research"
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Define a common data element (CDE) and describe how CDEs relate to forms and bundles.
+  - Describe the roles of NIH offices, Institutes and Centers, the NIH CDE Governance Committee, and research communities in developing, endorsing, and publishing CDEs.
+  - Identify ways to find, save, and export CDEs and forms using the NIH CDE Repository.
+  - Explain how CDEs support FAIR data principles and research data reuse, and describe their limitations.
+  - Identify capabilities that help software interpret, validate, exchange, and reuse CDEs in research workflows.
+
+reading_time: true
+
+date: 2026-10-26
+---
+
+## The research interoperability problem
+
+***Two studies may both collect "pain interference," "smoking status," or "physical function," yet use different questions, response options, units, coding systems, or assessment timeframes. Even when investigators intend to measure the same concept, those differences can make datasets difficult to combine and reuse.***
+
+**Common Data Elements** address this problem by establishing shared definitions and standardized approaches to data collection. But standardizing a question is only the first step. Modern biomedical research increasingly requires those definitions to be interpretable by software, exchanged between systems, validated automatically, and reused across studies.
+
+This module explains how software can interpret, validate, exchange, and reuse CDEs.
+
+## CDEs and forms
+
+A **common data element (CDE)**, [as defined by NIH](https://cde.nlm.nih.gov/nihDataSharing), is a precisely defined variable or question with specified allowable responses, intended for consistent use across studies, sites, or research programs. Its components describe the concept, question or variable, allowable responses, and associated metadata.
+
+| CDE component | Example                           |
+|---------------|-----------------------------------|
+| Concept       | Participant height                |
+| Question      | What is the participant's height? |
+| Data type     | Numeric                           |
+| Unit          | Centimeters (cm)                  |
+| Constraint    | Defined allowable range           |
+| Identifier    | Repository identifier             |
+| Steward       | Responsible organization          |
+
+A **form** is an organized collection of CDEs used together for a particular data-collection purpose.
+
+![Form composed of multiple CDEs](images/cde-form.png){fig-alt="Four common data elements, labeled A through D, combine into a form."}
+
+Some forms are **bundles** whose elements must be used as a complete set to retain their validity, as explained in the [NIH CDE Repository guide](https://cde.nlm.nih.gov/guides). Extracting individual questions from a validated instrument can compromise its validity. A CDE bundle is distinct from the FHIR [Bundle](https://www.hl7.org/fhir/bundle.html) resource.
+
+**Example:** [BRICS Social Determinants of Health](https://cde.nlm.nih.gov/formView?tinyId=RJGIz6BY9) form
+
+Forms may recreate the format of real-world data collection instruments or case report forms, or may be digital-only forms created for a specific use case.
+
+## The NIH CDE ecosystem
+
+Over the past three decades, NIH has made substantial investments in the [development of CDE assets and governance foundations](https://datascience.nih.gov/fhir-initiatives/common-data-elements) across multiple Institutes and Centers (ICs) and initiatives. The goal of this effort is to improve data consistency, facilitate cross-study analyses, and enhance research reproducibility. The use of CDEs supports the 2023 [NIH Data Management and Sharing Policy](https://sharing.nih.gov/data-management-and-sharing-policy/about-data-management-and-sharing-policies/data-management-and-sharing-policy-overview) by making data from different studies more interoperable.
+
+### Development of CDEs
+
+- In collaboration with the ICs, the [NIH Office of Data Science Strategy](https://datascience.nih.gov/about/odss) (ODSS) leads the creation of new CDEs in areas such as immune-mediated conditions, autoimmune diseases, heart diseases, post-traumatic epilepsy, pediatric critical care, and others.
+- Scientific communities, NIH ICs, and specific programs develop and steward domain CDEs and assess their scientific merit.
+- The [National Library of Medicine (NLM)](https://www.nlm.nih.gov/) hosts and maintains the [NIH Common Data Elements Repository and Forms Catalog](https://cde.nlm.nih.gov), launched in 2015 [@Sheehan_2016_CDE]. As of October 2026, it contains over 22,000 CDEs compiled in 19 collections, from 21 organizations and approximately 1,680 forms from 17 organizations. NLM curates and publishes CDE metadata for discovery and reuse.
+- The [NIH CDE Governance Committee](https://cde.nlm.nih.gov/guides) reviews submissions for endorsement against criteria set by the NIH Scientific Data Council. NLM publishes endorsed collections and marks [NIH-endorsed CDEs](https://cde.nlm.nih.gov/cde/search?nihEndorsed=true) with a gold ribbon icon. For more information on NIH CDE endorsements, see the [NIH CDE Repository guide](https://cde.nlm.nih.gov/guides).
+
+Using CDEs, especially curated NIH-endorsed CDEs, helps researchers make their data [FAIR (Findable, Accessible, Interoperable, and Reusable)](https://www.nlm.nih.gov/oet/ed/cde/tutorial/02-200.html) and supports compliance with federal data sharing and management policies.
+
+### Criteria for endorsing CDEs
+
+The [NIH CDE Repository guide](https://cde.nlm.nih.gov/guides) lists the criteria used to assess collections for NIH endorsement:
+
+> - Clear definitions of variables and measures, including prompts and responses.
+> - Documented evidence of reliability and validity.
+> - A preference for formats readable by both people and machines.
+> - Recommendation or designation by a recognized NIH body, such as an Institute, Center, or committee.
+> - Clear licensing and intellectual property status, with a preference for Creative Commons Attribution or open-source terms.
+
+NIH endorsement provides an important governance foundation for advancing selected CDEs from standardized research measures toward more interoperable and computable research assets.
+
+::: callout-note
+NLM's Office of Engagement and Training provides a self-paced tutorial, [Common Data Elements: Standardizing Data Collection](https://www.nlm.nih.gov/oet/ed/cde/tutorial/index.html).
+:::
+
+### Using the NIH CDE Repository
+
+Use the [NIH CDE Repository](https://cde.nlm.nih.gov/home) to search or browse [all CDEs](https://cde.nlm.nih.gov/cde/search), [endorsed CDEs](https://cde.nlm.nih.gov/cde/search?nihEndorsed=true), or [forms](https://cde.nlm.nih.gov/form/search). To browse, click the search icon with an empty search box or follow one of the links in the previous sentence.
+
+You can use the repository to:
+
+- Search by keyword or browse classifications, which group CDEs by NIH IC, research initiative, or topic.
+- View each CDE's steward or owner and the other organizations that use it.
+- Export CDEs and forms in [supported formats](https://www.nlm.nih.gov/oet/ed/navigator/cder3/index.html), including JSON, XML, and CSV.
+- Create forms using existing CDEs when signed in as a registered user.
+- Save CDEs or forms to private or public boards when signed in.
+
+For more information on using the NIH CDE repository, see NIH's [Guide to the NIH CDE Repository](https://cde.nlm.nih.gov/guides).
+
+## Value, alignment, and limitations of CDEs
+
+As mentioned previously, CDEs support interoperability, data sharing, and compliance with [NIH's Data Management and Sharing Policy](https://grants.nih.gov/policy-and-compliance/policy-topics/sharing-policies/dms). They also advance the [FAIR (Findable, Accessible, Interoperable, and Reusable)](https://www.nlm.nih.gov/oet/ed/cde/tutorial/02-200.html) data principles [@Wilkinson_2016_FAIR] by providing standardized definitions, data structures, permissible values, and associated metadata that make research data easier to discover, interpret, combine, and reuse across studies.
+
+::: callout-note
+## How CDEs support FAIR
+
+**F — Findable**<br>Registered CDEs have identifiers and searchable metadata.
+
+**A — Accessible**<br>Published definitions and metadata can be retrieved and reused subject to applicable access/licensing conditions.
+
+**I — Interoperable**<br>Shared definitions, value domains and terminology mappings reduce semantic ambiguity.
+
+**R — Reusable**<br>Definitions, provenance, context and standardized representations make data easier to interpret across studies.
+:::
+
+While CDEs support FAIRness, CDEs alone do not make data FAIR. FAIR implementation also depends on persistent identifiers, rich metadata and provenance, access mechanisms, licensing, standardized terminologies, and machine-actionable representations.
+
+CDEs provide shared meanings for data exchanged among research systems. Consistent use of CDEs supports cross-study comparison, data aggregation, and meta-analysis while improving data quality and reducing the burden of developing and interpreting study-specific variables [@Sheehan_2016_CDE].
+
+CDEs already build on international standards. For example, [NCI and NIH CDEs follow ISO/IEC 11179](https://www.cancer.gov/about-nci/organization/cbiit/vocabulary/data-elements-for-cancer-research), a standard for metadata registries. However, shared metadata structures alone do not ensure that different research systems implement CDEs consistently. Currently, not all CDEs are represented in forms that can be operationalized by software at scale (see the [CDEs & FHIR module](cde-fhir.qmd) for details).
+
+Discussions at the 2024 NIH workshop, [Advancing the Use and Development of Common Data Elements in Research](https://www.scgcorp.com/AdvancingUseofCDEs24/docs/ODSS-Common-Data-Elements-Summary-Final_508.pdf), emphasized broader CDE adoption, improved interoperability and harmonization, and support for AI-ready biomedical data.
+
+## From CDE to computable CDE
+
+Existing CDE repositories provide structured metadata and machine-readable exports. For example, the NIH CDE Repository [exports forms](https://www.nlm.nih.gov/oet/ed/navigator/cder3/index.html) as FHIR [Questionnaire](https://www.hl7.org/fhir/questionnaire.html) resources in JSON. However, a machine-readable export does not necessarily make CDEs interoperable: true interoperability requires consistent terminology bindings, validation rules, and implementation guidance.
+
+Capabilities that help software interpret and use CDEs include:
+
+- Terminology bindings that connect questions and responses to standard codes, and value sets that specify permitted codes.
+- Explicit context, constraints, and reuse requirements, such as the unit and allowable range for a height measurement.
+- Schemas that specify how to structure data, using standards or tools such as FHIR or [LinkML](https://linkml.io/).
+- Validation rules and tools that check whether data follow the specified structure and constraints.
+- Governance, versioning, and processes for maintaining and retiring CDE definitions.
+
+These capabilities can build upon basic usage of CDEs as primarily reference definitions to create infrastructure supporting discovery, interpretability, validation, exchange, and reuse.
+
+## Why this matters now
+
+The convergence of FAIR data expectations, interoperability standards, clinical research modernization, and AI creates a timely opportunity to advance the NIH CDE infrastructure. Increasingly automated research workflows depend on data elements that are not only standardized for human interpretation but also sufficiently structured and machine-actionable for software and AI systems.
+
+### HHS Operation TrialBlazer
+
+The [HHS Operation TrialBlazer Roadmap to Maintaining U.S. Leadership in Early Clinical Research and Development](https://www.hhs.gov/sites/default/files/operation-trialblazer.pdf), published in June 2026, describes opportunities for computable research protocols (pp. 19–20):
+
+- It identifies unstructured clinical trial protocols as an impediment to automated eligibility screening, regulatory validation, and reuse of protocol logic.
+- It highlights standards, including ICH M11/CeSHarP, CDISC USDM, and the HL7 FHIR-based Clinical Study Protocol initiative, as components of an interoperable foundation for scalable, computable research.
+- It identifies accelerated standards adoption as an opportunity to improve patient matching and reduce burden on sponsors and clinicians.
+
+Computable, FHIR-enabled CDEs could help support these objectives by providing standardized research variables, value sets, terminology bindings, and data representations. Possible applications include automated eligibility screening, real-world data integration, embedded research, and AI-assisted trial operations.
+
+## References
+
+::: {#refs}
+:::

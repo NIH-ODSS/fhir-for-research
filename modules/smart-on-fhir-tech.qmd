@@ -7,6 +7,11 @@ roles:
 bibliography: ../bibliography.bib
 
 reading_time: true
+
+date: 2026-05-13
+
+aliases:
+  - new-smart-on-fhir-tech.html
 ---
 
 This module is meant for technical users who would like to start working hands-on with SMART on FHIR. Read the [SMART on FHIR Introduction](smart-on-fhir-intro.qmd) before continuing.
@@ -20,7 +25,7 @@ This module is meant for technical users who would like to start working hands-o
 Your SMART on FHIR application will use one of the authorization patterns defined by the [SMART App Launch specification](http://www.hl7.org/fhir/smart-app-launch/).
 
 1.  [**SMART App Launch**](http://www.hl7.org/fhir/smart-app-launch/app-launch.html) supports applications that launch in an EHR or launch standalone:
-    1.  **EHR Launch:** A user launches the application within the EHR from an existing EHR session (e.g., custom a clinical decision support application).
+    1.  **EHR Launch:** A user launches the application within the EHR from an existing EHR session (e.g., a custom clinical decision support application).
 
     2.  **Standalone Launch:** A user launches the application directly, like in a smartphone or stand-alone website (e.g., Apple's [Health app on the iPhone](https://support.apple.com/guide/healthregister/technical-requirements-specifications-health-apd12d144779/web)).
 2.  [**SMART Backend Services**](http://www.hl7.org/fhir/smart-app-launch/backend-services.html) support applications that run autonomously, like an automated data pipeline. SMART Backend Services are also used for user-facing applications where the FHIR authorization service does not need the user's information (e.g., a dashboard application).
@@ -37,11 +42,11 @@ Open-source libraries exist in many programming languages to help developers wor
 >
 > -   [Python](http://docs.smarthealthit.org/client-py/): Server-side Python library with support for SMART App Launch
 >
-> -   [R](https://github.com/FirelyTeam/RonFHIR)
+> -   [R](https://github.com/FirelyTeam/RonFHIR): R on FHIR client by Firely
 >
-> -   [Ruby](https://github.com/fhir-crucible/fhir_client)
+> -   [Ruby](https://github.com/fhir-crucible/fhir_client): Ruby FHIR client
 >
-> -   [Swift (iOS)](https://github.com/smart-on-fhir/Swift-SMART)
+> -   [Swift (iOS)](https://github.com/smart-on-fhir/Swift-SMART): Swift iOS FHIR client
 >
 > -   [Java](https://mvnrepository.com/artifact/org.hspconsortium.client/hspc-java-client)
 >
@@ -243,7 +248,7 @@ Once you are running the server, navigate to [`http://localhost:8000`](http://lo
 
 #### Step 5: Test with launch.smarthealthit.org
 
-Go to <https://launch.smarthealthit.org>, enter `http://localhost:8000/launch.html` for in the "App's Launch URL" field, and click "Launch".
+Go to <https://launch.smarthealthit.org>, enter `http://localhost:8000/launch.html` in the "App's Launch URL" field, and click "Launch".
 
 You should see the following happen:
 
@@ -257,7 +262,7 @@ You should see the following happen:
 
 Here's a visual diagram of the process that occurs when you launch your example application with `launch.smarthealthit.org`:
 
-::: {#mermaidImageOld .mermaid-lightbox data-caption="Diagram showing the workflow for a SMART on FHIR EHR launch"}
+::: {#mermaidImage .mermaid-lightbox data-caption="Diagram showing the workflow for a SMART on FHIR EHR launch"}
 ```{mermaid}
 sequenceDiagram
     accTitle: Diagram showing the workflow for a SMART on FHIR EHR launch

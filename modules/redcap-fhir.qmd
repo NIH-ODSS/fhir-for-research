@@ -14,16 +14,18 @@ learning_objectives2:
   - Understand how REDCap can integrate with FHIR to support research.
   - Learn about the roles and approaches that may lead to successful REDCap on FHIR implementations.
 
+date: 2026-03-10
+
 reading_time: true
 ---
 
-@Cheng_2021 describe the development of "REDCap on FHIR," an approach for integrating REDCap with a FHIR-enabled sever.
+@Cheng_2021 describe the development of "REDCap on FHIR," an approach for integrating REDCap with a FHIR-enabled server.
 
 ::: {.callout-note appearance="minimal" icon="false"}
 If you are not familiar with REDCap and its research use cases, please see the [REDCap Introduction](redcap-intro.qmd) module.
 :::
 
-In their manuscript, @Cheng_2021 describe the development of the Clinical Data Interoperability Services (CDIS), which facilitates the exchange of data between REDCap and any EHR via the FHIR API. As of September 2022, 40 institutions in the US and Canada have integrated REDCap with their Epic or Cerner EHR [@Cheng_Banasiewicz_Johnson_Sulieman_Kennedy_Delacqua_Lewis_Joly_Bistran-Hall_Collins_2023], which represents a small portion of the total number of institutions that have implemented REDCap. However, integrating REDCap with FHIR can provide significant value to researchers by making clinical data more accessible without requiring [manually querying FHIR endpoints](fhir-accessing-data.qmd).
+In their manuscript, @Cheng_2021 describe the development of the Clinical Data Interoperability Services (CDIS), which facilitates the exchange of data between REDCap and any EHR via the FHIR API. As of September 2022, 40 institutions in the US and Canada have integrated REDCap with their Epic or Cerner EHR [@Cheng_Banasiewicz_Johnson_Sulieman_Kennedy_Delacqua_Lewis_Joly_Bistran-Hall_Collins_2023], which represents a small portion of the total number of institutions that have implemented REDCap. However, integrating REDCap with FHIR can provide significant value to researchers by making clinical data more accessible without requiring researchers to [manually query FHIR endpoints](fhir-accessing-data.qmd).
 
 ![The CDIS workflow uses FHIR to simplify the process of creating a registry from EHR data.](images/cheng-fhir-shortcut.png){fig-alt="Data flowing directly from an EHR to a REDCap registry, saving time and effort by bypassing a data warehouse and a flat file."}
 
@@ -32,7 +34,7 @@ REDCap on FHIR/CDIS includes two approaches:
 1.  Clinical Data Pull (CDP), which applies to prospective studies that aggregate data and fill out case report forms (CRFs) for study participants.
 2.  Clinical Data Mart (CDM), which is for studies with a known cohort of patients and requires a bulk data extraction from an EHR.
 
-According to @Cheng_2021, both CDP and CDM can significantly reduce manual data entry into REDCap, and is reusable between projects at Vanderbilt University Medical Center (VUMC) without the need for support from IT staff.
+According to @Cheng_2021, both CDP and CDM can significantly reduce manual data entry into REDCap and are reusable between projects at Vanderbilt University Medical Center (VUMC) without the need for support from IT staff.
 
 ## Implementation approach
 
@@ -49,7 +51,7 @@ Due to the relatively low percentage of institutions that have implemented REDCa
 
 Additionally, for REDCap on FHIR, close collaboration with the EHR implementation team and informaticists who are familiar with your institution's EHR is necessary.
 
-@mare2022 focused on the adoption of REDCap in academic and clinical environments identified similar roles and strategies to facilitate the process. They identified the following methods to support new REDCap users, listed below. Again, these are not specific to REDCap on FHIR but are still applicable.
+@mare2022 focused on the adoption of REDCap in academic and clinical environments and identified similar roles and strategies to facilitate the process. They identified the following methods to support new REDCap users, listed below. Again, these are not specific to REDCap on FHIR but are still applicable.
 
 > -   top-down organizational support;
 > -   secure and reliable application, hosting infrastructure, and systems administration; an enabling and accessible REDCap support team;
@@ -62,6 +64,8 @@ The authors also used two strategies to support adoption of REDCap:
 
 1.  Building trust among researchers in the security and reliability of REDCap through several layers of back-up should any component fail and simulated data loss and retrieval exercises.
 2.  Establishing a REDCap administrator that acted as a dedicated, go-to person that could answer researchers' questions and offer consultations.
+
+Additionally, Cheng _et al._ @redcap_2025 discuss potential implementation barriers and potential solutions to REDCap on FHIR.
 
 ## Conclusion
 

@@ -1,5 +1,6 @@
 ---
 title: Reading FHIR Implementation Guides
+date: 2026-03-21
 
 toc: false
 number-sections: false
@@ -30,24 +31,16 @@ FHIR IGs typically share a common structure and format (especially those publish
 
 ## Evaluating an IG for research
 
-The approach described in the materials FSH Seminar materials linked above can be applied to reviewing an IG for research purposes. Some of the key considerations specifically for research include:
+The approach described in the FSH Seminar materials linked above can be applied to reviewing an IG for research purposes. Some of the key considerations specifically for research include:
 
--   Are all the necessary data elements included in the resources profiled in the IG? Determining
-
+-   Are all the necessary data elements included in the resources profiled in the IG?
 -   Are the constraints defined in the IG appropriate for the relevant research use cases?
-
-    -   Are necessary data elements marked as required or marked as MustSupport? This means that conforming FHIR servers should provide the data elements if they are available.
-
+    -   Are necessary data elements marked as required or as MustSupport? (MustSupport means that conforming FHIR servers *should* provide the data elements if they are available.)
     -   Are there any required data elements that are problematic from a research perspective? (E.g., requiring a patient's name for research on deidentified data.)
-
 -   Are there terminology bindings, and are they sufficiently strong to ensure consistent output?
-
     -   Note that unless a terminology binding is set at the "[required](https://www.hl7.org/fhir/R5/terminologies.html#strength)" level, FHIR servers may still return concepts that are not in the bound ValueSet.
-
     -   This is especially relevant for using FHIR across different systems or institutions, which may use different terminology. It may be necessary to map to a single set of concepts, either as part of the FHIR implementation or during data analysis.
-
 -   Is the IG implemented on the relevant FHIR servers you wish to get data from? If not, how much effort would be required to implement it?[^1]
-
     -   In the US, many IGs are based on US Core. Because many FHIR-enabled systems already support US Core, it may be easier to implement IGs that are based on it compared to IGs that are not.[^2]
 
 [^1]: One approach to assessing this is to access instances of FHIR resources profiled in the IG from the FHIR server, and then compare them to the IG to see how close they are to the desired output.
@@ -55,6 +48,36 @@ The approach described in the materials FSH Seminar materials linked above can b
     Conformance to an IG can be assessed automatically using a tool like [the FHIR validator](https://confluence.hl7.org/display/FHIR/Using+the+FHIR+Validator), or the output of the FHIR server can be manually compared against the profiles in the IG.
 
 [^2]: IGs that are published through HL7 in the [US Realm](https://www.hl7.org/fhir/us/) are typically required to either be based on US Core, or get an explicit exemption (which should be described in the IG).
+
+## Reading Particular IGs
+
+Below are overviews for reading several IGs which serve as examples for the broad range of content in FHIR IGs.
+
+-   [US Core](https://www.hl7.org/fhir/us/core/): Primarily defines profiles for data, and the necessary FHIR REST API interactions for accessing that data. The API interactions in this guide are simple queries in line with the base FHIR API.
+-   [Bulk Data Access](https://hl7.org/fhir/uv/bulkdata/en/index.html): Primarily defines a workflow for accessing data in bulk. The majority of the system interactions are not part of the base FHIR REST API.
+-   [Electronic Case Reporting](https://hl7.org/fhir/us/ecr/) (eCR): Defines profiles for data and several reporting workflows. These workflows can involve interactions beyond the FHIR REST API such as FHIR Messaging and Subscriptions.
+
+Details on these IGs appear below. Readers are encouraged to click through the links to IG pages and explore the contents of these IGs.
+
+### US Core
+
+The main US Core page has a helpful ["How To Read This Guide" section](https://hl7.org/fhir/us/core/STU8.0.1/#how-to-read-this-guide), which describes the different parts of the IG. The ["Conformance"](https://hl7.org/fhir/us/core/STU8.0.1/conformance.html) and ["Guidance"](https://hl7.org/fhir/us/core/STU8.0.1/guidance.html) sections are of particular importance because they contain requirements which cannot be expressed in the FHIR artifacts themselves.
+
+Two parts of the ["FHIR Artifacts" section](https://hl7.org/fhir/us/core/STU8.0.1/artifacts.html) are of particular interest. The ["US Core Server Capability Statement"](https://hl7.org/fhir/us/core/STU8.0.1/CapabilityStatement-us-core-server.html) defines which FHIR interactions servers must support, which will determine how you can use the FHIR API to retrieve data. The ["Profiles and Extensions" section](https://hl7.org/fhir/us/core/STU8.0.1/profiles-and-extensions.html) contains links for all of the profiles and extensions defined in US Core, which will determine what the data looks like. When reading a page for a particular profile or extension, be sure to pay attention to the written narrative in addition to the actual definition, as the narrative may contain additional conformance rules which are not able to be expressed in the profile or extension itself.
+
+### Bulk Data Access
+
+The Bulk Data Access IG is primarily concerned with defining a workflow for accessing large amounts of FHIR data, whatever that data may be. For this reason, the portions of the IG defining this workflow are much more important than the portions which contain actual FHIR artifacts. The ["Export" page](https://hl7.org/fhir/uv/bulkdata/STU3/en/export.html) is the most important part of the guide, as it defines the actors involved as well as the workflows for initiating, cancelling, and checking the status of a bulk export. The ["Authorization" page](https://hl7.org/fhir/uv/bulkdata/STU3/en/authorization.html) is also important, although that page's content has been migrated out of the Bulk Data Access IG and is now part of the [SMART App Launch IG](http://www.hl7.org/fhir/smart-app-launch/backend-services.html). Finally, the ["Groups" page](https://hl7.org/fhir/uv/bulkdata/STU3/en/group.html) describes how to define the Groups which determine which resources are included in bulk data export.
+
+### Electronic Case Reporting (eCR)
+
+The eCR IG defines data and workflows to support data submission for public health surveillance. The ["Design Considerations" page](https://hl7.org/fhir/us/ecr/design_considerations.html) provides a general overview of the IG's goals and workflows, and the ["eICR Data Elements" page](https://hl7.org/fhir/us/ecr/2.1.2/eicr_data_elements.html) provides a list of the data elements used in the electronic initial case reports (eICRs). The workflows defined in the IG, as well as the FHIR profiles used by each workflow, are described on their own pages:
+
+-   [Electronic Initial Case Report (eICR) Transaction and Profiles](https://hl7.org/fhir/us/ecr/2.1.2/electronic_initial_case_report_eicr_transaction_and_profiles.html)
+-   [Reportability Response (RR) Transaction and Profiles](https://hl7.org/fhir/us/ecr/2.1.2/reportability_response_rr_transaction_and_profiles.html)
+-   [Electronic Reporting and Surveillance Distribution (eRSD) Transaction and Profiles](https://hl7.org/fhir/us/ecr/2.1.2/electronic_reporting_and_surveillance_distribution_ersd_transaction_and_profiles.html)
+
+The [Artifacts Summary](https://hl7.org/fhir/us/ecr/artifacts.html) page contains a list of the large number of FHIR artifacts defined by the IG.
 
 ## Next steps
 

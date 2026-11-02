@@ -1,6 +1,7 @@
 ---
 title: "FHIR Versions"
 number-sections: false
+date: 2026-02-18
 
 roles:
   - Research Leader
@@ -10,21 +11,25 @@ roles:
 reading_time: true
 ---
 
-The FHIR specification is under active development. The latest version, R5, was officially published in [March 2023](http://hl7.org/fhir/directory.html). Major updates to the FHIR specification are typically published every few years, and minor updates are published more frequently.
+The FHIR specification is under active development. Major updates to the FHIR specification are typically published every few years, and minor updates are published more frequently. The latest version, R5, was officially published in [March 2023](http://hl7.org/fhir/directory.html), and the next version, R6, is currently under development.[^1]
 
-Major updates to FHIR can have breaking changes, but typically these changes only occur in areas of the specification that are not fully mature. FHIR uses a [maturity model](https://confluence.hl7.org/display/FHIR/FHIR+Maturity+Model) that describes "[the level of stability and implementation readiness associated with different aspects of the specification](https://www.hl7.org/fhir/R5/versions.html#std-process)."
+[^1]: To see the current status of R6, you can look at "R6 Sequence" section on the [FHIR Specification's Publication History page](https://hl7.org/fhir/directory.html). There is also a [release plan for R6](https://confluence.hl7.org/spaces/FMG/pages/256509111/Release+Plan+for+R6).
 
-For example, the [Patient resource](https://www.hl7.org/fhir/R4/patient.html) was assigned a "normative" maturity level in the R4 release of FHIR. This means that starting in the R4 release, the content of the Patient resource
+The [US Core Implementation Guide](https://hl7.org/fhir/us/core/), which forms the basis of many US-based implementation guides and regulations, is currently based on R4. The US Realm Steering Committee (USRSC) has decided that [the next version of FHIR which US Core will support is R6](http://hl7.org/fhir/us/core/STU8.0.1/us-core-roadmap.html#fhir-version-support). Because US Core is skipping directly from R4 to R6, FHIR R5 is unlikely to be widely adopted in the U.S. Additionally, [US Core will not support R6 until v11 (to be published in 2028) at the earliest](https://confluence.hl7.org/spaces/USR/pages/413249499/2026+US+Core+Version+Support). It would then take additional time for regulations and systems to be updated to use R6, so R4 is likely to remain the primary version of FHIR used in the US through 2030.
 
->  is considered to be stable and has been 'locked', subjecting it to FHIR [Inter-version Compatibility Rules](https://www.hl7.org/fhir/versions.html#change). While changes are possible, they are expected to be infrequent and are tightly constrained.
+One of the major focuses in R6 is specification maturity. Major updates to FHIR can have breaking changes, but typically these changes only occur in areas of the specification that are not fully mature. FHIR uses a [maturity model](https://confluence.hl7.org/display/FHIR/FHIR+Maturity+Model) that describes "[the level of stability and implementation readiness associated with different aspects of the specification](https://www.hl7.org/fhir/R5/versions.html#std-process)." More areas of the FHIR specification will be considered mature (or "normative" in FHIR parlance) after the R6 release. ([More information on the FHIR maturity model is available in the FHIR Resources in Depth module](fhir-resources-in-depth.qmd#maturity).)
+
+Key portions of FHIR are already normative. For example, the [Patient resource](https://www.hl7.org/fhir/R4/patient.html) was assigned a normative maturity level in the R4 release of FHIR. This means that starting in the R4 release, the content of the Patient resource
+
+> is considered to be stable and has been 'locked', subjecting it to FHIR [Inter-version Compatibility Rules](https://www.hl7.org/fhir/versions.html#change). While changes are possible, they are expected to be infrequent and are tightly constrained.
 
 The above description for normative as well as the other standards maturity levels can be found in the documentation on the [standards development process](https://www.hl7.org/fhir/R5/versions.html#std-process).
 
-Other resources, like [NutritionProduct](https://www.hl7.org/fhir/R5/nutritionproduct.html) have a much lower maturity level even in the R5 release than the normative Patient resource. These resources are likely to experience more significant changes -- including breaking changes -- in subsequent releases of FHIR.
+Other resources, like [NutritionProduct](https://www.hl7.org/fhir/R5/nutritionproduct.html), have lower maturity levels in the R4 and R5 releases. These resources are likely to experience more significant changes -- including breaking changes -- in R6 or subsequent releases of FHIR.
 
 ## Implications for this website
 
-References to resources and examples on this website typically use the [Patient](https://www.hl7.org/fhir/patient.html) or [Observation](https://www.hl7.org/fhir/observation.html). Like Patient, Observation was "normative" as of FHIR R4, so the release of FHIR R5 and future versions is unlikely to affect these examples.
+References to resources and examples on this website typically use the [Patient](https://www.hl7.org/fhir/patient.html) or [Observation](https://www.hl7.org/fhir/observation.html) resource. Like Patient, Observation was normative as of FHIR R4, so the release of FHIR R5 and future versions is unlikely to affect these examples.
 
 To ensure consistency between content in this website and links to the FHIR specification (or FHIR Implementation Guides), we link to version-specific pages whenever quoting from a specification or referencing material that might change in a future version. For example, we would link to the version-independent URL when generally referencing the Patient resource (<https://www.hl7.org/fhir/patient.html>), but would link to the R4 URL when stating that Patient achieved "normative" maturity in R4 (<https://www.hl7.org/fhir/R4/patient.html>). More details are in the [Style Guide](/style-guide.qmd#referencing-fhir-artifacts).
 

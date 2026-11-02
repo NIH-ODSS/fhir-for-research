@@ -8,16 +8,21 @@ roles:
   - Clinician Scientist/Trainee
 
 reading_time: true
+
+aliases:
+  - new-cds-hooks-types.html
+
+date: 2026-05-26
 ---
 
-Understanding the different types of CDS Hooks is essential because it allows developers to deliver timely, context-specific decision support that seamlessly integrates into clinicians' workflows, enhancing user experience, reducing alert fatigue, and improving patient outcomes. By choosing the right hook for each scenario, developers can create targeted, efficient applications that provide critical information precisely when it's needed, leading to better clinical decisions and more effective EHR integration. This knowledge also enables scalable, adaptable solutions that can evolve with the complexity of healthcare needs.
+Understanding the different types of CDS Hooks is essential because it allows developers to deliver timely, context-specific decision support that seamlessly integrates into clinicians' workflows, enhancing user experience, reducing alert fatigue, and supporting improved patient outcomes. By choosing the right hook for each scenario, developers can create targeted, efficient applications that provide critical information precisely when it's needed, leading to better clinical decisions and more effective EHR integration. This knowledge also enables scalable, adaptable solutions that can evolve with the complexity of healthcare needs.
 
 CDS Hooks can be broadly categorized based on when and how they are triggered within the EHR workflow. Below are some common types of CDS Hooks and examples of how they might be used. More detailed information on the varied types of CDS Hooks can be found on the [CDS Hooks community site](https://cds-hooks.org/).
 
 ## `patient-view` Hook
 
--   **Description:** The `patient-view` hook is triggered when a clinician opens a patient’s record or chart within the EHR. It provides an opportunity to display patient-specific information or suggest actions based on the patient’s health data.
--   **Use Case Example:** Imagine a SMART on FHIR application that monitors a patient’s chronic conditions. When a clinician opens the patient’s chart, the `patient-view` hook could trigger an application that provides a summary of the patient’s recent lab results, medication adherence, and potential drug interactions.
+-   **Description:** The `patient-view` hook is triggered when a user (e.g., a clinician) opens a patient’s record or chart within the EHR. It provides an opportunity to display patient-specific information or suggest actions based on the patient’s health data.
+-   **Use Case Example:** Imagine a SMART on FHIR application that monitors a patient’s chronic conditions. When a clinician opens the patient’s chart, the `patient-view` hook could trigger launching an application that provides a summary of the patient’s recent lab results, medication adherence, and potential drug interactions.
 -   **When to Use:** This hook is ideal for applications that need to provide a comprehensive overview or specific recommendations whenever a patient’s chart is accessed.
 
 ## `order-select` Hook

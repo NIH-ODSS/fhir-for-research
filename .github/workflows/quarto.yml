@@ -3,17 +3,20 @@ name: Quarto Publish GitHub Pages
 on:
   workflow_dispatch:
   push:
-    branches: '*'
+    branches: "*"
 
 env:
-  RENV_CONFIG_REPOS_OVERRIDE: "http://cran.r-project.org"
-  RENV_PATHS_CACHE: "$GITHUB_ACTION_PATH/cache"
-  RENV_PATHS_LIBRARY: "$GITHUB_ACTION_PATH/renv/library"
+  RENV_CONFIG_REPOS_OVERRIDE: "https://packagemanager.posit.co/cran/__linux__/noble/latest"
+  RENV_CONFIG_INSTALL_JOBS: 4
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   PLANTUML_BIN: "$GITHUB_ACTION_PATH/plantuml.jar"
   FHIR_SERVER: "http://localhost:8080/fhir"
-  CI_DEBUG_SERVICES: "false"  # This helps with FHIR service debugging
+  CI_DEBUG_SERVICES: "false" # This helps with FHIR service debugging
   ENVIRONMENT_NAME: "production"
+  DEPLOY_TARGET: github
+  DEPLOY_REPOSITORY: ${{ github.repository }}
+  DEPLOY_BRANCH: ${{ github.ref_name }}
+  DEPLOY_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
   PACKAGES: |
     libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libfontconfig1-dev
 
@@ -40,7 +43,7 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         with:
-          version: 1.6.40
+          version: 1.10.18
 
       - name: Write APT package dependencies to a file
         run: echo "$PACKAGES" > github-ci-apt-packages.txt
@@ -61,6 +64,8 @@ jobs:
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2.11.3
+        with:
+          r-version: renv
 
       - name: Install R libraries
         uses: r-lib/actions/setup-renv@v2.11.3
@@ -95,8 +100,22 @@ jobs:
           uv run ./script/load_data.py
           echo "Data uploaded"
 
+      - name: Set deployment location
+        run: |
+          DEPLOY_PREFIX=""
+          if [ "$DEPLOY_BRANCH" != "$DEPLOY_DEFAULT_BRANCH" ]; then
+            DEPLOY_PREFIX="branches/${GITHUB_REF_NAME##*/}"
+          fi
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          DEPLOY_URL="https://${GITHUB_REPOSITORY_OWNER}.github.io/${REPO_NAME}"
+          if [ -n "$DEPLOY_PREFIX" ]; then
+            DEPLOY_URL="${DEPLOY_URL}/${DEPLOY_PREFIX}"
+          fi
+          echo "DEPLOY_PREFIX=$DEPLOY_PREFIX" >> "$GITHUB_ENV"
+          echo "DEPLOY_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
+
       - name: Render Quarto
-        run: uv run quarto render
+        run: uv run quarto render --site-url "$DEPLOY_URL"
 
       - name: Remove .html extensions and /index from links
         run: |
@@ -128,7 +147,7 @@ jobs:
 
       # Deploy the output for main branch
       - name: Push build to gh-pages (default branch)
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
         run: |
           # Deploy
           git config --global user.email "noreply@mitre.org"
@@ -153,7 +172,7 @@ jobs:
 
       # Deploy branches to *.github.io/[REPOSITORY]/branches/[BRANCH NAME]
       - name: Push build to gh-pages (non-default branches)
-        if: ${{ github.ref != 'refs/heads/main' }}
+        if: github.ref != format('refs/heads/{0}', github.event.repository.default_branch)
         run: |
           # Deploy
           git config --global user.email "noreply@mitre.org"
@@ -166,13 +185,12 @@ jobs:
           git fetch origin
           git reset --hard origin/gh-pages
 
-          mkdir -p branches/${GITHUB_REF_NAME##*/}
-          rm -rf branches/${GITHUB_REF_NAME##*/}/*
-          cp -r $GITHUB_WORKSPACE/public/* branches/${GITHUB_REF_NAME##*/}/
+          mkdir -p "$DEPLOY_PREFIX"
+          rm -rf "$DEPLOY_PREFIX"/*
+          cp -r "$GITHUB_WORKSPACE"/public/* "$DEPLOY_PREFIX"/
           rm -rf .github/workflows
           git add -A
           git commit --amend -m "Update site"
           GIT_SSH_COMMAND='ssh -i ' git push -u --force origin gh-pages
 
-          REPO_NAME=$(basename "${{ github.repository }}")
-          echo "Preview URL: https://$GITHUB_ACTOR.github.io/$REPO_NAME/branches/$GITHUB_REF_NAME"
+          echo "Preview URL: $DEPLOY_URL"

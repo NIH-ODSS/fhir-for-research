@@ -1,0 +1,10 @@
+- name: Investigator
+  value: investigator
+- name: Research Leader
+  value: research-leader
+- name: Informaticist
+  value: informaticist
+- name: Software Engineer
+  value: software-engineer
+- name: Clinician Scientist/Trainee
+  value: clinician-scientist

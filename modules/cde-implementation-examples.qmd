@@ -1,0 +1,158 @@
+---
+title: "CDE and Interoperability Implementation Examples"
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Describe how NIH and its partners have implemented CDEs and related standards in different initiatives across research domains.
+  - Distinguish CDE programs from initiatives that provide standardized measures, technical infrastructure, or interoperability models.
+  - Identify how governance, policy, standardized measures, semantic harmonization, and interoperability technologies support data reuse, and describe limitations that remain.
+
+reading_time: true
+
+date: 2026-10-26
+---
+
+## Introduction
+
+Common data element (CDE) implementation initiatives across the National Institutes of Health (NIH), partner organizations, and the broader research community have advanced the standardization, harmonization, and reuse of biomedical research data.
+
+This learning module features some of these efforts and their progress, including:
+
+- Foundational programs that demonstrate the importance of standardized measures, domain-specific governance, and consistent adoption.
+- Initiatives that extend these approaches into coordinated research programs and disease-focused data ecosystems.
+- More technically oriented efforts that demonstrate how semantic standards can be integrated with interoperable technologies and reusable infrastructure.
+
+Together, these examples illustrate a progression from CDE development and standardized measurement to policy-driven adoption, computable implementation, and interoperability.
+
+The examples are not all CDE programs. Some provide standardized measures, technical infrastructure, or interoperability models that demonstrate how CDEs can operate within a broader research ecosystem.
+
+CDE adoption depends on standardized definitions, domain governance, implementation resources (such as contextual metadata and implementation guidance), and community participation. Standardized measures and machine-readable data alone do not ensure that systems interpret data consistently; see the [CDEs & FHIR module](cde-fhir.qmd) for the complementary semantic and technical requirements.
+
+## Foundational program examples
+
+### [National Institute of Neurological Disorders and Stroke (NINDS) Common Data Elements Program](https://www.commondataelements.ninds.nih.gov/)
+
+The NINDS CDE Program develops standardized data elements and data-collection instruments for neuroscience research through [disease-specific expert working groups](https://commondataelements.ninds.nih.gov/CDEStandard). Its content standards help investigators collect, analyze, and share data consistently. Recommended instruments and template case report forms (CRFs) help researchers put those standards into practice.
+
+**What it demonstrates:**
+
+- Domain-based CDE development and governance
+- Reusable CDEs organized for specific research contexts
+- Integration of CDEs into case report forms (CRFs)
+- Sustained engagement of research communities in standards development and maintenance
+
+### [Helping to End Addiction Long-term® (HEAL) Initiative](https://heal.nih.gov/)
+
+The **HEAL Initiative** is an NIH-wide effort to improve prevention and treatment strategies for opioid misuse and addiction and to enhance pain management. It demonstrates how governance, policy, and funding requirements can promote adoption of standardized measures across a large research portfolio.
+
+Under [HEAL's data-sharing requirements](https://beta.nih.gov/heal/requirements/public-access-data-sharing/complying-heal-public-access-data-sharing-policy), HEAL clinical pain studies involving human participants must use core CDEs; other HEAL studies involving human participants are strongly encouraged to select and use applicable CDEs. These measures support cross-study comparisons and secondary reuse, but their interpretation still depends on the study context.
+
+**What it demonstrates:**
+
+- Policy-linked CDE adoption
+- Harmonization across independently funded studies
+- Portfolio-level governance
+- Integration of standardized data with a broader data-sharing ecosystem
+
+For more information about how HEAL CDEs are used by researchers, see Adams et al. (2025) [@Adams_2025_HEAL].
+
+### [PhenX Toolkit](https://www.phenxtoolkit.org/)
+
+The **PhenX Toolkit** provides standardized, consensus-based measurement protocols for phenotypes and exposures that researchers can incorporate into studies across multiple domains. Its web-based catalog supports genomic, clinical, and translational research with human participants.
+
+PhenX complements CDE programs by promoting reuse of established measures rather than requiring each study to develop its own instruments. This supports harmonization beginning at study design and reduces the need to reconcile incompatible variables after data collection.
+
+**What it demonstrates:**
+
+- Consensus-based standardized measures
+- Reuse of common measurement protocols
+- Improved cross-study comparability
+- Support for data harmonization and reuse
+
+PhenX's [protocol-selection criteria](https://www.phenxtoolkit.org/about/criteria) emphasize established, validated measures and practical implementation. Researchers still need to assess whether a protocol fits their study population and purpose.
+
+The [PhenX Toolkit use statistics](https://www.phenxtoolkit.org/news/statistics) report the following cumulative figures through September 2026:
+
+| Metric | Count |
+|--------|------:|
+| Registered users | 6,222 |
+| Visits | 2,536,628 |
+| Protocols | 1,009 |
+| Domains | 30 |
+| Report downloads | 11,405 |
+| Protocols imported to REDCap | 573 |
+
+Collections include [COVID-19 Research](https://www.phenxtoolkit.org/collections/view/8), [Sickle Cell Disease](https://www.phenxtoolkit.org/collections/view/4), [Substance Use, Use Disorders, and Recovery](https://www.phenxtoolkit.org/collections/view/2), [Mental Health Research](https://www.phenxtoolkit.org/collections/view/1), [Tobacco Regulatory Research](https://www.phenxtoolkit.org/collections/view/3), and [Social Determinants of Health](https://www.phenxtoolkit.org/collections/view/6).
+
+Domains include [Psychiatric](https://www.phenxtoolkit.org/domains/view/120000), [Anthropometrics](https://www.phenxtoolkit.org/domains/view/20000), and [Alcohol, Tobacco and Other Substances](https://www.phenxtoolkit.org/domains/view/30000).
+
+### [HealthMeasures](https://www.healthmeasures.net/): PROMIS, Neuro-QoL, and NIH Toolbox
+
+[HealthMeasures](https://www.healthmeasures.net/) provides access to several measurement systems. Its September 2026 overviews describe the following:
+
+- **[Patient-Reported Outcomes Measurement Information System® (PROMIS®)](https://healthmeasures.net/promis-basics/)** includes more than 300 measures of physical, mental, and social health. It offers adult measures, pediatric self-report measures for ages 8–17, and parent-report measures for children ages 1–17. These can be used in the general population and among people with chronic conditions.
+
+- **[Quality of Life in Neurological Disorders (Neuro-QoL™)](https://healthmeasures.net/neuro-qol/)** offers about 65 patient-reported measures for adults and children ages 8–17. Developed for people with neurological conditions, these measures assess physical, mental, and social health and can also be used in other populations.
+
+- **[NIH Toolbox® for Assessment of Neurological and Behavioral Function](https://healthmeasures.net/nih-toolbox/)** includes more than 80 measures spanning ages 3 to 85+. It combines self- and proxy-report emotion measures with performance-based tests of cognitive, sensory, and motor function. HealthMeasures provides access to the emotion measures and directs users to the [NIH Toolbox site](https://nihtoolbox.org/) for performance tests.
+
+**What it demonstrates:**
+
+- Standardized assessments with defined administration and scoring approaches
+- Consistent measurement of patient-reported health, neurological quality of life, and functional performance
+- Reusable instruments whose questions, response options, and scoring rules must be preserved when implemented in electronic systems
+
+## Coordinated research programs and disease-focused examples
+
+### [IBD Plexus](https://www.crohnscolitisfoundation.org/research/plexus)
+
+**IBD Plexus**, led by the Crohn's & Colitis Foundation, integrates data and biosamples for inflammatory bowel disease (IBD) research. The [Foundation's overview](https://www.crohnscolitisfoundation.org/research/plexus), as of October 2026, reports more than 30,000 patients across studies, over 80,000 biosamples from more than 9,000 patients, more than 100 participating research sites, and more than 50 pharmaceutical and biotechnology companies.
+
+IBD Plexus is an example of a disease-focused research ecosystem designed to support standardized, reusable data across inflammatory bowel disease research. Unlike a CDE repository alone, a data ecosystem connects standardized data definitions with data collection, integration, governance, and reuse. CDEs create greater value when they are embedded within operational data ecosystems that support longitudinal reuse and analysis.
+
+**What it demonstrates:**
+
+- Integration of standardized data with governance and reuse capabilities
+- Support for longitudinal analysis across inflammatory bowel disease studies
+- Connections between data collection, biosamples, and secondary research
+
+## Semantic standards and interoperable technology examples
+
+### [Multi-State EHR-Based Network for Disease Surveillance (MENDS)](https://chronicdisease.org/cphl/technical-assistance-hub/data-modernization/mends/)
+
+The **Multi-State EHR-Based Network for Disease Surveillance (MENDS)** uses electronic health record (EHR) data for chronic disease surveillance. It is supported by the Centers for Disease Control and Prevention (CDC) through its Division for Heart Disease and Stroke Prevention [@Essaid_2024_MENDS].
+
+[MENDS-on-FHIR](https://github.com/CU-DBMI/mends-on-fhir) is a standards-based data pipeline that transforms clinical data from the Observational Medical Outcomes Partnership (OMOP) Common Data Model into HL7 FHIR and US Core resources. The project leveraged the US Core FHIR standard and Bulk FHIR to exchange data stored in the Observational Medical Outcomes Partnership (OMOP) Common Data Model (CDM) format, establishing a standards-based ETL pipeline and significantly reducing site-specific implementation burden. Essaid et al. [@Essaid_2024_MENDS] discuss piloting a standards-based approach to replace a custom CSV import process.
+
+These efforts illustrate how standardized clinical data can support reuse beyond the originating EHR environment, leveraging standards-based interoperability resources (including [Bulk FHIR](bulk-fhir-intro.qmd)) to provide an alternative mechanism for sharing large amounts of research data.
+
+**What it demonstrates:**
+
+- A standards-based alternative to an institution-specific data import
+- Reuse of clinical data through a common data model, FHIR profiles, and Bulk Data export
+- Reduction of site-specific implementation burden and improvements in interoperability and reuse of clinical data
+
+### mCODE and CodeX
+
+The **[minimal Common Oncology Data Elements (mCODE) implementation guide](https://hl7.org/fhir/us/mcode/STU4/index.html)** defines FHIR profiles and terminology bindings for representing oncology data. It specifies how to represent concepts when shared, rather than requiring every data element to be collected for every patient. This connects domain-specific definitions to specifications that software can implement and validate.
+
+**[CodeX](https://codex.hl7.org/)** is a member-driven HL7 FHIR Accelerator that develops and pilots FHIR-based workflows in oncology, cardiovascular health, and genomics. Its [oncology use cases](https://codex.hl7.org/uses/) include cancer clinical trial matching, registry reporting, and clinical trial data collection. These efforts demonstrate how mCODE and related standards can support care and research workflows.
+
+**What it demonstrates:**
+
+- Domain-specific semantic standardization
+- FHIR profiles and terminology bindings that make shared definitions implementable
+- Implementation guidance and pilots that test clinical and research workflows
+- Reuse of standardized data across clinical and research workflows
+- The distinction between standardized data representations and a complete exchange implementation
+
+## References {.unnumbered}
+
+::: {#refs}
+:::

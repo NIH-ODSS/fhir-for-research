@@ -100,7 +100,7 @@ July 2023 <br><br><br>
         1.  Tabular Analysis
         2.  REDCap
         3.  FHIR Bulk Data
-    3.  Advanced Topics
+    3.  Technologies
         1.  Synthetic Data & FHIR Testing Servers
         2.  Other Topics
 :::
@@ -138,7 +138,7 @@ Detailed setup instructions are found at <https://purl.org/fhir-for-research/web
 
     -   Submit a pull request: <https://docs.github.com/articles/using-pull-requests>
 
-    -   NIH/ODSS will review to intergrate into the main repository
+    -   NIH/ODSS will review to integrate into the main repository
 :::
 
 # Workshop Best Practices
@@ -185,7 +185,7 @@ Detailed setup instructions are found at <https://purl.org/fhir-for-research/web
 -   Keep the total length under 3 hours
 
     -   Consider 1-2 hours of content, and an optional "lab" hour if there is substantial hands-on content to allow participants to work independently and ask questions
-    -   Include 5 minute breaks every hour
+    -   Include 5-minute breaks every hour
 :::
 
 ## [Workshop Best Practices /]{style="font-weight: normal; font-size: 50%;"}<br>Running a Workshop
@@ -193,7 +193,7 @@ Detailed setup instructions are found at <https://purl.org/fhir-for-research/web
 ::: r-fit-text
 -   Plan for "preflight" if technical setup is necessary
 
-    -   Strategize to reduce setup as much as possible (e.g., use cloud Jupyter environment rather than requiring participants to run it locally -- more on this below)
+    -   Strategize to reduce setup as much as possible (e.g., use a cloud Jupyter environment rather than requiring participants to run it locally -- more on this below)
 
 -   Include at least one TA to help with technical issues and questions during the workshop
 
@@ -205,15 +205,15 @@ Detailed setup instructions are found at <https://purl.org/fhir-for-research/web
 ::: r-fit-text
 -   Require registration to attend
 
-    -   Allows for monitoring and adjustment of outreach strategy if the desired mix of people don't initially sign up
+    -   Allows for monitoring and adjustment of outreach strategy if the desired mix of people doesn't initially sign up
 
 -   Start registration at least 2 weeks ahead of the event
 
 -   Include learning objectives and prerequisites in registration promotional materials
 
-    -   Consider the Introduction to FHIR for Reserach webinar as a prerequisite if your potential audience doesn't have prior FHIR experience (<https://purl.org/fhir-for-research/webinars/intro>)
+    -   Consider the Introduction to FHIR for Research webinar as a prerequisite if your potential audience doesn't have prior FHIR experience (<https://purl.org/fhir-for-research/webinars/intro>)
 
-    -   Identify any technical skills are required for some/all of the workshop
+    -   Identify any technical skills that are required for some/all of the workshop
 :::
 
 ## [Workshop Best Practices /]{style="font-weight: normal; font-size: 50%;"}<br>Recording & Accessibility

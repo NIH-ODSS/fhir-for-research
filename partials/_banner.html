@@ -1,0 +1,9 @@
+<div id="env-banner">
+$if(local)$
+🏠 Local Development
+$elseif(github)$
+ℹ️ You are viewing a <b>preview</b> build$if(branch)$ of the <code>$branch$</code> branch$endif$ of this website, which may differ from the <a href="https://nih-odss.github.io/fhir-for-research/">published version</a>. You can <a href="$published-page$">directly view this page on the published website</a>$if(compare-url)$, or <a href="$compare-url$">compare this branch with the published version</a>$endif$.
+$else$
+ℹ️ You are viewing a non-canonical build$if(branch)$ of the <code>$branch$</code> branch$endif$ of this website, which may differ from the <a href="https://nih-odss.github.io/fhir-for-research/">published version</a>. You can <a href="$published-page$">directly view this page on the published website</a>.
+$endif$
+</div>

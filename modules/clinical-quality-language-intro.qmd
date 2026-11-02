@@ -1,0 +1,200 @@
+---
+title: Clinical Quality Language (CQL)
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives:
+  - question: What is Clinical Quality Language (CQL) and how does it relate to FHIR?
+    answer: CQL is a domain-specific language for representing computable clinical logic, such as cohort criteria, algorithms, and clinical rules. CQL is data-model agnostic, but it is commonly used with FHIR so that logic can reference standardized clinical data in a format supported by many vendors.
+  - question: How can CQL be used to represent clinical and research logic?
+    answer: CQL can express precise, human-readable, machine-computable criteria for use cases such as electronic clinical quality measures, clinical decision support, cohort definitions, phenotype definitions, and computable protocols. For example, CQL can define whether a patient is an adult, had an outpatient encounter during a study period, and has an elevated HbA1c result.
+  - question: Why is CQL relevant to clinical researchers using FHIR data?
+    answer: CQL can help researchers define and share standardized logic across FHIR-enabled sites, reducing ambiguity in cohort selection, eligibility criteria, quality measurement, guideline adherence studies, and point-of-care research interventions. It can also help connect research workflows with existing quality measurement and decision support infrastructure.
+  - question: What should researchers consider before using CQL in a project?
+    answer: Researchers should assess whether the required FHIR data are available, complete, consistently coded, and suitable for the intended logic. They should also account for terminology requirements, clinical validation, site-to-site implementation differences, and the need for specialized tooling to author and execute CQL.
+
+reading_time: true
+
+date: 2026-05-18
+---
+
+## Overview
+
+[HL7 Clinical Quality Language](https://cql.hl7.org/) (CQL) is a domain-specific language for specifying clinical logic such as algorithms, rules, and complex criteria. It is most often used for defining electronic clinical quality measures (eCQMs) and clinical decision support (CDS) logic, but it can also be used for cohort selection, prior authorization logic, questionnaire population, and other use cases that need to extract, reason over, and/or manipulate health data in a standardized way. CQL is sometimes referred to as a way of representing clinical knowledge because it can be used to encode clinical guidelines, calculators, and measures.
+
+CQL is intended to be both human-friendly _and_ machine-computable. Simple expressions can often be understood by people who are not familiar with CQL. For example:
+
+<ul>
+<li><pre class="cql-code-inline"><code>AgeInYears() <span class="cql-operator">&gt;=</span> <span class="cql-number">18</span></code></pre></li>
+<li><pre class="cql-code-inline"><code><span class="cql-keyword">exists</span> [Condition: <span class="cql-identifier">"Diabetes"</span>]</code></pre></li>
+<li><pre class="cql-code-inline"><code>[Encounter: <span class="cql-identifier">"Inpatient"</span>] E where</span> E.period <span class="cql-keyword">starts</span> <span class="cql-number">1</span> <span class="cql-keyword">year or less before</span> Today()</code></pre></li>
+</ul>
+
+Human-readable CQL expressions are usually bundled together in a single file called a CQL _library_. CQL libraries can be translated automatically into a special format that is optimized for machine processing, called the Expression Logical Model (ELM). In this way, CQL can be used to turn clinical intent, such as "adult patients with elevated A1C," into precise logic that software systems can evaluate against structured health data.
+
+For a comprehensive overview of CQL, watch the [Clinical Quality Language Deep Dive](https://youtu.be/vR5phubnGa8) video from the FHIR DevDays 2023 conference.
+
+{{< video https://www.youtube.com/embed/vR5phubnGa8 >}}
+
+## Relationship to FHIR Standards
+
+### FHIR
+
+The CQL specification is primarily concerned with defining a standard way to express logic over clinical data. As such, it is _data-model agnostic_, meaning that it does not make any assumptions about how data is represented or exchanged. In theory, CQL can be used with any data specification or format, but when authors write CQL logic they must declare which data model(s) the logic is intended for. Similarly, CQL tools must declare which data model(s) they support.
+
+When CQL was first introduced, most CQL libraries used the [Quality Data Model](https://ecqi.healthit.gov/qdm/about) (QDM) for representing clinical data. Today, CQL authors and implementers usually prefer using [HL7 FHIR](https://hl7.org/fhir/) (or FHIR implementation guides like [QI Core](https://hl7.org/fhir/us/qicore/)) as the underlying data model. In these cases, CQL libraries reference [FHIR resources](https://hl7.org/fhir/resourcelist.html) (e.g., `Patient`, `Encounter`, `Condition`) and their corresponding elements (e.g., `Patient.gender`, `Encounter.period`, `Condition.clinicalStatus`). FHIR-based CQL implementations must be capable of retrieving the FHIR resources that CQL libraries request.
+
+### FHIR Clinical Reasoning and Questionnaires
+
+FHIR also defines several resources in the Clinical Reasoning module that can be used to exchange CQL and CQL-enabled workflows as FHIR resources:
+
+* [Library](https://hl7.org/fhir/library.html) packages a CQL library (and optionally its translated ELM) along with related metadata about the CQL library.
+* [Measure](https://hl7.org/fhir/measure.html) represents an electronic quality measure or population-based calculation.
+* [MeasureReport](https://hl7.org/fhir/measurereport.html) represents the results of evaluating an electronic clinical quality measure.
+* [PlanDefinition](https://hl7.org/fhir/plandefinition.html) represents a computable clinical guideline, protocol, or other decision support artifact.
+* [ActivityDefinition](https://hl7.org/fhir/activitydefinition.html) represents actions that may be recommended by decision support logic within a plan definition.
+
+In addition, the [Questionnaire](https://hl7.org/fhir/questionnaire.html) resource and related extensions allow CQL as an expression language for populating the initial values in Questionnaire responses. See [Structured Data Capture: Using Expressions](https://hl7.org/fhir/uv/sdc/STU4/en/expressions.html) for additional guidance.
+
+### SMART on FHIR and CDS Hooks
+
+While the CQL specification defines a standard representation for clinical logic, it does not define how the results of that logic should be presented to users or delivered to systems. Instead, standards such as [SMART on FHIR](smart-on-fhir-intro.qmd) and [CDS Hooks](cds-hooks-intro.qmd) are used to present and exchange clinical logic results and CDS suggestions. SMART on FHIR and CDS Hooks implementations often _do_ perform logical operations on clinical data, but they operate as _black boxes_; these standards define how data goes in and out of the systems, but they do not define how the input data is used to derive the output results. As such, CQL can provide a standards-based mechanism for representing the clinical reasoning that happens "inside the box" for SMART on FHIR and CDS Hooks systems.
+
+## Common CQL Use Cases
+
+### Electronic Clinical Quality Measures
+
+> Electronic clinical quality measures (eCQMs) are measures specified in a standard electronic format that use data electronically extracted from electronic health records (EHRs) and/or health information technology (IT) systems to assess the quality of health care provided [@ecqm_basics].
+
+For example, [CMS125: Breast Cancer Screening](https://ecqi.healthit.gov/ecqm/ec/2025/cms0125v13) measures the percentage of women aged 50 to 74 who received a mammogram within a certain period of time.
+
+Many eCQMs follow a population-based paradigm, defining criteria that evaluate each patient for membership in the following populations:
+
+* **Initial Population**: the initial cohort from which the denominator will be selected; often designated by broad criteria like age and gender.
+* **Denominator**: the population to which the measure applies; often providing more specific criteria such as diagnoses, procedures, lab results, or visits.
+* **Denominator Exclusions**: criteria used to remove patients from the denominator when the numerator is not applicable to the patient (e.g., a patient with a bilateral mastectomy should not be evaluated for a mammography measure)
+* **Denominator Exceptions**: criteria used to remove patients from the denominator for medical reasons (e.g., pregnancy), patient reasons (e.g., religious objection), or system reasons (e.g., a vaccine shortage). In this case, patients are only removed from the denominator if they do not meet the numerator criteria.
+* **Numerator**: the population that satisfies the intent of the measure; often used to determine if the required standard of care was applied or the desired outcome was achieved. In some measures the numerator may represent undesired outcomes, in which case lower scores are better.
+* **Numerator Exclusions**: criteria used to remove patients from the numerator when they should not be counted for some other reason.
+
+As the population names suggest, these measures are typically scored by dividing the numerator by the denominator, taking into account relevant exclusions and exceptions. The above descriptions focus on patient-based populations, but some measures may count encounters, episodes, or other items instead. The CMS documentation for [specifications by measure category](https://mmshub.cms.gov/measure-lifecycle/measure-specification/specifications-measure-category) describes the different types of measures, and the documentation for [developing specifications](https://mmshub.cms.gov/measure-lifecycle/measure-specification/develop-specification/overview) provides additional details about the different measure populations.
+
+CQL-based measures use CQL logic to define the population criteria for each of the populations above. The Centers for Medicare and Medicaid Services (CMS) began publishing eCQMs in the CQL format in 2019 [@ecqm_cql_start] and has published updates every year since then. Current measures (as of 2026) use CQL with the [QDM](https://ecqi.healthit.gov/qdm/about), [HQMF](https://ecqi.healthit.gov/hqmf/about), and [QRDA](https://ecqi.healthit.gov/qrda/about). CMS is in the process of transitioning to FHIR for measure data and reporting, at which point these measures will be called digital quality measures (dQMs) [@cms_fhir_dqm]. Visit the [eCQI Resource Center](https://ecqi.healthit.gov/) to download CMS eCQMs and access robust documentation about developing and using CQL-based eCQMs.
+
+### Clinical Decision Support
+
+> Clinical decision support (CDS) is a digital tool that provides timely and person-specific information, intelligently filtered or presented at appropriate times, to enhance patient outcomes and quality of care [@onc_cds].
+
+CDS may be presented as clinician- or patient-facing dashboards, clinical recommendations based on guidelines, risk calculators, patient-safety alerts, relevant links to documentation, order sets, and more. The _CDS Five Rights Framework_ [@osheroff2012improving] indicates that successful CDS tools should deliver
+
+* the right information
+* to the right people
+* in the right format
+* through the right channels
+* at the right time.
+
+CQL logic can be used in CDS implementations for tasks such as determining if a patient should receive a particular treatment, calculating risk, suggesting screenings or labs, calculating dosage information, and processing patient data to surface clinical insights such as trends and summaries. To provide a complete solution, CQL is often used in conjunction with other standards and technologies, including:
+
+* SMART on FHIR
+* CDS Hooks
+* FHIR Clinical Reasoning
+* FHIR Structured Data Capture
+
+The [FHIR Clinical Guidelines implementation guide](https://hl7.org/fhir/uv/cpg/) provides additional guidance and specification regarding how to use CQL with FHIR to implement clinical guidelines as standards-based clinical decision support tools. See its [examples](https://hl7.org/fhir/uv/cpg/examples.html) page for a list of guidelines that have been converted to CQL-based CDS. From 2016 to 2024, the [AHRQ CDS Connect](https://digital.ahrq.gov/ahrq-funded-projects/patient-centered-outcomes-research-clinical-decision-support-cds-connect) project implemented and piloted a number of CQL-based CDS artifacts, the findings of which are available in its publication archives.
+
+## CQL for Clinical Researchers
+
+CQL may be applicable to clinical researchers in any context in which they want to use or share standards-based clinical logic and algorithms.
+
+### Defining research cohorts
+
+CQL can help researchers express inclusion, exclusion, and phenotype definitions in a standardized, human-reviewable form. This may be useful when a study needs to identify patients across multiple FHIR-enabled sites. Even in cases where available tooling does not support executing CQL logic, CQL expressions provide a deterministic, fully specified approach to defining cohort criteria.
+
+### Connecting research and quality measurement
+
+Researchers studying care quality, guideline adherence, implementation outcomes, or learning health systems may encounter CQL in the context of existing clinical quality measurement and decision support tools. In cases where measurement or decision support tools are needed but do not yet exist, researchers may choose to build them using CQL logic and related technologies.
+
+### Supporting computable protocols and pragmatic trials
+
+CQL may be useful when research logic needs to run at the point of care, such as identifying eligible patients, detecting clinical events, or supporting CDS interventions within clinical workflows.
+
+### Enabling cross-site logic sharing
+
+FHIR can standardize data exchange, while CQL can standardize the logic applied to that data. Together, they may reduce ambiguity when research networks need to apply the same criteria across different systems.
+
+## Example CQL Library
+
+As an example, consider the following criteria:
+
+> Adult patients who had an outpatient encounter during the study period and who have elevated A1C.
+
+CQL can be used to express the following concepts from the criteria:
+
+* Adult patient (i.e., age >= 18 years)
+* Outpatient encounter during the study period
+* Elevated A1C (i.e., most recent HbA1c result >= 6.5%)
+
+The CQL library below demonstrates what this might look like when expressed as CQL logic. _Note that this library is for example purposes only. It has not been fully tested and should not be used in production environments._
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">library</span> ExampleElevatedHbA1c <span class="cql-keyword">version</span> <span class="cql-string">'0.0.1'</span>
+<span class="cql-keyword">using</span> FHIR <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span>
+<span class="cql-keyword">include</span> FHIRHelpers <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span>
+
+<span class="cql-keyword">valueset</span> <span class="cql-identifier">"Outpatient Clinical Encounters"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1160.24'</span>
+<span class="cql-keyword">valueset</span> <span class="cql-identifier">"HbA1c Laboratory Test"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1013'</span>
+
+<span class="cql-keyword">parameter</span> <span class="cql-identifier">"Study Period"</span> <span class="cql-type">Interval</span>&lt;<span class="cql-type">DateTime</span>&gt;
+
+<span class="cql-keyword">context</span> Patient
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult"</span>: AgeInYears() <span class="cql-operator">&gt;=</span> <span class="cql-number">18</span>
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span>:
+  <span class="cql-keyword">exists</span> [Encounter: <span class="cql-identifier">"Outpatient Clinical Encounters"</span>] E
+    <span class="cql-keyword">where</span> E.period <span class="cql-keyword">during</span> <span class="cql-identifier">"Study Period"</span>
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Most Recent HbA1c"</span>: <span class="cql-keyword">
+  Last</span>([Observation: <span class="cql-identifier">"HbA1c Laboratory Test"</span>] HbA1c <span class="cql-keyword">sort by</span> issued)
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Has Elevated HbA1c"</span>: <span class="cql-identifier">"Most Recent HbA1c"</span>.value <span class="cql-operator">&gt;=</span> <span class="cql-number">6.5</span> <span class="cql-string">'%'</span>
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult with Outpatient Encounter and Elevated HbA1c"</span>:
+  <span class="cql-identifier">"Is Adult"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Elevated HbA1c"</span></code></pre>
+```
+
+For a detailed walk-through of the process used to convert the criteria to the CQL library above, see the [CQL technical example](clinical-quality-language-example.qmd).
+
+If you'd like, you may also copy the CQL library into the online [CQL Playground](https://www.cqframework.org/clinical_quality_language/playground/) to see what the machine-computable ELM representation looks like. Feel free to experiment by changing the CQL and watching the ELM representation change in response.
+
+## Implementation Considerations
+
+When using CQL or determining if you should use CQL for a research project, consider the following:
+
+**CQL results are only as good as the data provided as input.** CQL does not limit the FHIR resources or elements you can reference, but real-world FHIR implementations do not support every FHIR resource or every element within each FHIR resource. The data requirements of a CQL library should be evaluated for feasibility based on the FHIR data that is available. In addition, FHIR data may be incomplete (e.g., missing values), may use non-standard codes, or may be coded incorrectly. If CQL is provided with poor-quality data, it will generally provide poor-quality results.
+
+**A strong understanding of terminology is required.** CQL uses value sets, code systems, and codes to filter data from broad health data types (e.g., procedure) to specific concepts (e.g., appendectomy). CQL authors and implementers must have a robust understanding of standard terminologies, how they are used, and how they relate to FHIR resources.
+
+**CQL logic must be clinically validated.** CQL tools can ensure that logic is syntactically correct, but they do not guarantee that the logic is semantically or clinically correct. Researchers should validate CQL definitions against chart review, known cohorts, synthetic data, or other expected results. Since FHIR implementations vary from site to site, CQL should be validated against representative data from each site (see the first point above).
+
+**CQL execution requires specialized tooling.** While CQL has been used in quality measurement for many years, health IT products outside of the quality measurement space are still in the process of adopting CQL. Researchers should not assume that sites are capable of executing CQL logic without introducing additional software services. The [CQL Community Projects wiki](https://github.com/cqframework/clinical_quality_language/wiki/Community-Projects) lists known open-source CQL implementations, but a similar list of commercial vendors supporting CQL is not currently available.
+
+## CQL Resources
+
+The following resources may be useful for researchers who want to learn more about CQL:
+
+* **[Clinical Quality Language Specification](https://cql.hl7.org/)**: The official specification describing CQL and its capabilities. The [Author's Guide](https://cql.hl7.org/02-authorsguide.html) provides a friendly walk-through of the most important CQL concepts and the [Appendix B - CQL Reference](https://cql.hl7.org/09-b-cqlreference.html) provides an exhaustive list of all standard CQL operations and system functions.
+* **[FHIR Clinical Reasoning](https://hl7.org/fhir/clinicalreasoning-module.html)**: A module within the FHIR specification that describes how to represent clinical knowledge artifacts, such as clinical decision support rules and clinical quality measures, using FHIR resources and expression languages like CQL. This includes resources like [Library](https://hl7.org/fhir/library.html), [Measure](https://hl7.org/fhir/measure.html), and [PlanDefinition](https://hl7.org/fhir/plandefinition.html).
+* **[Using CQL with FHIR Implementation Guide](https://hl7.org/fhir/uv/cql/)**: A FHIR implementation guide describing how to use CQL with FHIR, including [authoring guidance](https://hl7.org/fhir/uv/cql/using-cql.html) and [patterns](https://hl7.org/fhir/uv/cql/patterns.html), [implementation guidance](https://hl7.org/fhir/uv/cql/conformance.html), [common CQL functions for FHIR](https://hl7.org/fhir/uv/cql/Library-FHIRCommon.html), and more.
+* **[eCQI Resource Center](https://ecqi.healthit.gov/)**: A robust collection of information about standards and technologies related to electronic clinical quality. The [CQL](https://ecqi.healthit.gov/cql/about) module provides links to tools and educational resources. The [dQM](https://ecqi.healthit.gov/dqm/about-dqms) module contains information about the transition to FHIR-based CQL measures. Also check out the [eligible clinician](https://ecqi.healthit.gov/ep-ec/ecqms?global_measure_group=eCQMs), [inpatient](https://ecqi.healthit.gov/eh-cah/ecqms?global_measure_group=eCQMs), and [outpatient](https://ecqi.healthit.gov/oqr/ecqms?global_measure_group=eCQMs) eCQMs for real-world CQL measures (but note that they do not yet use FHIR).
+* **[CQL Community Projects](https://github.com/cqframework/clinical_quality_language/wiki/Community-Projects)**: A listing of open-source projects including CQL compilers, CQL engines, CQL authoring tools, and CQL content.
+* **[#cql on chat.fhir.org](https://chat.fhir.org/#narrow/channel/179220-cql)**: A public user forum where CQL novices and experts can discuss CQL, ask questions, and get help.
+* **[CQL Playground](https://www.cqframework.org/clinical_quality_language/playground/)**: An online web application that allows users to enter CQL and compile it on the fly to ELM. Although it does not yet support execution, it's useful for quickly checking CQL logic for syntactic correctness.
+* **[CQL Studio](https://cqlstudio.com/)**: A brand-new web application for CQL authoring and testing. As of May 2026 it is still under active development. Users may encounter bugs, but it shows great promise for the future, including AI-enabled CQL authoring.

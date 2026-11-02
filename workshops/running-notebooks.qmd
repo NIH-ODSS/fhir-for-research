@@ -1,0 +1,84 @@
+---
+title: Running Workshop Notebooks
+toc: true
+number-sections: false
+reading_time: false
+date: 2026-10-30
+---
+
+Some FHIR for Research workshops provide interactive [Jupyter notebooks](https://docs.jupyter.org/en/latest/#what-is-a-notebook). These notebooks make it easy to explore and run the provided Python code to develop a deeper technical understanding of the topic in question.
+
+There are a number of ways to view or run Jupyter notebooks, and four are supported by this website:
+
+1. **View the notebook on this website.** When you follow a link to a notebook on this website, you are viewing a rendered, static version of that notebook formatted for this website. This is the preferred option if you want to read through the code and surrounding narrative, but not run it.
+2. **Download and run the notebook locally.** Click the !['Download notebook' badge](../images/badges/download_notebook.svg) button, and open it using [JupyterLab Desktop](#jupyterlab-desktop-recommended) or a local Python environment with Jupyter installed.
+3. **View on nbviewer** to preview what you will see if you run the notebook locally. Click the !['View on nbviewer' badge](../images/badges/nbviewer.svg) to do this.
+4. **Run in the cloud.** There are multiple options for this including [Binder](https://mybinder.org) and [Google Colab](#google-colab). Use the !['Open in Google Colab' badge](../images/badges/colab.svg) to open notebooks in Colab with one click.
+
+## Running locally
+
+There are a few different options for running Jupyter notebooks locally.
+
+### JupyterLab Desktop (recommended)
+
+[JupyterLab Desktop](https://github.com/jupyterlab/jupyterlab-desktop) provides a local notebook environment without requiring a separately managed Jupyter installation.
+
+1. Install the appropriate [JupyterLab Desktop release](https://github.com/jupyterlab/jupyterlab-desktop#installation) for your operating system.
+2. On the workshop page, select **Download Notebook**.
+3. Open the downloaded `.ipynb` file in JupyterLab Desktop.
+4. Confirm that the notebook uses a Python 3 kernel (look for "Python 3" in the top right corner of the open notebook).
+5. Follow any additional setup/configuration instructions included in the notebook.
+
+### Local Python with Jupyter
+
+Use this option if Jupyter is already installed in a local Python environment and you are already familiar with using Python and Jupyter.
+
+1. Download the `.ipynb` file from the workshop page.
+2. Activate the Python environment you want to use and make sure [Jupyter is installed](https://jupyter.org/install).
+3. Start JupyterLab or Jupyter Notebook.
+4. Open the downloaded notebook and select a Python 3 kernel to run it.
+5. Follow any additional setup/configuration instructions included in the notebook.
+
+## Visual Studio Code
+
+[Visual Studio Code](https://code.visualstudio.com/) can open and run `.ipynb` files with the [Jupyter extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter). You will also need to have a local Python environment with [Jupyter installed](https://jupyter.org/install).
+
+1. Install Visual Studio Code, the Python extension, and the Jupyter extension.
+2. Download the workshop notebook.
+3. Open the `.ipynb` file in Visual Studio Code.
+4. Select a Python environment with Jupyter installed.
+5. Follow any additional setup/configuration instructions included in the notebook.
+
+This option has the same local dependency requirements as the "Local Python Server with Jupyter" option.
+
+## Running in the cloud
+
+::: callout-warning
+## Sensitive data and cloud services
+
+Do not use a cloud notebook service with protected health information (PHI), personally identifiable information (PII), credentials, or a sensitive FHIR endpoint unless that service and account have been approved by your organization. Use a local environment with proper security/privacy approval when handling sensitive data.
+:::
+
+### Google Colab
+
+[Google Colab](https://colab.research.google.com/) can open a generated notebook from the public GitHub mirror. A Google account is required to use a hosted runtime and save work.
+
+Use the **Open in Colab** button on the notebook page. The corrected link for the FHIR Data Analysis notebook was verified to resolve successfully. If the button is unavailable, download the `.ipynb` file from the workshop page and import it with **File → Upload notebook**.
+
+Opening the notebook does not guarantee that every cell will run. Complete execution still requires access to a compatible FHIR server containing the workshop data.
+
+### Binder
+
+[Binder](https://mybinder.org) is often used to run Jupyter notebooks in the cloud. However, it can sometimes be unreliable so a one-click button is not included on this website to avoid a bad experience for users who encounter errors on Binder.
+
+----
+
+## Technical details
+
+### How the notebooks on this website are published
+
+The editable workshop sources are Quarto `.qmd` files. During deployment, Quarto generates `.ipynb` files and publishes them as a static website to the `gh-pages` branch on GitHub. Tools that rely on GitHub URLs for opening notebooks therefore need to use the `gh-pages` branch rather than the default branch.
+
+### FHIR server and workshop data
+
+Notebooks may rely on a FHIR server to provide sample data. Running the notebook does not include a running copy of this server. See [Standing Up a FHIR Testing Server](../modules/synthea-test-server.qmd) for more information.

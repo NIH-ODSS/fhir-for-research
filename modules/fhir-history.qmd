@@ -1,5 +1,6 @@
 ---
 title: "History of FHIR"
+date: 2026-02-18
 
 area:
   name: Overview
@@ -18,13 +19,13 @@ learning_objectives:
     answer: HL7 V2's data format is outdated compared to modern formats like JSON and XML. It also does not support many health-related data types and is not structured enough to support interoperability.
   - question: Describe the key limitations of HL7 V3.
     answer: V3 is structured enough to support interoperability but is difficult to implement and has not been widely adopted.
-  - question: Understand how FHIR  is related to HL7 V2 and V3, and how the characteristics of these standards influenced their adoption.
-    answer: FHIR is structured enough to support interoperability, is simpler than V3, and uses uses common standards like JSON, XML, and REST, so integrates well with non-health-specific software.
+  - question: Understand how FHIR is related to HL7 V2 and V3, and how the characteristics of these standards influenced their adoption.
+    answer: FHIR is structured enough to support interoperability, is simpler than V3, and uses common standards like JSON, XML, and REST, so it integrates well with non-health-specific software.
 
 reading_time: true
 ---
 
-FHIR is the third health data standard that the [HL7® standards development organization](https://www.hl7.org/about/index.cfm?ref=nav) has developed. The two previous standards are HL7 V2 and HL7 V3.
+FHIR is the third major health data standard that the [HL7® standards development organization](https://www.hl7.org/about/index.cfm?ref=nav) has developed. The two previous standards are HL7 V2 and HL7 V3.
 
 The history of these standards and how they relate to FHIR is described below.
 
@@ -53,35 +54,35 @@ HL7 released [HL7 Version 2](https://www.hl7.org/implement/standards/product_bri
 
 -   V2 does not provide enough structure to support semantic interoperability across implementations.
 
--   V2 does not have a standard approach to sending common types of health data, like [PDFs](http://www.healthintersections.com.au/?p=2207).
+-   V2 does not have a standard approach to sending common types of health data, like [PDFs](https://www.healthintersections.com.au/2014/08/11/question-sending-pdfs-via-hl7-v2.html).
 
-More information on the [early history of HL7 and the development of V2 can be found here](http://www.ringholm.com/docs/the_early_history_of_health_level_7_HL7.htm).
+More information on the [early history of HL7 and the development of V2 can be found here](http://www.ringholm.com/docs/the_early_history_of_health_level_7_HL7.htm) and in @Simborg_2023.
 
 ## HL7 V3
 
 HL7 Version 3 ("V3", released in 2005) was created to address limitations of V2. It included a more rigorous approach to data modeling (the [Reference Information Model](https://www.hl7.org/implement/standards/rim.cfm)), and used a common data format ([XML](https://en.wikipedia.org/wiki/XML)).
 
-V3 was not as widely adopted as V2, in part due to its complexity. The [C-CDA® standard](https://www.hl7.org/implement/standards/product_brief.cfm?product_id=492) for clinical documents is the most widely adopted application of V3. For example, the C-CDA standard is used in the [Meaningful Use criteria](https://www.healthit.gov/topic/standards-technology/consolidated-cda-overview).
+V3 was not as widely adopted as V2, in part due to its complexity. The [C-CDA® standard](https://www.hl7.org/implement/standards/product_brief.cfm?product_id=492) for clinical documents is the most widely adopted application of V3. For example, the C-CDA standard is used in the [Meaningful Use criteria](https://site.healthit.gov/c-cda).
 
 ## FHIR
 
 HL7 developed FHIR in the early 2010s to provide a more interoperable alternative to V2 and a simpler alternative to V3.[^1] Like V3, FHIR uses common data formats (like [JSON](https://json.org) and XML). It also uses a common architecture ([REST](https://en.wikipedia.org/wiki/Representational_state_transfer)) for communication between systems. These design decisions make FHIR-enabled systems easier to integrate with mobile and cloud-based health applications compared to V2.
 
-[^1]: [This blog post from 2011 by Grahame Grieve](http://www.healthintersections.com.au/?p=502), one of the primary creators of FHIR, explains how FHIR is informed by V2 and V3.
+[^1]: [This blog post from 2011 by Grahame Grieve](http://www.healthintersections.com.au/2011/08/18/resources-for-health-a-fresh-look-proposal.html), one of the primary creators of FHIR, explains how FHIR is informed by V2 and V3.
 
 Recall from [FHIR from 1,000 Feet](fhir-from-1000-ft.qmd) that:
 
-> The FHIR specification follows [the 80/20 rule](http://www.healthintersections.com.au/?p=1924) to determine which data elements are included in a resource: data elements are typically included only if 80% of relevant systems will use them. Less common data needs are handled through [FHIR extensions](https://www.hl7.org/fhir/extensibility.html). This means that FHIR-enabled systems will implement *most* common data elements consistently.
+> The FHIR specification follows [the 80/20 rule](http://www.healthintersections.com.au/2014/02/28/fhir-and-confusion-about-the-8020-rule.html) to determine which data elements are included in a resource: data elements are typically included only if 80% of relevant systems will use them. Less common data needs are handled through [FHIR extensions](https://www.hl7.org/fhir/extensibility.html). This means that FHIR-enabled systems will implement *most* common data elements consistently.
 
-In late 2014, HL7 released the first official version of FHIR. In 2015, the Office of the National Coordinator for Health Information Technology (ONC) issued the 2015 Edition Cures Act certification criteria, which included an API criteria. While the API criteria did not target a specific standard, many adopted FHIR for the criteria. ONC continued to refine the certification's criteria through [revisions of the 2015 Edition Cures Act](https://www.healthit.gov/buzz-blog/healthit-certification/on-the-road-to-cures-update-certified-api-technology), and by 2019, 87% of hospitals in the US were using ONC certified EHRs with FHIR APIs as seen below. [@2015_fhir_adoption]
+In late 2014, HL7 released the first official version of FHIR. In 2015, the Office of the National Coordinator for Health Information Technology (ONC) issued the [2015 Edition Cures Act certification criteria](https://www.federalregister.gov/documents/2015/10/16/2015-25597/2015-edition-health-information-technology-health-it-certification-criteria-2015-edition-base), which included API criteria. While the API criteria did not target a specific standard, many adopted FHIR for the criteria. ONC continued to refine the certification's criteria through [revisions of the 2015 Edition Cures Act](https://healthit.gov/blog/health-information-exchange-2/on-the-road-to-cures-update-certified-api-technology/), and by 2019, 87% of hospitals in the US were using ONC-certified EHRs with FHIR APIs as seen below. [@2015_fhir_adoption]
 
-![87% of hospitals in the US were using ONC certified EHRs with FHIR APIs by 2019.](images/2015_hospital_fhir_usage.png){fig-alt="Map of the United States showing regional adoption of HL7 FHIR certified EHRs with text description above."}
+![87% of hospitals in the US were using ONC-certified EHRs with FHIR APIs by 2019.](images/2015_hospital_fhir_usage.png){fig-alt="Map of the United States showing regional adoption of HL7 FHIR certified EHRs with text description above."}
 
 The late 2010s saw adoption outside of EHRs. For example, Apple uses FHIR in [HealthKit](https://developer.apple.com/documentation/healthkit/samples/accessing_health_records) for accessing patient health data directly from EHRs. Moreover, three major public cloud vendors ([Amazon](https://aws.amazon.com/blogs/architecture/building-a-serverless-fhir-interface-on-aws/), [Google](https://cloud.google.com/healthcare-api/docs/concepts/fhir), [Microsoft](https://azure.microsoft.com/en-us/products/health-data-services/)) provide FHIR-enabled services as well.
 
 ### FHIR releases
 
-As of April 2023, the most recent version of the FHIR specification is [Release 5](http://hl7.org/fhir/directory.html) (often referred to as "FHIR R5"). ONC provides [a summary of FHIR releases](https://www.healthit.gov/sites/default/files/page/2021-04/FHIR%20Version%20History%20Fact%20Sheet.pdf) since the first release in 2012:
+In 2021, ONC provided a [summary of FHIR releases](https://healthit.gov/wp-content/uploads/2021/04/FHIR-Version-History-Fact-Sheet.pdf) since the first release in 2012:
 
 > HL7® FHIR® has evolved through four releases since its initial presentation in May 2012. It has grown from a true draft standard with 49 Resources to its current 145 and continues to expand. In that time the standard has improved and changed to meet the needs of the health information technology community.
 >
@@ -126,5 +127,7 @@ As of April 2023, the most recent version of the FHIR specification is [Release 
 > With the maturing of the FHIR IG tools and templates, better integration with public health, imaging, financial management, genomics and other fields will keep FHIR at the forefront of health IT.
 >
 > ::: callout-note
-> *Note: FHIR R5 was [officially released in March 2023](http://hl7.org/fhir/directory.html).*
+> *Note: FHIR R5 was [officially released in March 2023](http://hl7.org/fhir/directory.html). [FHIR R6](https://hl7.org/fhir/6.0.0-ballot4/) is expected to be released in 2026.*
 > :::
+
+The biggest change in the anticipated FHIR R6 release is a movement to broader "normative" status across the specification. This is a term of art in the [technical standards process](https://build.fhir.org/versions.html), indicating stability.

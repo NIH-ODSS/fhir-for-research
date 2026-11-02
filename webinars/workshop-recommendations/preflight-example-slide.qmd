@@ -17,7 +17,7 @@ Welcome! The workshop will begin shortly. Slides: <http://purl.org/fhir-for-rese
     -   If you are comfortable with HTML and JavaScript, hands-on participation is recommended
     -   But hands-on participation is totally optional -- feel free to just listen if you prefer!
 -   To participate hands-on, you will need:
-    1.  Download or clone <https://github.com/mitre/smart-on-fhir-demo>
+    1.  A downloaded or cloned copy of <https://github.com/mitre/smart-on-fhir-demo>
     2.  [VSCode](https://code.visualstudio.com) (or your editor of choice)
     3.  A local web server (e.g. [VSCode Live Preview extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server))
 -   Once you can open `http://localhost:3000/index.html` in your browser, you are ready to go

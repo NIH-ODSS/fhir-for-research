@@ -1,16 +1,43 @@
 ---
 title: "Roles"
 sidebar: false
+listing:
+  - id: role-selector
+    template: ./partials/role-selector.ejs.md
+    contents: ./partials/roles.yml
+format:
+  html:
+    css: 
+    - index.css
+    - sections.css
 ---
 
--   **Investigator** A clinician/scientist who is in a research PI, co-I, or staff scientist position. Their role requires enough technical informatics understanding to design and conduct research, and interface closely with technical staff responsible for implementation of informatics approaches including FHIR.
+::::::: {.home-page .section-page .column-screen}
+:::::: home-container
+::: section-intro
+[FHIR for Research]{.home-eyebrow}
 
--   **Research Leaders** Member of the leadership responsible for shaping research strategy and capacity across an institution's research portfolio. This persona may include roles like PIs, Institute directors, or health system executives like Chief Scientific Officers or Chief Research Informatics Officers.
+# Roles
 
--   **Informaticist** A technical role primarily responsible for working hands-on with clinical data. This role involve elements of software engineering, but is not focused primarily on developing software. Deep familiarity with clinical data and databases can be assumed, but there may be heterogeneous experience with FHIR and related technology.
+[Find the content that best fits your role.]{.home-lead}
 
--   **Software Engineer** A technical role involved in developing software for clinically-focused research. This role may have some hands-on experience with FHIR and related technology, but likely does not have comprehensive knowledge of the space. This role differs from the "Informaticist" in that it focuses on creating software, rather than on data modeling and manipulation.
+This website content encompasses many aspects of the FHIR ecosystem and is categorized for readers in different roles. You can use the role selector to set your preferred role. On the [Introduction](/sections/introduction.qmd) and [Technologies](/sections/technologies.qmd) pages, content matching that role will be highlighted.
+:::
 
--   **Clinician Scientist/Trainee** A role for practicing clinicians or clinician-trainees. This role is involved with research as a clinical subject matter expert or co-investigator, but is not be responsible for an entire study (or they would be in the "Investigator" role). Their role in research is focused on the clinical aspects related to their area of expertise, and could involve activities like chart review, creating a "phenotyping strategy" to identify a condition using EHR data, or designing a patient- or provider-facing intervention.
+:::: role-select-pane
+Select your role to <mark>highlight</mark> the content that is most relevant to you throughout this website:
 
--   **Trainer** This role is responsible for leading future researcher-led trainings. People in this role are likely hands-on technical, or technical leaders. There may be overlap with the "Informaticist" and "Software Engineer" roles.
+::: {#role-selector}
+:::
+::::
+
+- **Investigator** A clinician/scientist who is in a research PI, co-PI, or staff scientist position. Their role requires enough technical informatics understanding to design and conduct research, and interface closely with technical staff responsible for implementation of informatics approaches including FHIR.
+- **Research Leaders** Member of the leadership responsible for shaping research strategy and capacity across an institution's research portfolio. This persona may include roles like PIs, Institute directors, or health system executives like Chief Scientific Officers or Chief Research Informatics Officers.
+- **Informaticist** A technical role primarily responsible for working hands-on with clinical data. This role involves elements of software engineering, but is not focused primarily on developing software. Deep familiarity with clinical data and databases can be assumed, but there may be heterogeneous experience with FHIR and related technology.
+- **Software Engineer** A technical role involved in developing software for clinically focused research. This role may have some hands-on experience with FHIR and related technology, but likely does not have comprehensive knowledge of the space. This role differs from the "Informaticist" in that it focuses on creating software, rather than on data modeling and manipulation.
+- **Clinician Scientist/Trainee** A role for practicing clinicians or clinician-trainees. This role is involved with research as a clinical subject matter expert or co-investigator, but is not responsible for an entire study (or they would be in the "Investigator" role). Their role in research is focused on the clinical aspects related to their area of expertise, and could involve activities like chart review, creating a "phenotyping strategy" to identify a condition using EHR data, or designing a patient- or provider-facing intervention.
+- **Trainer** This role is responsible for leading future researcher-led trainings. People in this role are likely hands-on technical, or technical leaders. There may be overlap with the "Informaticist" and "Software Engineer" roles.
+
+<a href="#" onclick="history.back(); return false;" class="btn-outline-primary pt-3">Back</a>
+::::::
+:::::::

@@ -21,7 +21,7 @@ GitHub Actions automatically builds commits to the `main` branch to <https://nih
   + If running windows: follow setup-windows.qmd
   + If you want to use your system SSL/TLS certificates, add `UV_NATIVE_TLS=true` to the environment
 - Start the provided FHIR server: `docker compose -f fhir-server/docker-compose.yml up -d`
-- For first time setup, upload data to the FHIR server: `uv run ./script/load_data.py`
+- For first time setup, upload data to the FHIR server: `FHIR_SERVER=http://localhost:8080/fhir uv run ./script/load_data.py`
   + The server takes a few minutes to start the first time, so the script may fail if its executed immediately. Running the script multiple times will not duplicate data.
   + For more commands for the FHIR server, see [Running the Local FHIR Server](#running-the-local-fhir-server).
 - Run `uv run quarto preview`
@@ -29,6 +29,12 @@ GitHub Actions automatically builds commits to the `main` branch to <https://nih
 - When you are finished with development:
   + Press `Ctrl-c` to close the Quarto web server.
   + Run `docker compose -f fhir-server/docker-compose.yml down` to close the FHIR server.
+
+### Pre-Commit Hooks
+
+Run `uv tool install pre-commit` and then `pre-commit install` to install pre-commit hooks to install:
+
+1. `script/spellcheck.py` (via the `script/spellcheck-precommit.sh` wrapper). To run manually, run `uv run script/spellcheck.py`. To add words to the allowlist, edit `script/wordlist.txt`. This will not catch all misspelled words but it will catch many of them. It only checks `.qmd` files.
 
 ## Running the Local FHIR Server
 
@@ -141,7 +147,7 @@ Any forks of this repository will also replace the organization (NIH-ODSS) and r
 
 To deploy this static web application on any platform follow these rough guidelines:
 
- 1. Follow the [running locally](#running-locally) section to setup project dependencies. You can use .github/workflows/quarto.yml or .gitlab-ci.yml as reference for a CI/CD pipeline.
+ 1. Follow the [running locally](#running-locally) section to setup project dependencies. You can use .github/workflows/quarto.yml as reference for a CI/CD pipeline.
  2. Optional: You can replace the FHIR Server provided in this repository with any other one by setting the `FHIR_SERVER` environment variable. The new FHIR server must have the data in ./fhir-data/ uploaded. The script ./script/load_data.py can upload the data if the new FHIR server supports FHIR Transactions and Update as Create. Replacing `FHIR_SERVER` will update the text and code execution of this web application.
  3. Update the URLs in \_quarto.yml and \_environment for your intended URL.
  4. Run `uv run quarto render` which will compile the web application to public/.

@@ -25,4 +25,4 @@ roles:
 For more information, please see the [FHIR Bulk Data Workshop](../../workshops/bulk-data/index.qmd).
 :::
 
-If you are running this workshop and want to set up a [compute environment](../workshop-recommendations/index.qmd#compute), [these instructions may be helpful](http://localhost:8080/workshops/bulk-data/setup.html).
+If you are running this workshop and want to set up a [compute environment](../workshop-recommendations/index.qmd#compute), [these instructions may be helpful](../../workshops/bulk-data/setup.qmd).

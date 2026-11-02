@@ -34,8 +34,8 @@ June 13, 2023 <br><br><br>
 ### Step 1: Get an access token from the FHIR server
 
 1.  Create a key set for the client application (what we are making)
-2.  Register public key with the server
-3.  Authorize bulk data connection (SMART Backend Services OAuth)
+2.  Register the public key with the server
+3.  Authorize the bulk data connection (SMART Backend Services OAuth)
 
 ------------------------------------------------------------------------
 

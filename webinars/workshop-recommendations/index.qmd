@@ -56,7 +56,7 @@ Existing resources include:
 
 ## Workshop best practices
 
-Workshops are a useful approach to help attendees quickly climb the learning curve for a technical topic. They typically include a combination of lecture and hands-on participation. We recommend pairing live workshops with with written documentation (like this website) that participants can refer to later.
+Workshops are a useful approach to help attendees quickly climb the learning curve for a technical topic. They typically include a combination of lecture and hands-on participation. We recommend pairing live workshops with written documentation (like this website) that participants can refer to later.
 
 ## Capability assessments {#capability-assessments}
 
@@ -68,7 +68,7 @@ A capability assessment may help you adapt existing content to meet the needs an
 
 1.  Select a representative sample of people to connect with. Bear in mind that current FHIR capabilities and future needs may differ substantially across organizations.
 
-    Similarly, including a variety of roles in the assessment will ensure that content can support different needs. It may be helpful to connect with people that hold the following roles to build a well-rounded picture of what the capabilities and needs in a FHIR for Research workshop:
+    Similarly, including a variety of roles in the assessment will ensure that content can support different needs. It may be helpful to connect with people that hold the following roles to build a well-rounded picture of the capabilities and needs of participants in a FHIR for Research workshop:
 
     -   Investigators/Researchers
     -   Research leaders
@@ -83,18 +83,18 @@ A capability assessment may help you adapt existing content to meet the needs an
 3.  Adapt existing content in response to the observations. Throughout the outreach process, identify common themes and observations from your discussions, surveys, and/or listening sessions. Based on the observations, consider adapting the existing workshops to fit the needs of your group of researchers. Examples of useful adaptations may include:
 
     -   Identifying relevant FHIR resources to export in the FHIR Bulk Data workshop based on local researcher needs and EHR capabilities.
-    -   Aggregate specific data elements in the SMART on FHIR Applications workshop that are relevant to research topics.
+    -   Aggregating specific data elements in the SMART on FHIR Applications workshop that are relevant to research topics.
 
 4.  Meet participants at their level of interest and engagement. Not all training participants will need the same level of knowledge about FHIR, or other technology used to work with FHIR APIs and data.
 
-    Note that the existing content on this website was designed to be approachable for people with all levels of technical expertise. Content is generally organized from least-to-most technically complex to provide an "on ramp" for a less experienced audience. However, modifications may need to be made to tailor to your specific audience.
+    Note that the existing content on this website was designed to be approachable for people with all levels of technical expertise. Content is generally organized from least to most technically complex to provide an "on ramp" for a less experienced audience. However, modifications may need to be made to tailor the content to your specific audience.
 
 ### Getting started with a capability assessment
 
 We used roughly the following steps for the capability assessment that informed this website:
 
 -   Identify interviewees
--   Set-up meetings with interviewees
+-   Set up meetings with interviewees
 -   Write survey questions if using a written format or structured interview. The [capability assessment questions](capability-assessment-survey.qmd) used for developing this course content are available as a guide
 -   Hold conversations with previously identified interviewees
 -   Aggregate observations from conversations
@@ -125,17 +125,17 @@ Following an instructional design framework like ADDIE can support the following
 
 -   **Provide a way for participants to ask questions** if you are asking participants to do hands-on technical work (e.g., writing Python code to call a FHIR API). This could be in the form of an optional "lab" at the end of a workshop where participants can ask questions, or a point of contact for questions after the fact.
 
-    Participants may also need to ask questions about getting their environment set up. Strategize to reduce setup as much as possible (e.g., use cloud Jupyter environment rather than requiring participants to run it locally -- more on this below). Having a brief "preflight" immediately before the hands-on portion of the workshop is also advisable. ([Example preflight slide from the FHIR Bulk Data workshop](preflight-example-slide.qmd).)
+    Participants may also need to ask questions about getting their environment set up. Strategize to reduce setup as much as possible (e.g., use a cloud Jupyter environment rather than requiring participants to run it locally -- more on this below). Having a brief "preflight" immediately before the hands-on portion of the workshop is also advisable. ([Example preflight slide from the FHIR Bulk Data workshop](preflight-example-slide.qmd).)
 
     To avoid individual-specific questions disrupting the workshop, it is advisable to have an additional person to serve as a "TA". For virtual workshops, enable a breakout room that the TA can use to help participants 1:1 or in a small group.
 
 ### Workshop length
 
-Based on our experience, we recommend keeping the total length of a workshop under 3 hours per day. Having a longer workshop may introduce scheduling difficulties that can suppress attendance, and fatigue may result in diminishing returns for participants. Consider 1-2 hours of content, and an optional "lab" hour if there is substantial hands-on content to allow participants to work independently and ask questions. Include 5 minute breaks every hour.
+Based on our experience, we recommend keeping the total length of a workshop under 3 hours per day. Having a longer workshop may introduce scheduling difficulties that can suppress attendance, and fatigue may result in diminishing returns for participants. Consider 1-2 hours of content, and an optional "lab" hour if there is substantial hands-on content to allow participants to work independently and ask questions. Include 5-minute breaks every hour.
 
 ### Registration
 
-We recommend requiring registration to attend workshops. This allows for monitoring and adjustment of outreach strategy if the desired mix of people don't initially sign up. Registration should start at least 2 weeks ahead of the event, and ideally should start even earlier for a longer event that may require participants to shift their usual schedule to attend.
+We recommend requiring registration to attend workshops. This allows for monitoring and adjustment of outreach strategy if the desired mix of people doesn't initially sign up. Registration should start at least 2 weeks ahead of the event, and ideally should start even earlier for a longer event that may require participants to shift their usual schedule to attend.
 
 Registration should clearly identify prerequisites, required technical skills, and if there is an introductory portion appropriate for all audiences followed by a more technical portion.
 
@@ -151,7 +151,7 @@ The following recommendations support enhanced accessibility of workshop materia
     -   Subtitles can be in a .srt "sidecar" file -- this is a plain text file that can be easily edited by hand
 -   Provide slides and other materials on a single website at the time of the event
     -   e.g., <https://purl.org/fhir-for-research/workshops/bulk-data>
-    -   Consider "upstreaming" any materials to the main open source GitHub repository; see \[../../contribute.qmd\] for more information
+    -   Consider "upstreaming" any materials to the main open source GitHub repository; see [Questions & Contributions](../../contribute.qmd) for more information
 -   Use URLs in slides that can be updated later if the website changes (e.g. from <https://purl.org>) to avoid broken links in video recordings
 
 ## Environment & data
@@ -201,11 +201,11 @@ See the module on [Standing up a FHIR Testing Server](../../modules/synthea-test
 The content on this website is broken up into self-contained "modules" distributed among the following sections:
 
 1.  [Introduction](../../sections/introduction.qmd)
-2.  [Advanced Topics](../../sections/advanced-topics.qmd)
+2.  [Technologies](../../sections/technologies.qmd)
 3.  [Hands-on Practice](../../sections/hands-on-practice.qmd)
 4.  [Hosting your own Workshop](../../sections/hosting-your-own-workshop.qmd)
 
-This website is generated from [source code](https://purl.org/fhir-for-research/github) using [Quarto](https://quarto.org%3E):
+This website is generated from [source code](https://purl.org/fhir-for-research/github) using [Quarto](https://quarto.org):
 
 -   Quarto is a tool for generating static documentation websites that include R or Python code
 -   It's made by Posit (the company that makes RStudio)
@@ -228,7 +228,7 @@ If you generate a PDF from PowerPoint slides, use [these instructions](https://s
 
 ## Mermaidjs
 
-Quarto supports [Mermaidjs diagrams](https://quarto.org/docs/authoring/diagrams.html). If you need to download a Mermaidjs diagram as a SVG, [this Chrome bookmarklet](http://nytimes.github.io/svg-crowbar/) may be helpful.
+Quarto supports [Mermaidjs diagrams](https://quarto.org/docs/authoring/diagrams.html). If you need to download a Mermaidjs diagram as an SVG, [this Chrome bookmarklet](http://nytimes.github.io/svg-crowbar/) may be helpful.
 
 To add an accessibility title to a Mermaidjs diagram, add `accTitle` like below:
 

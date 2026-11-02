@@ -15,13 +15,13 @@ learning_objectives:
 reading_time: true
 ---
 
-<!-- TODO: parts of this webpage refer to an Journal which has not yet been published -->
+<!-- TODO: parts of this webpage refer to a journal which has not yet been published -->
 
-**Synthetic Data** describes how to access synthetic FHIR data and run on a test server. Synthetic data is provided by the [Synthea](https://github.com/synthetichealth/synthea)<sup>TM</sup> project.
+**Synthetic Data** describes how to access synthetic FHIR data and load it onto a test server. Synthetic data is provided by the [Synthea](https://github.com/synthetichealth/synthea)<sup>TM</sup> project.
 
 Synthetic data should be used instead of real data whenever possible when building and testing FHIR software. Using synthetic data allows researchers to run their software without human subjects privacy considerations, like IRB approval and privacy review.
 
-Synthetic data in FHIR format is typically available via two separate mechanism:
+Synthetic data in FHIR format is typically available via two separate mechanisms:
 
 1.  **As downloaded files (usually `.json` format)**, usually used for loading into software manually for testing or experimentation.
 2.  **From a FHIR server**, usually used for testing software that connects with FHIR API endpoints.

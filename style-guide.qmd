@@ -2,9 +2,9 @@
 title: Style Guide
 ---
 
-We use the [RStudio Visual R Markdown](https://rstudio.github.io/visual-markdown-editing/) interchangeably with writing raw Markdown in another editor like VSCode. Visual R Markdown will automatically reformat `.md` or `.qmd` files when opening them, so we do not get hung up on specific Markdown styling as we accept the default output of Visual R Markdown.
+We use the [RStudio Visual R Markdown editor](https://rstudio.github.io/visual-markdown-editing/) interchangeably with writing raw Markdown in another editor like VSCode. Visual R Markdown will automatically reformat `.md` or `.qmd` files when opening them, so we do not get hung up on specific Markdown styling as we accept the default output of Visual R Markdown.
 
-The following are style rules that are not impacted by Visual R Markdown automatic reformatting.
+The following are style rules that are not impacted by Visual R Markdown's automatic reformatting.
 
 Visual R Markdown uses [Pandoc's flavor of Markdown](https://pandoc.org/MANUAL.html#pandocs-markdown) so that's what we use when manually writing Markdown. [Quarto's Markdown guide](https://quarto.org/docs/authoring/markdown-basics.html) is also helpful.
 
@@ -34,7 +34,7 @@ Use [this website](https://individed.com/code/to-title-case/) to properly capita
 
 ### Targeted roles
 
-Roles should be listed as a YAML array in the frontmatter. The following roles are valid, and should appear verbatim as below:
+Roles should be listed as a YAML array in the frontmatter. The following roles are valid, and should appear verbatim as shown below:
 
     - Investigator
     - Research Leaders
@@ -46,13 +46,25 @@ These are defined on the [Roles page](roles.qmd).
 
 ### Learning objectives (optional)
 
-Learning objectives can be included in the frontmatter to display as part of the module content. Use the following syntax:
+Learning objectives can be included in the frontmatter to display as part of the module content. For a list of objectives without answers, use the following syntax:
 
 ```yaml
-learning_objectives:
+learning_objectives2:
   - Learning objective 1 goes here.
   - Learning objective 2 goes here.
 ```
+
+For objectives with answers, use `learning_objectives` instead. The answers appear in a "Key points" section at the end of the module:
+
+```yaml
+learning_objectives:
+  - question: Learning objective 1 goes here.
+    answer: A possible answer goes here.
+  - question: Learning objective 2 goes here.
+    answer: A possible answer goes here.
+```
+
+Use only one of these formats per page.
 
 ## Voice
 
@@ -60,7 +72,7 @@ See [Microsoft's](https://learn.microsoft.com/en-us/style-guide/grammar/person) 
 
 ### First person
 
-Avoid singular first person pronouns ("I"/"me").
+Avoid singular first-person pronouns ("I"/"me").
 
 Use plural first person sparingly ("we"/"us") to refer to the authors.
 
@@ -110,7 +122,7 @@ From [Microsoft's style guide](https://learn.microsoft.com/en-us/style-guide/gra
 
 - "Very" and "really" are absent.
   - **Ctrl-f for "very" and "really".** Remove these words.
-  - If necessary, replace the verb or adjective with a more description verb or adjective.
+  - If necessary, replace the verb or adjective with a more descriptive verb or adjective.
     - **Examples** "It's really good."
       - "It's excellent."
 
@@ -212,7 +224,7 @@ From the [Google documentation guide](https://google.github.io/styleguide/docgui
 
 When citing web-based content, simply add a hyperlink as described above.
 
-When citing printed content or any content where an academic reader would expect a formal citation, use Quarto's built-in [citation capabilities](https://quarto.org/docs/authoring/footnotes-and-citations.html). References should be added to `references.bib` in the root of the repository.
+When citing printed content or any content where an academic reader would expect a formal citation, use Quarto's built-in [citation capabilities](https://quarto.org/docs/authoring/footnotes-and-citations.html). References should be added to `bibliography.bib` in the root of the repository. Module pages inherit `bibliography: ../bibliography.bib` from `modules/_metadata.yml`.
 
 ## Images
 
@@ -267,7 +279,7 @@ Note the `<img>` tag in the rendered HTML has an `alt` property. This is critica
 
         -   Likewise, if you refer to content that might change (even if the link still resolves), use a release-specific link.
 
-        -   If we want to "upgrade" the documentation in the future, we can search for all instances of `https://www.hl7.org/fhir/R4B/`, and then check those links for
+        -   If we want to "upgrade" the documentation in the future, we can search for all instances of `https://www.hl7.org/fhir/R4B/`, and then check those links for version-specific content.
 
 ## Referencing the FHIR specification
 

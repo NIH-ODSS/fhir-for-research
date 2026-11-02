@@ -16,6 +16,8 @@ learning_objectives2:
 bibliography: ../bibliography.bib
 
 reading_time: true
+
+date: 2026-03-10
 ---
 
 [REDCap](https://www.project-redcap.org) (which stands for "Research Electronic Data Capture") is:
@@ -49,7 +51,7 @@ A more detailed look at example use cases follows.
 
 VACtrac uses REDCap Clinical Data Interoperability Services (CDIS) FHIR plug-in for both Epic and Cerner EHRs to extract patient information. The REDCap database can be accessed and updated by multiple providers, so the burden of maintaining vaccination information can be spread among multiple providers.
 
-The [REDCap vaccination status tracker](https://github.com/vactraccovid/vactrac) is publicly available for adaption in other institutions.
+The [REDCap vaccination status tracker](https://github.com/vactraccovid/vactrac) is publicly available for adaptation in other institutions.
 
 ### Example use case: cancer registry
 

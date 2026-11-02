@@ -70,7 +70,7 @@ SMART on FHIR lets you:
 
 -   Integrate with an EHR (e.g., add an AI-driven CDS app)
 -   Add patient-generated data to an EHR workflow
--   Create an app that can be used acorss institutions and EHR products
+-   Create an app that can be used across institutions and EHR products
 -   Access [Bulk Data](../bulk-data/index.html)
 
 ## SMART on FHIR standards
@@ -97,7 +97,7 @@ It ties together existing common web standards and HL7 specifications to enable 
 -   SMART App Launch
     -   EHR Launch: user launches an application from within an EHR (ex: a CDS app)
     -   Standalone Launch: user launches the application directly (ex: iPhone Health app)
--   SMART Backend Service: support applications that run autonomously (ex: data pipeline)
+-   SMART Backend Services: support applications that run autonomously (ex: data pipeline)
 
 ## Technical considerations, continued
 
@@ -113,7 +113,7 @@ It ties together existing common web standards and HL7 specifications to enable 
 
 #### Design
 
--   If you are developing a user-facing application, consider a [human-centered design](https://en.wikipedia.org/wiki/Human-centered_design) approach to help ensure good user experience.
+-   If you are developing a user-facing application, consider a [human-centered design](https://en.wikipedia.org/wiki/Human-centered_design) approach to help ensure a good user experience.
 -   More: <https://www.fastcompany.com/90772846/human-centered-design>
 
 # SMART App Launch workflow + sample app demo
@@ -159,7 +159,7 @@ sequenceDiagram
     -   Enter URL for sample app's `launch.html` page into "App's Launch URL" and click "Launch"
 :::
 
-## Video of launch sample app via SMART App Launch
+## Video of launching the sample app via SMART App Launch
 
 <!-- THIS FAILS {{< video smart-on-fhir-flow.mp4 >}} -->
 
@@ -195,7 +195,7 @@ Your browser (a client) gets redirected by the EHR to your app's <http://localho
 
 -   `iss`: Identifies the EHR's endpoint for the app
 -   `launch`: An opaque identifier for this specific app launch and EHR context, required for security purposes
-    -   JavaScript librar automatically passes this back to EHR with authorization request (Step 2)
+    -   The JavaScript library automatically passes this back to the EHR with the authorization request (Step 2)
 
 ------------------------------------------------------------------------
 
@@ -204,7 +204,7 @@ Your browser (a client) gets redirected by the EHR to your app's <http://localho
 ### Step 2. Your app's `launch.html` executes an authorization request with select parameters
 
 -   We are using the [SMART on FHIR JavaScript Library](https://docs.smarthealthit.org/client-js/) from SMART Health IT
--   This library handles the OAuth2 workflow and making authenticated requests from the FHIR server
+-   This library handles the OAuth2 workflow and makes authenticated requests to the FHIR server
 
 ------------------------------------------------------------------------
 
@@ -274,7 +274,7 @@ The `clientId` parameter is a specific string obtained after registering the app
 
 **SMART on FHIR walkthrough**
 
-The `scope` parameter specifies what kinds of data the app needs access to. See [SMART on FHIR scope and lunch context](https://hl7.org/fhir/smart-app-launch/STU2/scopes-and-launch-context.html) for more data access options.
+The `scope` parameter specifies what kinds of data the app needs access to. See [SMART on FHIR scope and launch context](https://hl7.org/fhir/smart-app-launch/STU2/scopes-and-launch-context.html) for more data access options.
 
 ``` {.javascript code-line-numbers="11-16"}
 <script>
@@ -411,7 +411,7 @@ This access token gets embedded in a `client` object to authenticate and authori
 
 ### Step 6. The app performs a Patient read FHIR query...
 
-...and writes the raw JSON data in the app's patient box. A real world application should parse the JSON into something more useful.
+...and writes the raw JSON data in the app's patient box. A real-world application should parse the JSON into something more useful.
 
 ``` {.javascript code-line-numbers="4-12"}
 <script type="text/javascript">
@@ -586,7 +586,7 @@ This access token gets embedded in a `client` object to authenticate and authori
 ## US Core
 
 -   FHIR implementation of [U.S. Core Data for Interoperability (USCDI)](https://www.healthit.gov/isa/united-states-core-data-interoperability-uscdi)
--   Conformance to US Core is part of ONC's EHR certification program, so adoption is wide-spread in production EHRs
+-   Conformance to US Core is part of ONC's EHR certification program, so adoption is widespread in production EHRs
 -   Review the spec to understand available data elements: <https://www.hl7.org/fhir/us/core/>
     -   How to read FHIR specs: <https://purl.org/fhir-for-research/data-modeling-reading-igs>
 

@@ -1,0 +1,44 @@
+---
+title: What is a FHIR Implementation Guide?
+date: 2026-09-29
+
+toc: false
+number-sections: false
+
+roles:
+  - Investigator
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+  
+learning_objectives2:
+  - Understand the definition and purpose of FHIR Implementation Guides (IGs).  
+
+reading_time: true
+---
+
+## Introduction
+
+FHIR provides a broad library of [reusable resources](https://hl7.org/fhir/resourcelist.html), such as [Patient](https://hl7.org/fhir/patient.html), [Encounter](https://hl7.org/fhir/encounter.html), [Observation](https://hl7.org/fhir/observation.html), and [Claim](https://hl7.org/fhir/claim.html).
+
+These resources cover the majority of common use cases, and define many data elements specific to each. Many of those elements are defined as optional, which means developers are free to make choices about which elements may be included when exchanging information. In practical real-world usage, however, that flexibility can make it more difficult when many parties need to exchange data reliably. FHIR also supports [extensions](https://hl7.org/fhir/extensibility.html) to resources, allowing resources to represent additional information that is important, but not part of the basic definition of the resource.
+
+[FHIR profiles](https://hl7.org/fhir/profiling.html) allow developers to define rules about what resource elements are needed for a given use case, what terminologies should be used in particular elements, and how to meet regulatory or legal obligations.
+
+Then there may be additional rules needed for real-world solutions, including actors, workflows, security constraints, search parameters, edge cases and testing scenarios. All of this is brought together in a FHIR Implementation Guide (IG) - a practical rule book for using the FHIR standard in a particular setting.
+
+FHIR Implementation Guides (IGs) define a "[set of rules of how a particular interoperability or standards problem is solved](https://www.hl7.org/fhir/R5/implementationguide.html)." IGs are needed because FHIR is intentionally flexible. Different systems may choose different conventions regarding how to represent the same clinical data. Through published IGs, FHIR developers can work towards making their systems conform to those rules and requirements, reducing effort, making data more predictable for users and analytics, and meeting external data obligations.
+
+FHIR IGs are published in a standard format, with human-readable and machine-readable rules and definitions. Many IGs also include additional narrative descriptions of the rules, the problem each IG is trying to solve and the thinking behind the approach adopted in the IG. This narrative helps developers better understand the scope and reasoning behind the guide, and how to handle requirements which may not be able to be tested in an automated manner.
+
+## Examples
+
+Three prominent guides demonstrate the role that IGs play in the exchange of health data:
+
+- The [**US Core**](https://www.hl7.org/fhir/us/core/) IG defines constraints and RESTful actions for exchanging [United States Core Data for Interoperability](https://isp.healthit.gov/united-states-core-data-interoperability-uscdi) (USCDI) data, and serves as a foundation for many FHIR implementations in the U.S. including patient-facing systems and certified health IT systems.
+- The [**International Patient Summary**](https://international-patient-summary.net) (IPS) IG defines a compact, internationally usable set of patient information for unplanned care across borders, such as allergies, medications, problems, and immunizations.
+- The [**Da Vinci Payer Data Exchange**](https://build.fhir.org/ig/HL7/davinci-epdx/) (PDex) IG guides U.S. health plans in sharing a member’s clinical history with providers and other authorized recipients; it supports payer-to-provider data exchange and related interoperability requirements.
+
+IGs can vary in length and complexity. Some may be short, like a single recipe for a specific resource. Others may be more complex, like a cookbook bringing together several related resources. And very large IGs may be needed to set national or international standards, or define a mechanism to meet national legal requirements. A system can use several guides at once, provided their requirements are compatible; this allows broad foundations and specialized workflows to work together reliably.
+
+An organization should develop its own IG when an established guide does not fully answer a recurring, shared interoperability need. Suitable cases include a national reporting program, a specialty registry, a research network, a clinical trial, a local public-health exchange, or a multi-vendor workflow that needs common data and API rules. The preferred approach is to reuse existing FHIR resources and IGs, then add only necessary constraints or extensions. A well-governed IG should identify its audience and scope, define versioning and stewardship, engage implementers early, publish examples and validation tests, and evolve through transparent change control. In this way, IGs turn FHIR’s general-purpose building blocks into reliable agreements that make real-world exchange possible.

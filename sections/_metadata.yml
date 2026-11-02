@@ -1,2 +1,11 @@
+# Shared presentation for the four section landing pages.
+page-layout: full
 toc: false
 sidebar: false
+section-divs: false
+anchor-sections: false
+format:
+  html:
+    css:
+      - ../index.css
+      - ../sections.css

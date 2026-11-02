@@ -47,7 +47,7 @@ The following summarizes key regulations and their implications for research.
 
 #### Challenges and Gaps
 
--   **Ensuring Data Privacy:** With increased data sharing, maintaining patient privacy and complying with regulations like HIPAA is a critical concern. Researchers must navigate the complexities of de-identifying data and ensuring secure access.
+-   **Ensuring Data Privacy:** With increased data sharing, maintaining patient privacy and complying with regulations like HIPAA are critical concerns. Researchers must navigate the complexities of de-identifying data and ensuring secure access.
 
 -   **Overcoming Technical Barriers:** Aligning diverse data-sharing practices and integrating various EHR systems can be technically challenging. Researchers may also encounter varying interpretations of regulatory requirements, which can affect data exchange.
 
@@ -73,7 +73,7 @@ Cloud services enable the aggregation of diverse data types into a centralized r
 
 Cloud platforms also support advanced big data analytics by providing the computational power necessary to process large datasets. Healthcare organizations can utilize cloud-based analytics tools to perform real-time data analysis, predictive modeling, and machine learning applications. For instance, analyzing population health trends or predicting patient outcomes becomes more feasible when computational resources can scale according to demand. For infrequent or variable workflows, this scalability not only enhances operational efficiency but also reduces the costs associated with maintaining extensive on-premises IT infrastructures. However, on-premises solutions may be more cost-effective for high-volume, consistent workloads in the long term.
 
-Cloud computing promotes innovation by enabling researchers to access and analyze data on-demand from anywhere, unconstrained by local infrastructure. This facilitates streamlined collaboration as data can be securely shared and accessed globally. The adoption of standardized data formats like FHIR further enhances collaboration, helping to ensure consistency and reliability in data analysis across various research domains.
+Cloud computing promotes innovation by enabling researchers to access and analyze data on demand from anywhere, unconstrained by local infrastructure. This facilitates streamlined collaboration as data can be securely shared and accessed globally. The adoption of standardized data formats like FHIR further enhances collaboration, helping to ensure consistency and reliability in data analysis across various research domains.
 
 A notable example of a cloud-based clinical data initiative is the [**National COVID Cohort Collaborative (N3C)**](https://covid.cd2h.org/) (@Haendel_Chute_2021). N3C is a nationwide effort that aggregates and harmonizes EHR data from numerous healthcare institutions into a centralized, secure cloud environment specifically for COVID-19 research. While not currently FHIR-based, N3C recognizes the potential of FHIR for future development, as it may offer enhanced interoperability and alignment with emerging health data standards. The N3C platform allows for advanced big data analytics, facilitating studies on disease progression, treatment efficacy, and long-term outcomes related to COVID-19, with the goal of improving patient care and public health responses to the pandemic.
 

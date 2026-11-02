@@ -1,5 +1,6 @@
 ---
 title: SMART on FHIR Workshop
+date: 2026-09-16
 
 toc: false
 number-sections: false

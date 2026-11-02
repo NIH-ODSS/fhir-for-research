@@ -3,9 +3,9 @@
 # FHIR usd by some of the tutotorials, update depending on your local environment
 FHIR_SERVER="http://localhost:8080/fhir/"
 
-# URL path fragment to use to open Jupyter notebooks in collab and binder 
-# when this project is published
-COLLAB_BINDER_PATH="NIH-ODSS/fhir-for-research"
+# CI overrides these values before rendering; plain quarto preview stays local.
+DEPLOY_TARGET="local"
+DEPLOY_URL="http://localhost:1414"
 
 # Repository URL to FHIR Exercises
 FHIR_EXERCISES_REPO="https://github.com/NIH-ODSS/fhir-exercises"

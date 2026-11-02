@@ -1,5 +1,6 @@
 ---
 title: Using the FHIR API to Access Data
+date: 2026-02-18
 
 roles:
   - Informaticist
@@ -26,7 +27,7 @@ A FHIR server's API is typically accessed via a [URL](https://developer.mozilla.
 
 [^1]: URLs may only be accessible inside an institution's firewall, or may be accessible to the public internet. Even if a FHIR server is accessible to the public internet, it may not respond to *any* request -- depending on how it is configured, it may require authentication (like a username and password) to return any data.
 
-This URL is used to construct the API request, which typically takes the following form:
+This URL is used to construct an HTTP API request, which typically takes the following form:
 
 ``` markdown
 GET https://hapi.fhir.org/baseR4/Patient/591702
@@ -44,7 +45,7 @@ The general structure of a FHIR API request includes the following:
 -   `Patient` = FHIR resource type you want
 -   `591702` = The ID for the resource you want (note that an ID is not needed for some types of API requests)
 
-You can use this information to **fill out the form below** to construct and run a **live** FHIR query below to retrieve this patient's instance of Patient:
+You can use this information to **fill out the form below** to construct and run a **live** FHIR query to retrieve this patient's instance of Patient:
 
 ```{=html}
 <div class="d-xl-flex row justify-content-around g-3">
@@ -182,7 +183,7 @@ The example above (`GET https://hapi.fhir.org/baseR4/Patient/591702`) shows how 
 ::: callout-tip
 ## Making requests to a FHIR server
 
-Because FHIR's RESTful interface uses standard HTTP requests, it is possible to make `GET` requests by pasting a URL like `https://hapi.fhir.org/baseR4/Patient/591702`into your browser's address bar (omit the `GET` when using your browser, as loading web pages uses `GET` by default).
+Because FHIR's RESTful interface uses standard HTTP requests, it is possible to make `GET` requests by pasting a URL like `https://hapi.fhir.org/baseR4/Patient/591702` into your browser's address bar (omit the `GET` when using your browser, as loading web pages uses `GET` by default).
 
 However, it may be helpful to use an API testing tool like [Postman](https://www.postman.com) or [Hoppscotch](https://hoppscotch.io) when constructing FHIR searches for testing, or viewing longer responses. **Note that caution should be used when loading real patient data with FHIR via third-party tools.** The FHIR search examples in this module use synthetic data so this is not a concern here.
 
@@ -201,9 +202,9 @@ Note that rather than including the ID as part of the URL like in `GET https://h
 
 This request also uses the [`_revinclude` parameter](https://www.hl7.org/fhir/search.html#_include), which tells the FHIR server to follow the "reverse link" to identify instances of Observation where the reference in `Observation.patient` refers to one of the instances of Patient returned by the search.
 
-The response to a `search` interaction is an instance of the [Bundle](https://www.hl7.org/fhir/bundle.html) resource, which contains the instances of the Patient and Observation resources returned by the server in response to the search. More information on Bundle can be found in [Key FHIR Resources](key-fhir-resources.qmd#the-bundle-resource).
+The response to a `search` interaction is an instance of the [Bundle](https://www.hl7.org/fhir/bundle.html) resource, which contains the instances of the Patient and Observation resources returned by the server in response to the search. More information on Bundle can be found in [FHIR Resources in Depth](fhir-resources-in-depth.qmd#the-bundle-resource).
 
-Depending on your query, the response may be too large for the sever to easily return all at once. In this case, the server may employ [paging](http://www.hl7.org/fhir/http.html#paging) to split up the response. If it does, the response will include an entry in the `link` element that indicate the URL that provides the `relation="next"` page. To retrieve all the results, you will need to issue a `GET` request to the `next` URLs on each page of results. The last page of results will not have a `next` URL populated.
+Depending on your query, the response may be too large for the server to easily return all at once. In this case, the server may employ [paging](http://www.hl7.org/fhir/http.html#paging) to split up the response. If it does, the response will include an entry in the `link` element that indicates the URL that provides the `relation="next"` page. To retrieve all the results, you will need to issue a `GET` request to the `next` URLs on each page of results. The last page of results will not have a `next` URL populated.
 
 #### Multiple types of resources
 
@@ -227,7 +228,7 @@ This instructs the server to return instances of Observation where `Observation.
 
 FHIR's `search` interaction does not allow for the same degree of filtering logic as a SQL-style query in a relational database. However, it does include some ability to filter with AND/OR logic, or by other criteria. Below are a few examples of this functionality.
 
-To get all the patients who have an Observation observation with a specific value of `Observation.code`, make the following request:
+To get all the patients who have an Observation instance with a specific value of `Observation.code`, make the following request:
 
 ```         
 GET https://hapi.fhir.org/baseR4/Patient?_has:Observation:patient:code=http://loinc.org|718-7
@@ -251,9 +252,9 @@ GET https://hapi.fhir.org/baseR4/Observation?code=http://loinc.org|718-7&_has:Ob
 
 The parameter `value-quantity=gt20` tells the server to take the subset of the selected Observation instances with `Observation.valueQuantity` greater than (`gt`) 20. Care should be used when analyzing the response to ensure `Observation.valueQuantity.units` is consistent.
 
-A number of other logic and filtering capabilities are described in detail on in [a section on the Search page in the FHIR specification](https://www.hl7.org/fhir/search.html#combining).
+A number of other logic and filtering capabilities are described in detail in [a section on the Search page in the FHIR specification](https://www.hl7.org/fhir/search.html#combining).
 
-## Determining a FHIR server capabilities
+## Determining a FHIR server's capabilities
 
 All servers are required to support the [`capabilities` interaction](https://www.hl7.org/fhir/http.html#capabilities) which documents the server's functionality. The capability interaction is of the form:
 
@@ -263,23 +264,11 @@ GET [base]/metadata
 
 This request will return an instance of a resource called a [CapabilityStatement](https://www.hl7.org/fhir/capabilitystatement.html) that defines the behaviors supported by the server.
 
-Instances of CapabilityStatement are often extremely long -- [the response](https://gist.github.com/masnick/4ae69f88c498a98f65d40a1098bcc9f6) from `GET https://hapi.fhir.org/baseR4/metadata` is more than 25,000 lines of JSON. Therefore, if you wish to use the `capabilities` interaction to discover server capabilities, you will likely need to write a script to assist with parsing the response. More information on this can be found [here]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_1_Opioids.ipynb) under "Querying the Server." The FHIR specification has a [summary table of interactions](https://www.hl7.org/fhir/http.html#summary) that may be available on a server, which may help in understanding the response of the `capabilties` interaction.
+Instances of CapabilityStatement are often extremely long -- [the response](https://gist.github.com/masnick/4ae69f88c498a98f65d40a1098bcc9f6) from `GET https://hapi.fhir.org/baseR4/metadata` is more than 25,000 lines of JSON. Therefore, if you wish to use the `capabilities` interaction to discover server capabilities, you will likely need to write a script to assist with parsing the response. More information on this can be found [here]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_1_Opioids.ipynb) under "Querying the Server." The FHIR specification has a [summary table of interactions](https://www.hl7.org/fhir/http.html#summary) that may be available on a server, which may help in understanding the response of the `capabilities` interaction.
 
 ## Next steps
 
-If you are interested in using the FHIR API to access data, you may want to review the following resources:
-
--   The [general FHIR API documentation](https://www.hl7.org/fhir/http.html) and the documentation specific to the [`search` interaction](https://www.hl7.org/fhir/search.html) in the FHIR specification.
-
--   The workshop covering [FHIR data analysis](/workshops/data-analysis-cds/01-fhir-analysis.qmd) if you are interested in extracting data from a FHIR server into a Python Pandas DataFrame.
-
--   NIH/ODSS training materials on using Python/Pandas to extract data from a FHIR server and integrate it with other data sources (note that R versions of these exercises are [also available](https://datascience.nih.gov/fhir-initiatives/researchers-training)):
-
-    -   [Exercise 1: Patients Prescribed Opioids]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_1_Opioids.ipynb)
-
-    -   [Exercise 2: "Kids First" Data]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_2_KidsFirst.ipynb)
-
-    -   [Exercise 3: Drug-Drug Interactions]({{< env FHIR_EXERCISES_REPO >}}/blob/main/Python/Exercise_3_DrugInteractions.ipynb)
+If you are interested in using the FHIR API to access data, you may want to review the [general FHIR API documentation](https://www.hl7.org/fhir/http.html) and the documentation specific to the [`search` interaction](https://www.hl7.org/fhir/search.html) in the FHIR specification.
 
 ```{=html}
 <!-- script to expand FHIR Query callout/dropdown -->

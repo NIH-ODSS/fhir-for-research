@@ -1,0 +1,173 @@
+---
+title: "CDEs & FHIR"
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Distinguish how Common Data Elements, Common Data Models, and FHIR contribute to interoperability.
+  - Describe how connecting CDEs with FHIR and related interoperability standards creates a pathway from standardized research definitions to reusable, computable research infrastructure.
+  - Describe the complementary layers of a computable CDE architecture.
+  - Identify common interoperability patterns for a CDE-based research workflow.
+
+reading_time: true
+
+date: 2026-10-26
+---
+
+## FHIR and interoperable research
+
+Interoperability requires both shared meaning and a standardized way to represent and exchange data. Common Data Elements (CDEs), Common Data Models (CDMs), and [HL7 Fast Healthcare Interoperability Resources (FHIR)](https://hl7.org/fhir/overview.html) address different parts of this challenge:
+
+- **CDEs** standardize what data mean and, where specified, what is collected.
+- **CDMs** standardize how data are organized for a particular use or analytical environment.
+- **FHIR** standardizes how health information can be represented and exchanged between systems. It can be viewed as a specific type of CDM, though FHIR also has many capabilities that go beyond CDMs (e.g., the [FHIR API](https://www.hl7.org/fhir/http.html)).
+
+FHIR provides a standards-based framework for representing and exchanging health and research information using FHIR resources, [profiles](https://hl7.org/fhir/profiling.html), terminology bindings, and APIs. When combined with well-defined CDEs, these capabilities can help translate shared research concepts into machine-actionable specifications that software systems can implement and use to validate and exchange data.
+
+FHIR does **not**, however, create semantic interoperability by itself. A FHIR representation still requires clearly defined concepts, appropriate terminology and value-set bindings, explicit context and constraints, governance, and implementation guidance.
+
+The goal is not simply to “convert CDEs to FHIR.” It is to create an interoperable semantic and technical layer in which CDEs can be consistently represented, validated, exchanged, and reused across research workflows.
+
+## FHIR-enabled CDEs
+
+### Bridging the gap for computability
+
+Historically, CDEs have been represented through data dictionaries, case report forms, PDFs, metadata repositories, and spreadsheet-based specifications. Existing repositories also provide structured metadata and [machine-readable exports](https://www.nlm.nih.gov/oet/ed/navigator/cder3/index.html) of CDEs, as described in the [CDE introduction](cde-introduction.qmd). These artifacts can effectively define research concepts, but they do not necessarily provide everything software systems need to implement those concepts consistently.
+
+FHIR and related implementation standards provide a **machine-readable implementation layer** that can help bridge the gap from human-readable definitions to computable assets. A FHIR-enabled CDE combines its scientific and semantic definition with computable specifications for how the element can be represented, constrained, validated, and exchanged.
+
+### Example: a CDE for pain intensity
+
+Consider a **CDE for pain intensity**.
+
+A traditional CDE might specify:
+
+- the element name and definition;
+- question or prompt text; and
+- permissible values or response options.
+
+A FHIR-enabled implementation makes choices such as the following explicit and usable by software, building on terminology and constraints already present in the CDE definition:
+
+- a code from a standard terminology, such as [Logical Observation Identifiers Names and Codes (LOINC)](https://loinc.org/), when appropriate;
+- the applicable FHIR resource and profile, which define the structure used to represent the concept;
+- terminology and value-set bindings;
+- cardinality (how many times a data element may occur) and other validation constraints; and
+- a standards-based representation that can be exchanged through a FHIR API.
+
+The underlying scientific concept has not changed. **What changes is how computable the data element is** (i.e., how consistently software can implement it). A shared computable specification reduces the need for each organization or software team to interpret the CDE independently and provides rules that systems can use to process and validate data.
+
+### What FHIR enables
+
+FHIR is not a replacement for CDEs. Instead, it provides a standards-based pathway for operationalizing CDEs so they can move beyond reference definitions and become reusable components of interoperable research systems.
+
+The table below explains how CDEs and FHIR may support complementary capabilities for research interoperability. These capabilities reinforce one another, underscoring how semantic and technical interoperability should be developed together.
+
+| Research interoperability capability | Purpose | Examples |
+|----|----|----|
+| **Standardized CDEs** | Establish shared meaning | Define research concepts, data definitions, response options, and applicable terminology consistently. |
+| **Computable CDEs** | Make definitions machine-actionable | Represent CDE specifications in structured, machine-readable forms with explicit terminology, constraints, and validation requirements. |
+| **Semantic interoperability** | Preserve meaning across systems | Use common definitions, terminology bindings, mappings, and value sets so that exchanged data can be interpreted consistently. |
+| **Technical interoperability** | Enable standards-based exchange | Use FHIR resources and profiles, APIs, Structured Data Capture (SDC), Bulk Data Access, terminology services, and implementation guides to support implementation across systems. |
+| **Computable research workflows** | Put standards into practice | Reuse computable CDEs in workflows such as electronic data capture, eSource (for example, populating research forms from electronic health records [EHRs]) [@Nordo_2017_eSource], cohort and phenotype definitions, computable protocols, and EHR-to-research data exchange. |
+| **AI-enabled research** | Build on standardized, computable data | Provide well-defined, structured data that can support AI and analytics workflows. Standardization does not by itself establish data quality or model validity. |
+
+## Computable CDE architecture
+
+Implementing a computable CDE across systems requires more than a machine-readable definition or a single FHIR resource. It typically involves a coordinated set of semantic and technical artifacts that preserves the meaning of a research concept while supporting consistent implementation, validation, exchange, and reuse. The table below describes these complementary layers.
+
+| CDE architecture | Purpose |
+|----|----|
+| **1. Semantic definition**<br>What does the CDE mean? | Defines the research concept, question or variable, permissible values, units, context, and other metadata needed for consistent interpretation. |
+| **2. Terminology**<br>How is meaning coded consistently? | Links concepts, responses, and units to appropriate standard terminologies such as LOINC, [SNOMED CT](https://www.snomed.org/), [RxNorm](https://www.nlm.nih.gov/research/umls/rxnorm/overview.html), [International Classification of Diseases (ICD)](https://icd.who.int/browse10/2019/en), and [Unified Code for Units of Measure (UCUM)](https://ucum.org/). Value sets identify applicable codes for a particular element, along with a binding strength that determines how strictly the value set constraints are applied. |
+| **3. Computable representation**<br>How can software interpret the CDE? | Represents CDE specifications in structured, machine-readable formats. FHIR profiles use [StructureDefinition](https://hl7.org/fhir/structuredefinition.html) resources to specify constraints; [ValueSet](https://hl7.org/fhir/valueset.html), [CodeSystem](https://hl7.org/fhir/codesystem.html), and [ConceptMap](https://hl7.org/fhir/conceptmap.html) resources represent terminology artifacts. Other schema languages, such as [LinkML](https://linkml.io/), can also represent structured definitions. |
+| **4. Data collection**<br>How is the CDE captured? | Translates standardized definitions into reusable electronic instruments. FHIR [Questionnaire](https://hl7.org/fhir/questionnaire.html) and [QuestionnaireResponse](https://hl7.org/fhir/questionnaireresponse.html), together with the [HL7 Structured Data Capture (SDC) Implementation Guide](https://hl7.org/fhir/uv/sdc/), can support standardized forms, response options, validation, and conditional logic. |
+| **5. Exchange and access**<br>How do systems share the data? | FHIR APIs and implementation guides define how standardized data can be accessed and exchanged. [SMART on FHIR](https://hl7.org/fhir/smart-app-launch/) supports authorized application access and integration. The [FHIR Bulk Data Access Implementation Guide](https://hl7.org/fhir/uv/bulkdata/) supports population-level export without individual patient-by-patient API calls. |
+| **6. Mapping and reuse**<br>How does the CDE connect to other data models? | Mappings connect CDEs to clinical, research, public health, and analytical representations, including CDMs. ConceptMap supports mappings between codes; moving data between models also requires structural transformation rules. Explicit, validated mappings reduce repeated local transformation and support reuse across environments. |
+
+::: callout-note
+## Structured Data Capture Implementation Guide
+
+The [HL7 Structured Data Capture (SDC) Implementation Guide](https://hl7.org/fhir/uv/sdc/) provides guidance for using FHIR Questionnaire resources in more sophisticated data-collection workflows. A Questionnaire can represent CDE questions, response options, terminology bindings, instructions, validation constraints, and conditional behavior.
+
+This approach is particularly relevant to standardized assessments and patient-reported outcomes, where consistent questions, response options, scoring rules, and terminology are important for reuse.
+
+This implementation guide creates a potential pathway from a standardized CDE definition to a reusable electronic data-collection specification. The same computable definition can inform implementation in research applications, registries, EHR-integrated workflows, and other data-collection systems, although individual platforms may require additional integration or transformation.
+:::
+
+### Example, continued: pain intensity
+
+The earlier pain intensity example can now be expressed as a set of implementation choices. The table below illustrates a numeric score representation of pain intensity using FHIR R4 and [LOINC 72514-3](https://loinc.org/72514-3), which identifies reported pain severity on a 0–10 scale. (Please note that this is a high-level illustrative example, not a complete FHIR profile or a specific repository CDE.)
+
+| Component | Example specification |
+|----|----|
+| **CDE** | Pain intensity at present |
+| **Question** | “On a scale of 0–10, where 0 is no pain and 10 is the worst pain imaginable, how would you rate your pain level now?” |
+| **Concept** | LOINC 72514-3 |
+| **Response domain** | Integers from 0 through 10 for this example |
+| **FHIR capture** | Questionnaire with an integer item and QuestionnaireResponse with the recorded answer |
+| **FHIR normalized result** | [Observation](https://hl7.org/fhir/R4/observation.html) constrained by a use case-specific profile |
+| **Value** | Numeric score in `Observation.valueQuantity.value`, constrained to the chosen response domain |
+| **Unit** | UCUM `{score}` in `Observation.valueQuantity.code`, with `Observation.valueQuantity.system` set to `http://unitsofmeasure.org` |
+| **Timing** | Point-in-time assessment, recording the assessment time in `Observation.effective[x]` |
+| **Respondent** | Patient |
+| **Exchange** | FHIR API, with SMART authorization where applicable |
+| **Population extraction** | FHIR Bulk Data Access, when supported by the source system |
+| **Research reuse** | Explicit mapping to the target research CDM |
+
+### FHIR resources for research CDEs
+
+The appropriate FHIR representation depends on the CDE and its use case. Commonly relevant resources include:
+
+- **Questionnaire** defines questions and structured data-collection instruments.
+- **QuestionnaireResponse** represents responses to a questionnaire.
+- **Observation** represents measurements, assessments, and other observations.
+- **[Condition](https://hl7.org/fhir/condition.html)** represents clinical conditions, diagnoses, and health concerns.
+- **[ResearchStudy](https://hl7.org/fhir/researchstudy.html)** represents information about a research study.
+- **[ResearchSubject](https://hl7.org/fhir/researchsubject.html)** represents an individual's participation in a study.
+
+Computable CDEs can support several complementary interoperability patterns. A research workflow may use several of these patterns together. For example, terminology-bound CDEs represented in a FHIR Questionnaire for data collection may also be mapped to an analytical CDM for downstream analysis.
+
+| Common interoperability patterns | Example enabling standards and tools |
+|----|----|
+| **Questionnaire-driven data capture** | FHIR Questionnaire, QuestionnaireResponse, SDC |
+| **EHR-to-research data access** | FHIR APIs, SMART on FHIR, Bulk Data Access |
+| **Terminology-linked CDEs** | LOINC, SNOMED CT, RxNorm, UCUM, ValueSets |
+| **Machine-readable specifications** | FHIR profiles, StructureDefinitions, ValueSets, LinkML |
+| **Cross-model reuse** | ConceptMaps for concept relationships, together with explicit structural transformation rules |
+| **Standards-based implementation** | FHIR implementation guides and profiles |
+
+### Terminology bindings and services
+
+Terminology links connect CDE concepts and permissible values to standardized vocabularies and codes. In FHIR, a [terminology binding](https://hl7.org/fhir/R4/terminologies.html#strength) associates a coded element with a value set and specifies how strictly it must be followed. For example, a measurement may use LOINC to identify what was measured, UCUM to represent the unit, and a value set to identify appropriate coded responses. Other terminologies, including SNOMED CT, RxNorm, and ICD, may also be used, depending on the concept.
+
+Terminology binding strengthens semantic interoperability. Consistent implementation also requires appropriate context, constraints, profiles, mappings, governance, and version management.
+
+[FHIR terminology services](https://hl7.org/fhir/R4/terminology-service.html) can support value-set expansion, code validation, terminology lookup, and concept mapping. Examples include open-source software such as [HAPI FHIR](https://hapifhir.io/hapi-fhir/docs/server_jpa/terminology.html), [Snowstorm](https://github.com/IHTSDO/snowstorm), and Cartos (see below). There are also commercial products in this space, such as the [Health Language Platform](https://www.wolterskluwer.com/en/solutions/health-language). Supported operations and terminology content vary by implementation. For more detail on code systems, value sets, and mappings, see the [Terminology and FHIR module](terminology.qmd).
+
+::: callout-note
+## Cartos terminology service
+
+The Office of the National Coordinator for Health IT (ONC) provides [Cartos](https://healthit.gov/standards-and-technology/cartos/) for accessing terminology associated with its Health IT Certification Program, Standards Version Advancement Process (SVAP), and supported implementation guides.
+
+Implementers can browse the content without an account or use a read-only FHIR R4 API to search, retrieve, expand, look up, and validate supported terminology content. Selected terminology collections are also available for download.
+
+Cartos focuses on this program-related content; it does not necessarily distribute complete large clinical code systems already available through their respective terminology stewards.
+:::
+
+## Progress toward FHIR-enabled CDEs and datasets
+
+FHIR-based access to EHR data provides a starting point for implementing research CDEs. For example, [REDCap Clinical Data Interoperability Services (CDIS)](https://projectredcap.org/software/cdis/) supports authorized imports of selected EHR data, including demographics, vital signs, laboratory results, medications, problems, and procedures. Availability depends on local configuration and source-system support. Importing these data still requires checking whether their definitions, units, timing, and context match the research CDE. See the [REDCap on FHIR module](redcap-fhir.qmd) for details.
+
+Other efforts, such as patient-reported outcomes, clinical trial data capture, registries, adverse event reporting, and capture of real-world evidence, are still emerging with varying levels of maturity and adoption of FHIR-enabled CDEs. For example, the [HL7 Vulcan Accelerator](https://hl7vulcan.org/) has published implementation guidance for [adverse events](https://hl7vulcan.org/projects/adverse-events-ae/) and [real-world data](https://hl7vulcan.org/projects/real-world-data/), while the [Vulcan Interoperability Bridge](https://vulcaninteroperabilitybridge.org/about-the-project/) supports demonstrations of connected research workflows. (The [HL7 Vulcan Accelerator module](cde-vulcan-accelerator.qmd) explores these efforts in more detail.) Other areas are less mature, including behavioral measures, disease-specific outcome measures, and research-specific instruments. Scaling FHIR-enabled CDEs across all domains can be difficult due to the need for custom FHIR profiles, extensions, and terminology work.
+
+Adams et al. highlight limitations for scaling CDEs in their 2025 paper, [The NIH HEAL pain common data elements (CDE): A great start but a long way to the finish line](https://doi.org/10.1093/pm/pnae110) [@Adams_2025_HEAL]. The findings recognize that while FHIR can standardize the collection, representation, and exchange of CDEs, it does not automatically solve for interpretation, contextual validity, and population-specific meaning. The authors emphasize that timing, pain type, disease context, and population matter, and that the same measure may not mean the same thing across studies. This paper concludes that future computable CDEs will need FHIR representations, metadata, provenance, implementation guidance, and validation constraints -- not merely exchange standards. The opportunity for the research community is to create a computable layer that preserves meaning, context, and validity as data move across studies, institutions, and AI-enabled research workflows.
+
+## References
+
+::: {#refs}
+:::

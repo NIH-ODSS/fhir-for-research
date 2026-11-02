@@ -1,0 +1,254 @@
+---
+title: Clinical Quality Language Technical Example
+
+roles:
+  - Informaticist
+  - Software Engineer
+
+date: 2026-05-18
+---
+
+This module is meant for technical users who are interested in understanding the details of authoring clinical logic using [HL7 Clinical Quality Language](https://cql.hl7.org/) (CQL). Please read or review the [Clinical Quality Language introduction](clinical-quality-language-intro.qmd) before continuing.
+
+## Example Overview: Elevated A1C
+
+In this module, we will walk through the steps to create a CQL library that contains expressions representing the following criteria:
+
+> Adult patients who had an outpatient encounter during the study period and who have elevated A1C.
+
+We will use the four CDS knowledge levels as a framework for working through this example [@boxwala2011cds]. Although our example is not necessarily a complete clinical decision support artifact, we can use the same process to move from a narrative representation to an executable representation.
+
+## Knowledge Level 1: Narrative
+
+Knowledge level 1 is the narrative representation. The narrative representation may come from a clinical guideline, a research paper, a best practice, or any other human-readable clinical statement. In our example, the level 1 narrative representation is:
+
+> Adult patients who had an outpatient encounter during the study period and who have elevated A1C.
+
+## Knowledge Level 2: Semi-Structured
+
+Knowledge level 2 is the semi-structured representation. This may often be represented using a decision tree, flowchart, or high-level pseudocode. One benefit of specifying a level 2 representation _before_ moving on to the level 3 representation is that it often surfaces hidden assumptions and/or ambiguous phrasing in the narrative. Although our narrative is relatively straightforward, there are still some phrases that would benefit from greater specificity:
+
+* Who qualifies as an adult? Is it anyone 18 years old and above, or is it intended to target a different age range? Is there an age cut-off – for example, 75 years of age?
+* What qualifies as an outpatient encounter? Do telehealth encounters count? What about outpatient surgeries?
+* How do we determine if a patient has elevated A1C? What is considered "elevated"? Should we consider all A1C results or only the most recent?
+
+When we restate the narrative in a semi-structured format, we often have to resolve these ambiguities. In our example, we will resolve them in the following way:
+
+* We will indicate that anyone 18 years or older qualifies as an adult.
+* We will use a value set to provide a list of encounter codes that represent all qualifying outpatient encounter types.
+* We will use the most recent HbA1c lab result to measure A1C and consider it "elevated" if it is >= 6.5%.
+
+Using the original narrative and the decisions above, we might come up with the following level 2 semi-structured representation that uses a bullet list and boolean logic:
+
+* Age >= 18 years
+* AND outpatient encounter ([2.16.840.1.113762.1.4.1160.24](https://vsac.nlm.nih.gov/valueset/2.16.840.1.113762.1.4.1160.24/expansion/Latest)) DURING study period
+* AND MOST RECENT HbA1c result ([2.16.840.1.113883.3.464.1003.198.12.1013](https://vsac.nlm.nih.gov/valueset/2.16.840.1.113883.3.464.1003.198.12.1013/expansion/Latest)) >= 6.5%
+
+::: callout-note
+## Note
+
+The object identifiers (OIDs) for outpatient encounter (`2.16.840.1.113762.1.4.1160.24`) and HbA1c result (`2.16.840.1.113883.3.464.1003.198.12.1013`) above link to value sets in the [Value Set Authority Center](https://vsac.nlm.nih.gov/) (VSAC). **Viewing the contents of these value sets requires a free account.**
+:::
+
+## Knowledge Level 3: Structured
+
+Knowledge level 3 is the structured representation. Level 3 representations are computable and shareable but may still require local adaptation before they can be used in any specific environment. In our case, we will use CQL and ELM for the level 3 representation, but other structured languages and formats are also valid (e.g., [BPM+](https://www.hl7.org/bpm/index.cfm)).
+
+We will work from the level 2 representation above to develop the level 3 structured representation using CQL.
+
+### Library and Data Model Declarations
+
+Every CQL [library](https://cql.hl7.org/02-authorsguide.html#library) should have a name and version. These are typically declared at the top of the file using `library` and `version` keywords. We will call our library `ExampleElevatedHbA1c` and give it version `0.0.1` to indicate it is in the early stages of development.
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">library</span> ExampleElevatedHbA1c <span class="cql-keyword">version</span> <span class="cql-string">'0.0.1'</span></code></pre>
+```
+
+Next, we must indicate what [data model](https://cql.hl7.org/02-authorsguide.html#data-models) we're using and include any [helper libraries](https://cql.hl7.org/02-authorsguide.html#libraries) for that data model. CQL uses the `using` keyword to declare models and the `include` keyword to include additional libraries in the logic. In our example, we are using the `FHIR` data model, which uses the `FHIRHelpers` library for common FHIR-related CQL functions and conversions.
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">using</span> FHIR <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span>
+<span class="cql-keyword">include</span> FHIRHelpers <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span></code></pre>
+```
+
+### Terminology: Outpatient Encounters and HbA1c Lab Tests
+
+CQL requires authors to declare [terminology](https://cql.hl7.org/02-authorsguide.html#terminology) requirements up front and provides `valueset`, `codesystem`, `concept`, and `code` keywords for doing so. In our case, the level 2 representation indicates specific value sets from VSAC that should be used when querying for outpatient encounters and HbA1c labs.
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">valueset</span> <span class="cql-identifier">"Outpatient Clinical Encounters"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1160.24'</span>
+<span class="cql-keyword">valueset</span> <span class="cql-identifier">"HbA1c Laboratory Test"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1013'</span></code></pre>
+```
+
+You may have noticed that the above value set definitions use URLs to identify the value sets rather than using the OIDs directly. This is because the [Using CQL with FHIR](https://hl7.org/fhir/uv/cql/using-cql.html#value-sets) implementation guide indicates that value set identifiers must use _canonical URLs_ as value set identifiers. The [FHIR terminology service for VSAC resources](https://www.nlm.nih.gov/vsac/support/usingvsac/vsacfhirapi.html) indicates the following form for canonical value set URLs: `http://cts.nlm.nih.gov/fhir/ValueSet/{OID}`.
+
+### Parameters: Study Period
+
+CQL [parameters](https://cql.hl7.org/02-authorsguide.html#parameters) allow authors to define data elements that can be specified at evaluation time. In our example, we don't want to tie the study period to a specific set of dates, so we will use the `parameter` keyword to define the study period as a DateTime interval that is passed in during execution. This means that the CQL can be executed with any arbitrary study period rather than encoding a specific study period into the CQL logic.
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">parameter</span> <span class="cql-identifier">"Study Period"</span> <span class="cql-type">Interval</span>&lt;<span class="cql-type">DateTime</span>&gt;</code></pre>
+```
+
+### Context: Patient
+
+Next, we will use the `context` keyword to declare that the following CQL expressions are intended to be processed in the [context](https://cql.hl7.org/02-authorsguide.html#context) of a patient.
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">context</span> Patient</code></pre>
+```
+
+CQL only requires that data models support the `Unfiltered` context, but most data models support additional contexts as well (especially the `Patient` context). The FHIR R4 data model currently supports the `Device`, `Patient`, `Practitioner`, and `Unfiltered` contexts.
+
+### Expression: Age >= 18 years
+
+We're finally at the point where we can define the first patient-based criterion: `Is Adult`. As indicated by the level 2 representation, we will define "adult" as patients aged 18 years and above. To represent this in CQL, we'll use CQL's built-in `AgeInYears()` function.
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult"</span>: AgeInYears() <span class="cql-operator">&gt;=</span> <span class="cql-number">18</span></code></pre>
+```
+
+Note that we use a `define` keyword to give the CQL expression a name that we can reference later. Statement names should reflect what they represent, so we've called it `Is Adult` since it returns a true or false value depending on whether the patient is an adult.
+
+You may have also noticed that we use the familiar `>=` syntax to express the concept of "greater than or equal to." CQL supports a variety of [comparison operators](https://cql.hl7.org/09-b-cqlreference.html#comparison-operators-4) like this as well as other [mathematical operators](https://cql.hl7.org/09-b-cqlreference.html#arithmetic-operators-4) like `+`, `-`, `/`, and more.
+
+### Expression: Outpatient Encounter DURING study period
+
+To determine if the patient had an outpatient encounter in the study period, we must query for `Encounter`s that have a code in the `Outpatient Clinical Encounters` value set and whose encounter `period` occurred during the `Study Period`.
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span>:
+  <span class="cql-keyword">exists</span> [Encounter: <span class="cql-identifier">"Outpatient Clinical Encounters"</span>] E
+    <span class="cql-keyword">where</span> E.period <span class="cql-keyword">during</span> <span class="cql-identifier">"Study Period"</span></code></pre>
+```
+
+In the CQL [query](https://cql.hl7.org/02-authorsguide.html#queries) above, `[Encounter: "Outpatient Clinical Encounters"]` retrieves `Encounter` resources from the FHIR server and filters them by the `Outpatient Clinical Encounters` value set. The letter `E` is used as an alias so we can easily refer to each returned `Encounter` in the `where` clause. The `during` keyword is one of many [interval operators](https://cql.hl7.org/09-b-cqlreference.html#interval-operators-3) that allow us to compare specific dates with date ranges and/or compare date ranges with other date ranges. CQL also defines an additional set of [date and time operators](https://cql.hl7.org/09-b-cqlreference.html#datetime-operators-2) for performing other comparisons and calculations using dates and times.
+
+Note that we also prefixed the entire query with the `exists` keyword. This provides a simple way to check if the query returns at least one result. In our case, it will return `true` if at least one matching encounter *exists* and return `false` otherwise.
+
+### Expression: MOST RECENT HbA1c result >= 6.5%
+
+Next, we want to check the most recent HbA1c result value. First, we'll find the most recent HbA1c laboratory test by querying for `Observation`s with a code in the `HbA1c Laboratory Test` value set. Since we want the most recent one, we will `sort` the results by their `issued` dates and return the last one using CQL's built-in `Last` function. The `Last` function comes from CQL's set of [list operators](https://cql.hl7.org/09-b-cqlreference.html#list-operators-2).
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Most Recent HbA1c"</span>: <span class="cql-keyword">
+  Last</span>([Observation: <span class="cql-identifier">"HbA1c Laboratory Test"</span>] HbA1c <span class="cql-keyword">sort by</span> issued)</code></pre>
+```
+
+To see if the result is 6.5% or above, we can reference the `Most Recent HbA1c` expression we just defined and check its `value`. When working with quantity units in clinical logic, it is a best practice to use the [Unified Code for Units of Measure](https://unitsofmeasure.org/ucum) (UCUM). CQL indicates that UCUM units must be wrapped in single quotes, so when we do the comparison, we wrap the UCUM unit for percent (`%`) in single quotes: `'%'`.
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Has Elevated HbA1c"</span>: <span class="cql-identifier">"Most Recent HbA1c"</span>.value <span class="cql-operator">&gt;=</span> <span class="cql-number">6.5</span> <span class="cql-string">'%'</span></code></pre>
+```
+
+### Combining the Expressions
+
+Finally, we can combine our statements using the `and` keyword to provide one expression that checks all of the criteria.
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult with Outpatient Encounter and Elevated HbA1c"</span>:
+  <span class="cql-identifier">"Is Adult"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Elevated HbA1c"</span></code></pre>
+```
+
+CQL can also support more complex combinations via additional [logical operators](https://cql.hl7.org/09-b-cqlreference.html#logical-operators-3) such as `or`, `xor`, and `not`.
+
+### The Complete ExampleElevatedHbA1c CQL Library
+
+Putting all of the steps above together, we end up with the following library. _Note that this library is for example purposes only. It has not been fully tested and should not be used in production environments._
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">library</span> ExampleElevatedHbA1c <span class="cql-keyword">version</span> <span class="cql-string">'0.0.1'</span>
+<span class="cql-keyword">using</span> FHIR <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span>
+<span class="cql-keyword">include</span> FHIRHelpers <span class="cql-keyword">version</span> <span class="cql-string">'4.0.1'</span>
+
+<span class="cql-keyword">valueset</span> <span class="cql-identifier">"Outpatient Clinical Encounters"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1160.24'</span>
+<span class="cql-keyword">valueset</span> <span class="cql-identifier">"HbA1c Laboratory Test"</span>: <span class="cql-string">'http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.464.1003.198.12.1013'</span>
+
+<span class="cql-keyword">parameter</span> <span class="cql-identifier">"Study Period"</span> <span class="cql-type">Interval</span>&lt;<span class="cql-type">DateTime</span>&gt;
+
+<span class="cql-keyword">context</span> Patient
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult"</span>: AgeInYears() <span class="cql-operator">&gt;=</span> <span class="cql-number">18</span>
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span>:
+  <span class="cql-keyword">exists</span> [Encounter: <span class="cql-identifier">"Outpatient Clinical Encounters"</span>] E
+    <span class="cql-keyword">where</span> E.period <span class="cql-keyword">during</span> <span class="cql-identifier">"Study Period"</span>
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Most Recent HbA1c"</span>: <span class="cql-keyword">
+  Last</span>([Observation: <span class="cql-identifier">"HbA1c Laboratory Test"</span>] HbA1c <span class="cql-keyword">sort by</span> issued)
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Has Elevated HbA1c"</span>: <span class="cql-identifier">"Most Recent HbA1c"</span>.value <span class="cql-operator">&gt;=</span> <span class="cql-number">6.5</span> <span class="cql-string">'%'</span>
+
+<span class="cql-keyword">define</span> <span class="cql-identifier">"Is Adult with Outpatient Encounter and Elevated HbA1c"</span>:
+  <span class="cql-identifier">"Is Adult"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span> <span class="cql-keyword">and</span>
+  <span class="cql-identifier">"Has Elevated HbA1c"</span></code></pre>
+```
+
+### The Expression Logical Model (ELM) Representation
+
+The library syntax above is optimized for human authoring and reviewing. Although computers _can_ parse it as-is, most CQL engines prefer to parse the logic in a more machine-friendly format called [Expression Logical Model](https://cql.hl7.org/elm.html) (ELM). ELM is typically exchanged in a JSON or XML format.
+
+As an example of how CQL relates to ELM, consider the following statement from our CQL library:
+
+```{=html}
+<pre class="cql-code"><code><span class="cql-keyword">define</span> <span class="cql-identifier">"Has Outpatient Encounter During Study Period"</span>:
+  <span class="cql-keyword">exists</span> [Encounter: <span class="cql-identifier">"Outpatient Clinical Encounters"</span>] E
+    <span class="cql-keyword">where</span> E.period <span class="cql-keyword">during</span> <span class="cql-identifier">"Study Period"</span></code></pre>
+```
+
+The following ELM XML representation is equivalent to the CQL above.
+
+```xml
+<def name="Has Outpatient Encounter During Study Period"
+     context="Patient" accessLevel="Public">
+  <expression xsi:type="Exists">
+    <operand xsi:type="Query">
+      <source alias="E">
+        <expression xsi:type="Retrieve" dataType="fhir:Encounter"
+                    templateId="http://hl7.org/fhir/StructureDefinition/Encounter"
+                    codeProperty="type" codeComparator="in">
+          <codes xsi:type="ValueSetRef" name="Outpatient Clinical Encounters" preserve="true"/>
+        </expression>
+      </source>
+      <where xsi:type="IncludedIn">
+        <operand xsi:type="FunctionRef" name="ToInterval" libraryName="FHIRHelpers">
+          <signature xsi:type="NamedTypeSpecifier" name="fhir:Period"/>
+          <operand xsi:type="Property" path="period" scope="E"/></operand>
+        <operand xsi:type="ParameterRef" name="Study Period"/>
+      </where>
+    </operand>
+  </expression>
+</def>
+```
+
+### Converting the Full CQL Library to ELM
+
+The [CQL-to-ELM translator reference implementation](https://github.com/cqframework/clinical_quality_language/tree/main/Src/java/cql-to-elm) is capable of converting CQL to ELM JSON or ELM XML. This translator is typically invoked programmatically, but you can also invoke it using the online [CQL Playground](https://www.cqframework.org/clinical_quality_language/playground/). Try out the following to see how CQL-to-ELM translation works and to get a feel for the ELM representation:
+
+1. Use your browser to open the [CQL Playground](https://www.cqframework.org/clinical_quality_language/playground/) site.
+2. Make sure that _ELM_ is selected in the top-level banner.
+3. Copy the `ExampleElevatedHbA1c` CQL library above and paste it into the text box on the left of the CQL Playground (overwriting the default text).
+4. In the rightmost column, find the _Output content type_ section and check the box next to _Pretty print JSON output_.
+5. In the rightmost column, find the _Compiler options_ section and uncheck the box next to _Enable locators_ to get a cleaner view.
+6. Investigate the ELM JSON representation in the middle column of the page. Notice the library `identifier`, `usings` (data model), `includes` (helper libraries), `parameters`, `valueSets`, `contexts`, and `statements`.
+7. In the rightmost column, find the _Output content type_ section and select XML to see the ELM XML representation. There is no option to pretty-print XML directly, but you can copy the XML into an [online XML formatter](https://jsonformatter.org/xml-formatter) to view it more easily.
+
+Feel free to experiment with the CQL Playground further by editing the CQL to see how it affects the ELM and/or changing the compiler options.
+
+## Knowledge Level 4: Executable
+
+Knowledge level 4 is the executable representation, suitable for use at a specific site or within a specific system. It builds on level 3 structured artifacts by adding site-specific configuration, local data mappings, and integration into local clinical workflows. In our example, this might include configuring the CQL engine to interface with a local FHIR server, mapping local codes to the standardized codes in our value sets, and exposing the functionality to end users in an appropriate way. Level 4 integrations may leverage other health standards like [SMART on FHIR](smart-on-fhir-intro.qmd) or [CDS Hooks](cds-hooks-intro.qmd), or they may integrate directly using custom APIs and interfaces. This knowledge level represents the final step: the point at which the intent of the narrative has been realized in a specific environment.
+
+## CQL Resources
+
+The following resources may be useful for researchers who want to dig deeper into some of the topics discussed in this example walkthrough:
+
+* **[Clinical Quality Language Specification](https://cql.hl7.org/)**: The official specification describing CQL and its capabilities. The [Author's Guide](https://cql.hl7.org/02-authorsguide.html) provides a friendly walk-through of the most important CQL concepts and the [Appendix B - CQL Reference](https://cql.hl7.org/09-b-cqlreference.html) provides an exhaustive list of all standard CQL operations and system functions.
+* **[Using CQL with FHIR Implementation Guide](https://hl7.org/fhir/uv/cql/)**: A FHIR implementation guide describing how to use CQL with FHIR, including [authoring guidance](https://hl7.org/fhir/uv/cql/using-cql.html) and [patterns](https://hl7.org/fhir/uv/cql/patterns.html), [implementation guidance](https://hl7.org/fhir/uv/cql/conformance.html), [common CQL functions for FHIR](https://hl7.org/fhir/uv/cql/Library-FHIRCommon.html), and more.
+* **[CQL Community Projects](https://github.com/cqframework/clinical_quality_language/wiki/Community-Projects)**: A listing of open-source projects including CQL compilers, CQL engines, CQL authoring tools, and CQL content.
+* **[#cql on chat.fhir.org](https://chat.fhir.org/#narrow/channel/179220-cql)**: A public user forum where CQL novices and experts can discuss CQL, ask questions, and get help.
+* **[CQL Playground](https://www.cqframework.org/clinical_quality_language/playground/)**: An online web application that allows users to enter CQL and compile it on the fly to ELM. Although it does not yet support execution, it's useful for quickly checking CQL logic for syntactic correctness.
+* **[CQL Studio](https://cqlstudio.com/)**: A brand-new web application for CQL authoring and testing. As of May 2026 it is still under active development. Users may encounter bugs, but it shows great promise for the future, including AI-enabled CQL authoring.

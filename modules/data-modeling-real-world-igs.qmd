@@ -1,5 +1,6 @@
 ---
-title: Real World Implementation Guides
+title: Real-World Implementation Guides
+date: 2026-02-18
 
 roles:
   - Investigator
@@ -10,26 +11,43 @@ roles:
 learning_objectives2:
   - Review existing FHIR IGs that may be relevant to researchers.
 
+toc: false
+number-sections: false
+
 reading_time: true
 ---
 
-FHIR Implementation Guides (IGs) provide a mechanism for use-case specific customization of the FHIR specification.
+FHIR Implementation Guides (IGs) provide a mechanism for use-case-specific customization of the FHIR specification.
 
-::: {.callout-tip appearance="minimal"}
+::: {.callout-caution appearance="minimal"}
 Please see [the "Customizing FHIR" section in FHIR from 1,000 Feet](fhir-from-1000-ft.qmd#customizing-fhir) for a high-level overview of FHIR IGs and profiling. [Reading IGs](data-modeling-reading-igs.qmd) provides additional details.
 :::
 
-Examples of FHIR IGs that may be of interest to researchers are listed below. This is not meant to be an exhaustive list, but rather to demonstrate the scope of the IGs that have been published and identify some of the key IGs (identified with ⭐️) to be aware of in the FHIR ecosystem. A [full list of IGs published through HL7® is available here](http://www.fhir.org/guides/registry/), and additional IGs may be published outside of HL7.
+Examples of FHIR IGs that may be of interest to researchers are listed below. This is not meant to be an exhaustive list, but rather to demonstrate the scope of the IGs that have been published. IGs required or recommended in regulations are the most likely to be widely implemented and are identified with ⭐️.
 
--   [**Adverse Events for Clinical Research**](https://build.fhir.org/ig/HL7/fhir-ae-research-ig/), which provides an approach for representing adverse events in clinical research with FHIR. (Note that as of April 2023, this IG has not gone through the FHIR balloting process yet. The provided link is to the "live build" of the IG.)
+A [full list of IGs published through HL7® is available here](http://www.fhir.org/guides/registry/), and additional IGs may be published outside of HL7.
 
--   [**Bulk Data**](https://hl7.org/fhir/uv/bulkdata/)⭐️, which provides a mechanism for extracting population-scale data from FHIR servers. [See here for more information](smart-on-fhir-intro.qmd#bulk-data-access).
+## IGs of interest *(non-exhaustive list)*
 
--   [**Common Data Models Harmonization**](http://hl7.org/fhir/us/cdmh/), which focuses "on mapping and translating observational data extracted for Patient Centered Outcome Research (PCOR) and other purposes into FHIR format" and supports PCORNet, i2b2, i2b2, and Sentinel data models.
+-   [**Adverse Events for Clinical Research**](https://hl7.org/fhir/uv/ae-research-ig/), which provides an approach for representing adverse events in clinical research with FHIR.
 
--   [**Electronic Case Reporting**](http://hl7.org/fhir/us/ecr/), which supports public health electronic case reporting.
+-   [**Bulk Data Access**](https://hl7.org/fhir/uv/bulkdata/)⭐️, which provides a mechanism for extracting population-scale data from FHIR servers. [See here for more information](smart-on-fhir-intro.qmd#bulk-data-access).
 
--   [**GA4GH Phenopackets**](http://phenopackets.org/core-ig/ig/branch/master/index.html), which "intends to support global exchange of computable case-level phenotypic information for all types of disease diagnosis and research." (Note that this is an example of an IG published outside of HL7.)
+-   [**Da Vinci Coverage Requirements Discovery (CRD)**](https://hl7.org/fhir/us/davinci-crd/)⭐, "which provides decision support to providers at the time they're ordering diagnostics, specifying treatments, making referrals, scheduling appointments, etc." This IG leverages [CDS Hooks](https://cds-hooks.hl7.org/) to surface coverage information within the clinical workflow. ([source](https://hl7.org/fhir/us/davinci-crd/burden.html))
+
+-   [**Da Vinci Documentation Templates and Rules (DTR)**](http://hl7.org/fhir/us/davinci-dtr)⭐, "which allows providers to download 'smart' questionnaires, rules (e.g., [CQL](https://cql.hl7.org/)), and provides a SMART on FHIR app or EHR app that executes them to gather information relevant to a performed or planned service." ([source](https://hl7.org/fhir/us/davinci-crd/burden.html))
+
+-   [**Da Vinci Payer Data Exchange (PDex)**](https://hl7.org/fhir/us/davinci-pdex/)⭐, which defines how payers can provide "information related to the clinical condition and care" of a patient.
+
+-   [**Da Vinci Plan Net**](http://hl7.org/fhir/us/davinci-pdex-plan-net/)⭐, which "defines a FHIR interface to a health insurer's insurance plans, their associated networks, and the organizations and providers that participate in these networks."
+
+-   [**Da Vinci Prior Authorization Support**](http://hl7.org/fhir/us/davinci-pas/)⭐, which "allows provider systems to send (and payer systems to receive) prior authorization requests using FHIR." ([source](https://hl7.org/fhir/us/davinci-crd/burden.html))
+
+-   [**Da Vinci US Drug Formulary**](https://hl7.org/fhir/us/davinci-drug-formulary/)⭐, which "defines a FHIR interface to a health insurer's drug formulary information for patients/consumers."
+
+-   [**Electronic Case Reporting**](http://hl7.org/fhir/us/ecr/)⭐, which supports public health electronic case reporting.
+
+-   [**FHIR to CDISC Joint Mapping Implementation Guide**](https://hl7.org/fhir/uv/cdisc-mapping/), which provides mapping tables between selected portions of the [CDISC](https://www.cdisc.org) standard and FHIR.
 
 -   [**Genomics Reporting**](http://hl7.org/fhir/uv/genomics-reporting/), which provides FHIR versions of common data structures involving genomics data like [genotypes](http://hl7.org/fhir/uv/genomics-reporting/StructureDefinition-genotype.html) and [variants](http://hl7.org/fhir/uv/genomics-reporting/StructureDefinition-variant.html).
 
@@ -37,12 +55,22 @@ Examples of FHIR IGs that may be of interest to researchers are listed below. Th
 
 -   [**mCODE**](https://hl7.org/fhir/us/mcode/), which provides "a core set of structured data elements for oncology electronic health records (EHRs)."
 
+-   [**Protocols for Clinical Registry Extraction and Data Submission (CREDS) IG**](https://hl7.org/fhir/us/registry-protocols/), which provides a FHIR-based workflow for submissions for clinical registries.
+
 -   [**Quality Improvement Core**](http://hl7.org/fhir/us/qicore/), which supports interoperable clinical quality measures and clinical decision support.
 
--   [**Retrieval of Real World Data for Clinical Research**](https://build.fhir.org/ig/HL7/vulcan-rwd/), which supports the use of real world data for research purposes. (Note this link is to a a "live build" of the IG; as of April 2023 this IG has been balloted but not published through HL7. Once published, the IG will be accessible at <https://hl7.org/fhir/uv/vulcan-rwd>.)
+-   [**Retrieval of Real World Data for Clinical Research**](https://hl7.org/fhir/uv/vulcan-rwd/), which supports the use of real-world data for research purposes.
 
 -   [**Situational Awareness for Novel Epidemic Response**](http://hl7.org/fhir/uv/saner/), which "enables transmission of high level situational awareness information from inpatient facilities to centralized data repositories to support the treatment of novel influenza-like illness."
+
+-   [**SMART App Launch**](https://hl7.org/fhir/smart-app-launch/)⭐, which defines a workflow based on OAuth 2 for launching applications from an EHR, authorizing and authenticating the user, and defining what resources the user can access. As of version 2.2.0, it also includes [User-access Brands and Endpoints](https://hl7.org/fhir/smart-app-launch/STU2.2/brands.html), which allows organizations to publish a list of their FHIR endpoints and identify the organization associated with each endpoint.
+
+-   [**Subscriptions R5 Backport**](http://hl7.org/fhir/uv/subscriptions-backport/)⭐, which defines a way to backport changes to the FHIR Subscriptions framework introduced in FHIR R5 into FHIR R4. "The Subscriptions Framework is a mechanism designed to allow clients to ask for notifications when data changes."
 
 -   [**US Core**](https://www.hl7.org/fhir/us/core/)⭐️, which is the FHIR IG that implements USCDI ([more information here](fhir-from-1000-ft.qmd#example-customizing-patient-in-us-core)). This IG is highly relevant for researchers in the US because EHRs typically implement US Core as part of their FHIR implementations. Conversely, data elements that are not covered by US Core may not be consistently implemented in US EHR FHIR implementations.\
     \
     Many US-centric IGs use US Core as a starting point, so you may encounter US Core profiles when viewing other IGs. If you author a FHIR IG for US implementation, it may be beneficial to also follow this approach.
+
+-   [**Vulcan FHIR to OMOP FHIR IG**](https://build.fhir.org/ig/HL7/fhir-omop-ig/en/), which "provides details on how to transform healthcare data from FHIR to the OMOP Common Data Model. It aims to bridge the gap between these two widely used formats in healthcare and research. The standard defines mappings between FHIR resources and OMOP data tables, focusing on commonly used EHR data."
+
+-   [**Vulcan Clinical Study Protocol (Vulcan UDP)**](https://build.fhir.org/ig/HL7/vulcan-udp-ig/en/), which provides a FHIR representation of the [ICH M11 guidelines](https://www.ema.europa.eu/en/ich-m11-guideline-clinical-study-protocol-template-technical-specifications-scientific-guideline) for standardized clinical trial protocols.

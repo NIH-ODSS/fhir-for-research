@@ -1,0 +1,190 @@
+---
+title: "HL7 Vulcan Accelerator"
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Describe the origins, purpose, and evolution of the HL7 Vulcan Accelerator.
+  - Identify major Vulcan milestones and FHIR implementation guides that support clinical research interoperability.
+  - Explain how Vulcan coordinates standards development, implementation guidance, and testing across clinical research stakeholders.
+  - Describe how computable CDEs, standardized terminology, and FHIR implementation guidance can support Vulcan-related research workflows.
+  - Recognize opportunities for aligning NIH CDEs with FHIR-enabled research infrastructure to support data sharing and reuse.
+
+reading_time: true
+
+date: 2026-10-26
+---
+
+## Introduction
+
+Clinical research increasingly depends on data collected across electronic health records (EHRs), research repositories, clinical trial systems, registries, and other healthcare information systems. Yet clinical care and research have historically operated in separate data environments, requiring researchers to manually abstract information, enter the same information into multiple systems, or develop study-specific approaches to data exchange.
+
+As described in the [CDEs & FHIR module](cde-fhir.qmd), interoperability requires both shared meaning and standardized mechanisms to represent and exchange information. Common data elements (CDEs) standardize what data mean and, where specified, what is collected. FHIR provides a standardized mechanism for representing and exchanging information, while implementation guides (IGs) establish requirements for consistent implementation across systems.
+
+The [HL7 Vulcan Accelerator](https://hl7vulcan.org/) (Vulcan) was established to address this challenge by bringing together stakeholders to develop, test, and advance FHIR-based interoperability solutions. Vulcan illustrates how standardized research concepts, computable specifications, and implementation guidance can support reusable research workflows.
+
+## Origins and evolution of Vulcan
+
+### Why Vulcan was established
+
+The adoption of EHRs and development of FHIR created new opportunities to exchange clinical information electronically. However, clinical research had not benefited from these advances to the same extent as routine healthcare delivery.
+
+Research sponsors, academic medical centers, clinical research sites, and technology vendors continue to rely on separate information systems and study-specific processes to collect and exchange research information. For example, information documented in an EHR during routine clinical care might need to be manually abstracted and entered again into an electronic case report form for a clinical trial.
+
+Differences in definitions, terminology, data structures, and technical interfaces continue to complicate data exchange or reuse, increasing administrative burden and limiting integration between clinical care and research workflows.
+
+Vulcan was established to bridge this gap by extending the use of FHIR and related interoperability standards into translational and clinical research. Its [goals and activities](https://hl7vulcan.org/) include:
+
+- Bridging existing gaps between clinical care and clinical research.
+- Coordinating standards development across research stakeholders.
+- Building on existing interoperability standards and avoiding unnecessary duplication.
+- Developing FHIR implementation guidance for research workflows.
+- Supporting more efficient acquisition, exchange, and reuse of clinical information for research.
+
+### Formation and launch
+
+Vulcan [formed in September 2019](https://www.fda.gov/drugs/electronic-regulatory-submission-and-review/role-cder-health-level-seven-hl7-vulcan-accelerator) through a collaboration involving government agencies, academic institutions, technology companies, standards development organizations, patient representatives, and industry stakeholders. It [formally launched in August 2020](https://blog.hl7.org/hl7-fhir-accelerator-for-translational-and-clinical-research-vulcan-launches) as an HL7 FHIR Accelerator. Organizations involved at launch included TransCelerate BioPharma, Duke University, Johns Hopkins University, Oregon Health & Science University, UT Health San Antonio, the Society for Clinical Data Management, the U.S. National Library of Medicine, the National Center for Advancing Translational Sciences (NCATS), the Danish Medicines Agency, and the U.S. Food and Drug Administration (FDA).
+
+### The HL7 FHIR Accelerator model
+
+FHIR Accelerators are collaborative initiatives organized around specific interoperability challenges. They bring together stakeholders to prioritize use cases, coordinate standards development, test technical specifications, and promote adoption.
+
+Vulcan applies this model to clinical research by developing implementation guidance, aligning research requirements with existing standards, and testing implementations through HL7 Connectathons and other demonstrations. Vulcan works within the HL7 standards development process, collaborating with relevant HL7 work groups to develop and publish implementation artifacts.
+
+FHIR provides the underlying standard, while Vulcan helps coordinate how that standard is applied to clinical research problems.
+
+### Federal and regulatory participation
+
+Federal participation has been an important component of Vulcan's development. FDA was among its founding organizations, and its [Center for Drug Evaluation and Research (CDER) has contributed to Vulcan's governance, real-world data retrieval, and adverse event work](https://www.fda.gov/drugs/electronic-regulatory-submission-and-review/role-cder-health-level-seven-hl7-vulcan-accelerator).
+
+Vulcan's activities also intersect with broader federal efforts to modernize clinical trials, improve regulatory information exchange, and support reuse of clinical information for research. Its multi-stakeholder structure provides a venue for coordinating implementation requirements across government, research, and industry organizations.
+
+## Key milestones and progress
+
+Vulcan has progressed from identifying shared interoperability requirements toward publishing implementation guides and supporting practical implementation demonstrations.
+
+[Early Vulcan activities focused](https://blog.hl7.org/hl7-fhir-accelerator-for-translational-and-clinical-research-vulcan-launches) on establishing consensus around clinical research interoperability requirements and identifying priority use cases including real-world data, phenotypic data exchange, and clinical study schedules of activities.
+
+As Vulcan matured, its activities increasingly emphasized published FHIR implementation guides, reusable technical specifications, and collaborative implementation testing.
+
+This progression reflects a broader movement from defining research interoperability requirements toward demonstrating how standards can be applied across clinical and research systems.
+
+| Date | Milestone | Significance |
+|----|----|----|
+| **September 2019** | [Formation of Vulcan](https://www.fda.gov/drugs/electronic-regulatory-submission-and-review/role-cder-health-level-seven-hl7-vulcan-accelerator) | Initiated multi-stakeholder collaboration to bridge clinical care and research. |
+| **August 2020** | [Formal launch as an HL7 FHIR Accelerator](https://blog.hl7.org/hl7-fhir-accelerator-for-translational-and-clinical-research-vulcan-launches) | Established a coordinated initiative for research interoperability. |
+| **2020–2021** | Initial use cases established | Prioritized real-world data, Phenopackets, and schedules of activities. |
+| **April 2023** | [Clinical Study Schedule of Activities IG, STU1](https://hl7.org/fhir/uv/vulcan-schedule/STU1/) | Published trial-use guidance for structured study schedules. |
+| **May 2023** | [Retrieval of Real World Data for Clinical Research IG, STU1](https://hl7.org/fhir/uv/vulcan-rwd/STU1/) | Published guidance for retrieving EHR-derived information for research. |
+| **June 2023** | [Vulcan–CDISC protocol digitization collaboration announced](https://www.cdisc.org/news/vulcan-fhirr-accelerator-connects-cdisc-hl7-and-ich-m11-project-digitize-exchange-clinical) | Initiated work on structured clinical trial protocol exchange aligned with ICH M11 and CDISC standards. |
+| **2024** | [Adverse Event Clinical Research IG, STU1](https://hl7.org/fhir/uv/ae-research-ig/) | Published FHIR guidance for representing adverse event information. |
+| **June 2025** | [First Vulcan Interoperability Bridge cohort demonstrations](https://hl7news.hl7.org/2026/01/06/a-year-of-growth-for-hl7-vulcan/) | Demonstrated six use cases involving four implementation guides and more than 30 participating organizations. |
+
+These milestones represent different stages of maturity. A project announcement establishes planned collaboration, while a published implementation guide provides a technical specification that organizations can implement and test.
+
+Standards for Trial Use (STU) support implementation experience, feedback, and refinement. Similarly, demonstrations can establish technical feasibility but do not necessarily indicate widespread production adoption.
+
+Vulcan’s expanding portfolio of research-focused FHIR interoperability projects reflects its evolution from consensus-building toward reusable implementation guidance and practical applications, with varying levels of maturity and adoption across projects.
+
+## Vulcan projects and FHIR implementation guides
+
+One of Vulcan's major accomplishments has been the development of domain-specific implementation guides that apply FHIR to clinical research workflows.
+
+As discussed in the [CDEs & FHIR module](cde-fhir.qmd), implementing a computable CDE involves more than selecting a FHIR resource. It requires a coordinated set of semantic and technical artifacts that preserve the meaning of a research concept and support consistent implementation, validation, exchange, and reuse.
+
+Vulcan projects provide examples of how these capabilities can be brought together around research workflows. The discussion of CDEs in the context of Vulcan below illustrates possible applications of this guidance.
+
+### Clinical study schedules of activities
+
+A clinical study schedule of activities (SoA) describes the assessments, procedures, interventions, and other activities required at specified study visits or points in time.
+
+Traditionally, schedules have been represented in protocol documents or tables that require manual interpretation before implementation in clinical trial management, electronic data capture platforms, or EHR-integrated research workflows.
+
+The [Vulcan Clinical Study Schedule of Activities Implementation Guide](https://hl7.org/fhir/uv/vulcan-schedule/STU1/), published in April 2023, defines a FHIR R4 approach for representing and exchanging structured study schedules. Its [core model](https://hl7.org/fhir/uv/vulcan-schedule/STU1/basic-structure.html) uses [ResearchStudy](https://hl7.org/fhir/R4/researchstudy.html) to identify the study, [PlanDefinition](https://hl7.org/fhir/R4/plandefinition.html) to describe the schedule and planned visits, and [ActivityDefinition](https://hl7.org/fhir/R4/activitydefinition.html) to describe activities.
+
+A structured schedule identifies when an assessment is required, while a standardized CDE defines what information should be collected, including the question, response domain, terminology, and other specifications. For example, a multicenter study may require a pain intensity assessment at baseline and follow-up visits. A computable schedule can represent when the assessment is required, while a FHIR [Questionnaire](https://hl7.org/fhir/questionnaire.html) informed by a computable CDE could support consistent data collection (note that this is a speculative use of Questionnaire; the SoA STU1 guide focuses on scheduling and does not profile Questionnaire).
+
+This work is particularly relevant to broader efforts to digitize clinical research protocols and standardize study operational metadata.
+
+### Real-world data for clinical research
+
+Real-world data (RWD) include information generated during routine healthcare delivery and other everyday activities. EHR-derived information may support observational research, cohort identification, safety studies, and real-world evidence generation. However, differences in coding, completeness, provenance, and clinical context can complicate reuse.
+
+The [Vulcan Retrieval of Real World Data for Clinical Research Implementation Guide](https://hl7.org/fhir/uv/vulcan-rwd/STU1/), published in May 2023, provides FHIR R4 guidance for identifying patient cohorts and retrieving relevant healthcare information. Its STU1 scope is retrospective analysis of existing EHR data; it does not cover prospective study data collection or downstream transformation for regulatory submissions.
+
+Standardized research definitions help establish which clinical variables are required and how retrieved information should be interpreted. For example, an EHR may expose a pain intensity observation through FHIR, but researchers must still determine whether the measurement, timing, response scale, and clinical context satisfy the study's requirements. CDEs, terminology bindings, and explicit metadata can support consistent interpretation of these data.
+
+### Adverse event reporting
+
+Adverse event reporting requires accurate representation and exchange of information about events occurring during clinical research, including event characteristics, timing, seriousness, severity, outcomes, and relationships to study interventions.
+
+[Vulcan's Adverse Event Clinical Research Implementation Guide](https://hl7.org/fhir/uv/ae-research-ig/) provides a foundational profile of the FHIR [AdverseEvent](https://hl7.org/fhir/R5/adverseevent.html) resource. The published STU1 version 1.0.1 uses FHIR R5 and includes constraints, terminology bindings, and examples; an [R4 backport](https://hl7.org/fhir/uv/ae-research-backport-ig/) is also available. FDA's CDER has participated in this work.
+
+Standardized adverse event definitions and response specifications can support consistent capture and interpretation of safety-related information. FHIR implementation guidance provides mechanisms for exchanging that information across systems.
+
+### Clinical protocol digitization
+
+Clinical trial protocols describe study design, populations, interventions, eligibility criteria, and required assessments. Much of this information has traditionally been maintained in narrative documents requiring manual interpretation.
+
+In June 2023, Vulcan and the Clinical Data Interchange Standards Consortium (CDISC) [announced a collaborative project](https://www.cdisc.org/news/vulcan-fhirr-accelerator-connects-cdisc-hl7-and-ich-m11-project-digitize-exchange-clinical) to advance electronic exchange of structured clinical research protocols, aligned with ICH M11 and CDISC standards.
+
+As discussed in the [CDE harmonization module](cde-harmonization.qmd), [ICH M11](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/m11-clinical-electronic-structured-harmonised-protocol) standardizes protocol content and structure, while the [CDISC Unified Study Definitions Model (USDM)](https://www.cdisc.org/ddf) provides a computable model for representing and exchanging study definitions.
+
+Computable CDEs complement these standards by providing standardized definitions, terminology bindings, and validation requirements for variables collected through protocol-defined assessments.
+
+### Other Vulcan activities
+
+Vulcan's [broader portfolio](https://hl7vulcan.org/projects/) includes phenotypic exchange, FHIR-to-OMOP interoperability, and electronic product information (ePI). These projects vary in their stages of development, testing, publication, and adoption.
+
+**Phenopackets** are a standardized, machine-readable way to describe an individual's observable characteristics (phenotypes), clinical findings, and related health information. Developed by the Global Alliance for Genomics and Health (GA4GH), the [GA4GH Phenopacket Schema](https://phenopacket-schema.readthedocs.io/en/latest/) supports consistent representation of patient characteristics, particularly in rare disease research, genomics, and precision medicine. Phenopackets are relevant to Vulcan's phenotypic exchange activities because they can facilitate the exchange and reuse of detailed phenotype information across clinical care and research systems.
+
+The [Observational Medical Outcomes Partnership (OMOP) Common Data Model](https://ohdsi.github.io/CommonDataModel/) provides a standardized structure and terminology framework for organizing observational healthcare data to support research and analysis across institutions. While FHIR supports standardized representation and exchange of health information, OMOP organizes data for downstream research and analytics. Vulcan's FHIR-to-OMOP interoperability activities explore approaches for mapping between these complementary models to support reuse of clinical data for research.
+
+### Vulcan Interoperability Bridge: from standards to implementation
+
+The [Vulcan Interoperability Bridge (VIB)](https://vulcaninteroperabilitybridge.org/), introduced in the [CDEs & FHIR module](cde-fhir.qmd), supports practical implementation and testing of FHIR-based clinical research interoperability. VIB brings together research sponsors, clinical research sites, EHR vendors, health information exchanges, and other organizations to demonstrate standards-based research workflows.
+
+According to [HL7's retrospective on Vulcan's work in 2025](https://hl7news.hl7.org/2026/01/06/a-year-of-growth-for-hl7-vulcan/), the first VIB cohort completed demonstrations in June 2025 involving more than 30 organizations, six use cases, and four implementation guides. The [demonstrations](https://vulcaninteroperabilitybridge.org/use-cases/) addressed research site-to-sponsor communication, exchange between sponsors' internal systems, regulatory information exchange, and real-world data access through health information exchanges and patient engagement.
+
+VIB illustrates the progression from published implementation guides to testing interoperability across participating systems. These demonstrations provide evidence of technical feasibility, although broader production adoption requires further evaluation.
+
+For NIH research, VIB demonstrates potential pathways for reducing research burden through standards-based data exchange. It also reinforces the importance of computable CDEs, including standardized definitions, terminology bindings, and machine-readable specifications, to preserve meaning as research information moves between systems.
+
+## Alignment with NIH CDEs and research interoperability infrastructure
+
+Vulcan's work connects research requirements with existing healthcare information exchange infrastructure. For example, the [RWD STU1 guide](https://hl7.org/fhir/uv/vulcan-rwd/STU1/) builds on International Patient Access (IPA) profiles and describes how its requirements can be combined with jurisdiction-specific guides such as US Core. Its [dependencies include SMART App Launch](https://hl7.org/fhir/uv/vulcan-rwd/STU1/technical.html), which supports authorized application access. These standards create opportunities to reuse routine clinical information, but an available FHIR API does not by itself ensure that a study's required data are present or suitable for reuse.
+
+The NIH CDE ecosystem and Vulcan address complementary aspects of this challenge. NIH CDEs establish standardized definitions and metadata for research variables, while Vulcan advances FHIR-based implementation approaches that support exchange and reuse of clinical and research information. The NIH CDE Repository already [exports forms as FHIR Questionnaire resources in JSON](https://www.nlm.nih.gov/oet/ed/navigator/cder3/index.html) (but this does not necessarily guarantee consistent terminology bindings, explicit context and constraints, validation rules, and implementation guidance for a given set of CDEs -- in other words, a machine-readable representation of CDEs does not guarantee semantic interoperability).
+
+For example, CDEs may define individual questions and allowable responses within a patient-reported outcome assessment, while FHIR Questionnaire can represent the collection instrument and [QuestionnaireResponse](https://hl7.org/fhir/questionnaireresponse.html) represents completed responses.
+
+Several NIH-supported programs, including the NIH HEAL Initiative, demonstrate the importance of standardized data definitions for harmonization and secondary research use. Aligning computable CDEs with interoperable standards creates opportunities to extend these capabilities across clinical research environments; see the [CDE implementation examples module](cde-implementation-examples.qmd) for additional program examples.
+
+The broader opportunity is to establish reusable semantic and computable infrastructure that supports electronic phenotyping, cohort identification, clinical trial recruitment, real-world evidence generation, and AI-enabled research.
+
+## From computable CDEs to interoperable research infrastructure
+
+This module concludes the CDE-related modules by connecting standardized research data definitions to the broader goal of interoperable research infrastructure:
+
+- The [CDE introduction](cde-introduction.qmd), [harmonization](cde-harmonization.qmd), and [CDEs & FHIR](cde-fhir.qmd) modules introduced the NIH CDE ecosystem, the architecture of computable CDEs, and their alignment with complementary interoperability standards and data models.
+- The [implementation examples module](cde-implementation-examples.qmd) describes CDE adoption across research programs and clinical domains.
+- This module illustrates how Vulcan coordinates standards development and implementation to support interoperable clinical research workflows.
+
+No single standard provides end-to-end research interoperability. CDEs establish shared meaning, clinical terminologies encode concepts and values, FHIR supports standardized representation and exchange, and implementation guides define requirements for consistent implementation. Putting these capabilities into practice also requires governance, maintained mappings and versions, and testing across participating systems.
+
+Vulcan demonstrates how these complementary capabilities can be coordinated to address clinical research interoperability challenges.
+
+These capabilities could also support AI-enabled research by improving the consistency, interpretability, and reuse of data across research settings. However, standardization and interoperability alone do not ensure data quality, completeness, or model validity.
+
+## Conclusion
+
+Since its formation in 2019 and formal launch in 2020, Vulcan has advanced research-focused FHIR guidance and collaborative initiatives involving real-world data, study schedules, adverse event reporting, protocol digitization, and other research workflows. Its work reinforces the central theme of this training series: meaningful interoperability requires both shared meaning and standardized approaches to data exchange.
+
+The goal is to build on CDE dictionaries and existing machine-readable exports so that maintained, versioned definitions can be implemented consistently, validated against explicit rules, and reused across research workflows. This requires ongoing stewardship and testing as definitions, systems, and research needs change.
+
+Vulcan illustrates one pathway for translating these capabilities into practice and advancing reusable research infrastructure.

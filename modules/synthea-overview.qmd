@@ -14,6 +14,8 @@ learning_objectives:
     answer: Synthea is a software tool that generates realistic but not real synthetic electronic health records.
 
 reading_time: true
+date: 2026-10-26
+
 ---
 
 Accessing real healthcare data for research purposes is difficult for many reasons including:
@@ -24,7 +26,7 @@ Accessing real healthcare data for research purposes is difficult for many reaso
 
 These factors and more limit what researchers can do with real healthcare data.
 
-**Synthetic data** is an alternative to real healthcare data that avoids these challenges. Synthetic data is artifically generated, by computer or by hand, rather than collected from the real world. When using real healthcare data isn't feasible due to privacy, cost, or other restrictions, synthetic data is a good alternative.
+**Synthetic data** is an alternative to real healthcare data that avoids these challenges. Synthetic data is artificially generated, by computer or by hand, rather than collected from the real world. When using real healthcare data isn't feasible due to privacy, cost, or other restrictions, synthetic data is a good alternative.
 
 ::: callout-tip
 ## Synthetic data is not deidentified data
@@ -285,7 +287,7 @@ Combining these simple concepts allows module developers to build robust and det
 ::: {.callout-caution collapse="true"}
 ## A note on Synthea clinical detail
 
-Because Synthea is open source and accepts contributions from a global user base, the level of detail varies across modules. For instance, the Appendicitis module was the first to be created, and the level of detail is minimal. On the other hand, the COVID-19 module and submodules were designed to replicate the disease's progression as closely as possible, and is probably the largest and most detailed module.
+Because Synthea is open source and accepts contributions from a global user base, the level of detail varies across modules. For instance, the Appendicitis module was the first to be created, and the level of detail is minimal. On the other hand, the COVID-19 module and submodules were designed to replicate the disease's progression as closely as possible, and the COVID-19 module is probably the largest and most detailed module.
 
 Further, the number of disease modules is limited. Early efforts focused on the "top ten" causes of premature death and reasons people see their primary care provider. Further additions have added a large number of modules representing common conditions, but rarer and more complex conditions may not be represented.
 

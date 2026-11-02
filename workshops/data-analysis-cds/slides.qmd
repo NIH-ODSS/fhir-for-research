@@ -137,7 +137,6 @@ Questions
 
 - Basic familiarity with Python and JavaScript
 - Web browser (Chrome recommended)
-- Google account for Colab (optional)
 
 ::: {.notes}
 - Minimal requirements to get started
@@ -149,23 +148,23 @@ Questions
 
 ::: {.columns}
 ::: {.column width="50%"}
-### Google Colab
-- Zero setup required
-- Click and start coding
-- Great for workshops
+### Read Online
+- Rendered workshop pages
+- No setup required
+- Best for reviewing content
 :::
 
 ::: {.column width="50%"}
 ### Local Installation
 - JupyterLab Desktop
-- Command line setup
+- Download the notebook
 - Better for sensitive data
 :::
 :::
 
 ::: {.notes}
-- Recommend Colab for consistency
-- Local setup for production use
+- Recommend JupyterLab Desktop for interactive use
+- Use the rendered pages when execution is not needed
 - Important security considerations
 :::
 
@@ -196,7 +195,7 @@ Questions
 ::: {.notes}
 At its heart, FHIR is a standard for exchanging health information. Standards like FHIR help to establish a common language and a common process for health IT to share information more seamlessly and more efficiently.
 
-The moniker—FHIR— stands for Fast Healthcare Interoperability Resources. "Fast" refers to the design and implementation of the standard—it was designed to be easier for developers to work with than the prevailing health IT standards of a decade ago—and "resources" refers to the building blocks of FHIR. More on that later.
+The moniker—FHIR—stands for Fast Healthcare Interoperability Resources. "Fast" refers to the design and implementation of the standard—it was designed to be easier for developers to work with than the prevailing health IT standards of a decade ago—and "resources" refers to the building blocks of FHIR. More on that later.
 
 FHIR is open-source, so it's free to use, and it is modular. Resources and other constructs in FHIR allow people to assemble solutions that meet their needs in a specific use case, and customizability is built into FHIR throughout its design, including through FHIR features like extensions and profiling, which we'll talk about more later on.
 :::
@@ -277,7 +276,7 @@ search = Pirate(
 ```
 
 ::: {.notes}
-- We'll use FHIR-PYrate library
+- We'll use the FHIR-PYrate library
 - Handles authentication and requests
 - Makes FHIR data access pythonic
 :::

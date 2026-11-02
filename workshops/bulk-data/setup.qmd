@@ -1,5 +1,6 @@
 ---
 title: FHIR Bulk Data Workshop Setup
+date: 2026-09-16
 
 toc: false
 number-sections: false
@@ -24,11 +25,11 @@ curl -L https://tljh.jupyter.org/bootstrap.py | sudo -E python3 - --admin jupyte
 
 The `--show-progress-page` option will show a status page at `http://<public ip address here>/index.html` while the installer is running.
 
-The setup should be automatic after running this command. When completed, navigating to `http://<public ip address here>` in your web browser should show JupyterHub. You log in with username `jupyterhub` and whatever password you enter in the login box will be set for the `jupyterhub` account automatically.
+The setup should be automatic after running this command. When completed, navigating to `http://<public ip address here>` in your web browser should show JupyterHub. You log in with the username `jupyterhub`, and whatever password you enter in the login box will be set for the `jupyterhub` account automatically.
 
 ### Creating users for the workshop
 
-Can batch create, password will be set the first time they log in
+You can create users in batches. Each user's password will be set the first time they log in.
 
 Don't create extra admins -- they have root access to the server.
 
@@ -58,23 +59,23 @@ sudo ln -s /srv/workshop workshop-read-only
 
 All new users created after you run the above commands will have a `workshop-read-only/` folder symlink in their home folder.
 
-### Getting the Jupyter notebook and installing dependencies
+### Getting the workshop repository and installing dependencies
 
 Create a new Terminal window in JupyterHub while logged in as an admin, and run the following command:
 
 ```sh
 git clone https://github.com/NIH-ODSS/fhir-for-research.git
-sudo -E pip install -r /path/to/fhir-for-research/requirements.txt
+cd fhir-for-research
+uv sync --python 3.12
 ```
 
-The `requirements.txt` file you need is [here](https://github.com/NIH-ODSS/fhir-for-research/blob/main/requirements.txt) if you can't easily access your clone of the repo.
+This repository manages its Python environment with [uv](https://docs.astral.sh/uv/). Install uv before running `uv sync` if it is not already available on the server.
 
-### Getting the notebook in every user's home folder
+### Providing the technical exercise to participants
 
-There are two options:
+The former standalone Bulk Data notebook has moved to the [FHIR Bulk Data Technical Example](../../modules/bulk-fhir-tech.qmd). Do not copy or link to `workshops/bulk-data/notebook.ipynb`; that file is no longer part of the repository.
 
-1. Copy the notebook to `/etc/skel`, and JupyterHub will automatically copy it to the home folder for every new user. This is easier for the users, but there is no good way to update notebook contents once a user account has been created.
-2. Put it in the `/srv/workshop` folder, and have users open it via JupyterHub, "save as", and then refresh the page. This is more cumbersome for the users, but ensures everyone will have an up-to-date notebook to work off of.
+Use the rendered technical example for the current exercise. If a future workshop requires an independently runnable notebook, publish and test that notebook before distributing it through `/etc/skel` or `/srv/workshop`.
 
 ### Avoiding time-outs
 
@@ -128,4 +129,4 @@ sudo -E jupyter contrib nbextension install --sys-prefix
 sudo -E jupyter nbextension enable toc2/main --sys-prefix
 ```
 
-This is based on [this documentation](https://tljh.jupyter.org/en/latest/howto/admin/enable-extensions.html)
+This is based on [this documentation](https://tljh.jupyter.org/en/latest/howto/admin/enable-extensions.html).

@@ -11,6 +11,7 @@ learning_objectives:
     answer: There are both cloud-based and local options for hosting FHIR servers, with varying levels of capabilities, ease of setup and access, and performance. As always, the best option depends on the specific use case.
 
 reading_time: true
+date: 2026-04-14
 ---
 
 This module includes:
@@ -59,7 +60,7 @@ If the HAPI FHIR server does meet your testing needs, there are a few options: D
 
 Docker is a tool that runs packaged software locally. Packaging software to run on Docker means it can be preconfigured with all necessary dependencies, allowing it to run on nearly any hardware and operating system. This differs from traditional software, which often requires separate builds or development for Windows and Mac, may need additional libraries to be installed beforehand, and can involve a complicated setup process. Docker is commonly used for running servers.
 
-While Docker-based options generally require some configuration, especially when you want your test data to persist after you reboot, they can be setup quickly without programming experience. Although, [Git](https://git-scm.com/) is required for several Docker-based options.
+While Docker-based options generally require some configuration, especially when you want your test data to persist after you reboot, they can be set up quickly without programming experience. However, [Git](https://git-scm.com/) is required for several Docker-based options.
 
 Detailed technical documentation on Docker is available at <https://docs.docker.com/get-started/overview/>. To get started, Docker offers step-by-step instructions at <https://docs.docker.com/get-started/introduction/>. (Note that Docker Desktop is [generally not free for organizations and professional use](https://www.docker.com/pricing/faq/). There are free alternatives however they require more manual effort to get everything working. Setting up an alternative to Docker is outside the scope of this page.)
 
@@ -72,7 +73,7 @@ If you intend to run research on a server that is not based on HAPI, below are a
 
 ### Logica Sandbox Community Edition
 
-A cloud service, like Logica Sandbox Community Edition can be a low-friction option to get started—no installation is required on your local computer. Additional benefits include free registration, a shareable common instance between multiple people, and persistence across computer restarts. The Sandbox Community Edition can be run using Docker, but due to the [number of individual services needed](https://github.com/logicahealth/sandbox-community-edition?tab=readme-ov-file#setting-up-the-networking-environment-on-your-machine), using it requires a non-trivial amount of setup and knowledge of Docker.
+A cloud service, like Logica Sandbox Community Edition, can be a low-friction option to get started—no installation is required on your local computer. Additional benefits include free registration, a shareable common instance between multiple people, and persistence across computer restarts. The Sandbox Community Edition can be run using Docker, but due to the [number of individual services needed](https://github.com/logicahealth/sandbox-community-edition?tab=readme-ov-file#setting-up-the-networking-environment-on-your-machine), using it requires a non-trivial amount of setup and knowledge of Docker.
 
 **Quick Start** Make sure Docker is running, then clone the project, change to the directory, and launch the services with the following commands:
 
@@ -82,7 +83,7 @@ cd sandbox-community-edition
 docker compose up
 ```
 
-Launching the services will take a while the first time as it needs to download the Docker images. Wait until the logging output stops, then open the sandbox at <http://sandbox:3001>. From here the steps are identical to the steps for the cloud service steps listed above.
+Launching the services will take a while the first time as the Docker images need to be downloaded. Wait until the logging output stops, then open the sandbox at <http://sandbox:3001>. From here the steps are identical to the cloud service steps listed above.
 
 Full instructions are available at <https://github.com/logicahealth/sandbox-community-edition>.
 
@@ -96,17 +97,17 @@ There are no published limits to the software in terms of the number of Patients
 
 **MELD Signup Steps**
 
-To create your own MELD Sandbox, first register at <https://meld.interop.community>. You will need to provide an email address, where you will receive a confirmation email which you should click to activate your new account. Sign in using your email and password and accept the terms of use.
+To create your own MELD Sandbox, first register at <https://meld.interop.community>. You will need to provide an email address, where you will receive a confirmation email with a link you should click to activate your new account. Sign in using your email and password and accept the terms of use.
 
 Now you can create a new sandbox by clicking the New Sandbox button. The creation screen is shown below.
 
 ![](images/logica_create_sandbox.png){fig-alt="A screenshot of the creation options for a Logica Sandbox"}
 
-Choose a name, ID, and FHIR version that are appropriate for your usage. We recommend enabling the, "Allow Open FHIR Endpoint" setting as this will make it easier to load an initial set of data, and it may be disabled later for security.
+Choose a name, ID, and FHIR version that are appropriate for your usage. We recommend enabling the "Allow Open FHIR Endpoint" setting as this will make it easier to load an initial set of data, and it may be disabled later for security.
 
-If you plan to load patients for a specific use case, you may want to disable the, "Import sample patients and practitioners" option to ensure only your selected patients are loaded. Feel free to select or deselect the sample applications option - it will have no impact on basic FHIR operations.
+If you plan to load patients for a specific use case, you may want to disable the "Import sample patients and practitioners" option to ensure only your selected patients are loaded. Feel free to select or deselect the sample applications option - it will have no impact on basic FHIR operations.
 
-After clicking create, it will take \~15 seconds to setup the instance. Once ready, click on the row to go to the dashboard for your server. You can then visit the Settings tab to see your "Open FHIR Server URL." This is the server base URL that should be used for loading patients in the [Loading Synthea Patients](#loading-synthea-patients) section below. If you want to require security on the server, once you have loaded all the patients you want, return to this Settings tab and click the pencil icon to edit, and uncheck, "Allow Open FHIR Endpoint."
+After clicking create, it will take \~15 seconds to set up the instance. Once ready, click on the row to go to the dashboard for your server. You can then visit the Settings tab to see your "Open FHIR Server URL." This is the server base URL that should be used for loading patients in the [Loading Synthea Patients](#loading-synthea-data) section below. If you want to require security on the server, once you have loaded all the patients you want, return to this Settings tab and click the pencil icon to edit, and uncheck "Allow Open FHIR Endpoint."
 
 # Loading Synthea Data
 
@@ -146,7 +147,7 @@ for file in practitioner*.json
 done
 ```
 
-Finally, load all individual patient files. All patient file names start with a capital letter, unlike the hospital and practioner files above, so we can use that to select just the files that were not already uploaded in the previous two steps.
+Finally, load all individual patient files. All patient file names start with a capital letter, unlike the hospital and practitioner files above, so we can use that to select just the files that were not already uploaded in the previous two steps.
 
 ``` sh
 for file in [A-Z]*.json
@@ -160,7 +161,7 @@ Once all the data has been loaded onto your server, you can access it as any oth
 
 ## Cloud Computing Resources
 
-[NIH Strides](https://datascience.nih.gov/strides) is a initiative to make commercial cloud services accessible and affordable for NIH researchers. Cloud services offer infrastructure that can include bundles of tools like computing power and storage for a pay-as-you-go basis. They currently partner with three cloud providers: Amazon Web Services (AWS), Google Cloud, and Microsoft Azure.
+[NIH Strides](https://datascience.nih.gov/strides) is an initiative to make commercial cloud services accessible and affordable for NIH researchers. Cloud services offer infrastructure that can include bundles of tools like computing power and storage on a pay-as-you-go basis. They currently partner with three cloud providers: Amazon Web Services (AWS), Google Cloud, and Microsoft Azure.
 
 Some particularly helpful references for learning more about STRIDES and research possibilities include:
 
@@ -172,4 +173,4 @@ Some particularly helpful references for learning more about STRIDES and researc
 
 ## SITE
 
-The Assistant Secretary for Technology Policy (ASTP) has a collection of interoperability testing tools and resources, called [Standards Implementation & Testing Environments](https://site.healthit.gov) (SITE). Many of the tools are designed for developers that are seeking ONC Certification of an application that uses FHIR, rather than using FHIR for research. However, there are General Tools, including the [Lantern Dashboard](https://lantern.healthit.gov/?tab=dashboard_tab), which indicates open endpoints and the [Inferno Resource Validator](https://inferno.healthit.gov/validator/).
+The Office of the National Coordinator for Health IT (ONC) has a collection of interoperability testing tools and resources, called [Standards Implementation & Testing Environments](https://site.healthit.gov) (SITE). Many of the tools are designed for developers that are seeking ONC Certification of an application that uses FHIR, rather than using FHIR for research. However, there are General Tools, including the [Lantern Dashboard](https://lantern.healthit.gov/?tab=dashboard_tab), which indicates open endpoints and the [Inferno Resource Validator](https://inferno.healthit.gov/validator/).

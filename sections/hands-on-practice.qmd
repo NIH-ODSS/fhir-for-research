@@ -3,18 +3,56 @@ title: Hands-on Practice
 sidebar: false
 ---
 
-Get some **Hands-on Practice** by following along with our workshops.
+::: {.home-page .section-page .column-screen}
+::: {.home-container}
+::: {.section-intro}
+[Put knowledge into practice]{.home-eyebrow}
 
-*Recommended: complete the workshops relevant to your interests and work after reviewing its corresponding guide in [advanced topics](/sections/advanced-topics).*
+# Hands-on Practice
 
+[Build your skills with guided workshops.]{.home-lead}
+
+Use sample applications, notebooks, and synthetic data to explore FHIR data analysis, clinical decision support, application integration, and population-scale access.
+
+::: {.section-next}
+Recommended: review the relevant [technology modules](technologies.qmd) before beginning a workshop.
+:::
+:::
+
+::: {.section-grid}
+
+::: {.section-card}
 ## FHIR Analysis, CDS and Genomics Workshop
 
--   [FHIR Analysis, CDS and Genomics Workshop](/workshops/data-analysis-cds/index.qmd)
+Work through notebooks that retrieve FHIR resources, convert nested data into Pandas DataFrames, and apply common analysis patterns. Then explore genomic resources and genetic variants to implement clinical decision support logic and generate recommendations using synthetic data.
 
+-   [FHIR Analysis, CDS and Genomics Workshop](/workshops/data-analysis-cds/index.qmd)
+:::
+
+::: {.section-card}
 ## SMART on FHIR Workshop
 
--   [SMART on FHIR Workshop](/workshops/smart-on-fhir/index.qmd)
+Run a sample SMART on FHIR application and trace its EHR launch workflow, from authorization requests to access tokens and patient data retrieval. Use workshop slides, setup instructions, and the workflow diagram to guide your practice.
 
+-   [SMART on FHIR Workshop](/workshops/smart-on-fhir/index.qmd)
+:::
+
+::: {.section-card}
 ## FHIR Bulk Data Workshop
 
+Use a Jupyter notebook to practice working with population-scale FHIR data. Follow the workshop slides, review the introductory webinar, set up a local notebook environment, and access supporting tools for converting authentication keys into Python-compatible formats.
+
 -   [FHIR Bulk Data Workshop](/workshops/bulk-data/index.qmd)
+:::
+
+::: {.section-card}
+## SQL on FHIR Workshop
+
+Work through a practical example of converting FHIR data to a tabular structure using SQL on FHIR's standardized approach. This workshop also includes use of FHIRPath expressions to filter and select data elements from FHIR resource instances, and includes practical examples with synthetic data including linking blood pressure readings to patient demographics.
+
+-   [SQL on FHIR Workshop](/workshops/sql-on-fhir.qmd)
+:::
+
+:::
+:::
+:::

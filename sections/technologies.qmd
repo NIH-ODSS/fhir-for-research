@@ -1,0 +1,130 @@
+---
+title: FHIR Ecosystem Technologies
+sidebar: false
+listing:
+  - id: role-selector
+    template: ../partials/role-selector.ejs.md
+    contents: ../partials/roles.yml
+aliases:
+  - advanced-topics.html
+---
+
+::: {.home-page .section-page .column-screen}
+::: {.home-container}
+::: {.section-intro}
+[Explore the ecosystem]{.home-eyebrow}
+
+# FHIR Ecosystem Technologies
+
+[Find the technologies that fit your research.]{.home-lead}
+
+Build on the foundations of FHIR with standards and tools for consistent data, authorized access, clinical logic, research data capture, and synthetic patients.
+:::
+
+::::: role-select-pane
+Select your [role](/roles.html) to <mark>highlight</mark> the content that is most relevant to you:
+
+::: {#role-selector}
+:::
+
+:::::
+
+::: {.section-card .section-continue .mt-4 .mb-4}
+[Recommendation]{.home-eyebrow}
+
+<p class="mb-0">New to FHIR? Start with the <a href="introduction.qmd">Introduction materials</a> to learn about resources, terminology, and APIs before exploring the technologies below.</p>
+:::
+
+::: {.section-grid .highlight-by-role}
+::: {.section-card}
+## FHIR Implementation Guides
+
+Discover how Implementation Guides turn flexible FHIR resources into shared rules for specific use cases. Learn to interpret profiles and terminology requirements, examine published guides relevant to research, and consider when and how to author your own.
+
+- [What is a FHIR IG](/modules/data-modeling-what-is-fhir-ig.qmd)
+- [Reading a FHIR IG](/modules/data-modeling-reading-igs.qmd)
+- [Real world FHIR IGs](/modules/data-modeling-real-world-igs.qmd)
+- [Writing a FHIR IG](/modules/data-modeling-writing-igs.qmd)
+:::
+
+::: {.section-card}
+## SMART on FHIR
+
+Explore how applications connect to EHR data through standardized authorization and launch workflows. Review research use cases, security and privacy considerations, available software libraries, and a sample application that demonstrates requesting access and retrieving patient information.
+
+- [Introduction](/modules/smart-on-fhir-intro.qmd)
+- [Technical Details](/modules/smart-on-fhir-tech.qmd)
+:::
+
+::: {.section-card}
+## CDS Hooks
+
+Learn how clinical workflow events trigger decision support services and return contextual recommendations. Compare common hook types, then explore a technical example that prompts care teams about research registry enrollment for patients with retinoblastoma during clinical care.
+
+- [Introduction](/modules/cds-hooks-intro.qmd)
+- [Types of CDS Hooks](/modules/cds-hooks-types.qmd)
+- [Technical Example](/modules/cds-hooks-tech.qmd)
+:::
+
+::: {.section-card}
+## Clinical Quality Language
+
+Explore how CQL expresses clinical knowledge for quality measurement, decision support, and research cohort selection. Follow an elevated A1C example from narrative criteria through structured expressions, terminology definitions, and the machine-readable representation used to execute clinical logic.
+
+- [Introduction](/modules/clinical-quality-language-intro.qmd)
+- [Technical Example](/modules/clinical-quality-language-example.qmd)
+:::
+
+::: {.section-card}
+## REDCap
+
+Learn how REDCap supports surveys, registries, and research data capture, then explore its integration with FHIR-enabled EHRs. Review Clinical Data Interoperability Services, implementation considerations, and examples of bringing clinical information into study workflows and participant identification.
+
+- [Introduction](/modules/redcap-intro.qmd)
+- [REDCap on FHIR](/modules/redcap-fhir.qmd)
+:::
+
+::: {.section-card}
+## Synthea
+
+Understand how synthetic patient histories differ from deidentified records and where they support development and learning. Learn to run Synthea, configure its output, and customize modules, demographics, and exported data to better fit your testing needs.
+
+- [Synthea Overview](/modules/synthea-overview.qmd)
+- [Running Synthea](/modules/synthea-running.qmd)
+- [Customizing Synthea](/modules/synthea-customizing.qmd)
+:::
+
+::: {.section-card}
+## FHIR Bulk Data
+
+Explore population-scale data export for research, from authorization and export requests to downloading resources and converting them into Python DataFrames. Review technical examples, group exports, and introductory webinar materials before moving into the hands-on workshop activities.
+
+- [FHIR Bulk Data Access](/modules/bulk-fhir-intro.qmd)
+- [FHIR Bulk Data Technical Example](/modules/bulk-fhir-tech.qmd)
+- [FHIR Bulk Data webinar](/webinars/bulk-data/index.qmd)
+:::
+
+::: {.section-card}
+## Common Data Elements (CDEs)
+
+Learn how CDEs and FHIR can support FAIR data in research.
+
+- [Introduction to CDEs for Research](/modules/cde-introduction.qmd)
+- [Harmonization of CDEs & Other Standards](/modules/cde-harmonization.qmd)
+- [CDEs & FHIR](/modules/cde-fhir.qmd)
+- [CDE and Interoperability Implementation Examples](/modules/cde-implementation-examples.qmd)
+- [HL7 Vulcan Accelerator](/modules/cde-vulcan-accelerator.qmd)
+:::
+
+::: {.section-card}
+## Emerging Topics
+
+Explore developments affecting FHIR research, including evolving interoperability policy, AI, and cloud technologies. Review published examples of data extraction, portable phenotypes, and clinical workflow integration, then examine standards and tools that connect genomic and clinical information.
+
+- [Emerging Innovations](/modules/fhir-emerging-innovations.qmd)
+- [Real World Research](/modules/fhir-research.qmd)
+- [Genomics Data Standardization](/modules/genomics.qmd)
+:::
+:::
+:::
+:::

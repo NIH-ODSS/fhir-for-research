@@ -109,7 +109,7 @@ Implementations use these specs:
 
 -   **System**, to obtain all resources, whether or not they are associated with a patient
 
-## High level FHIR Bulk Data request steps
+## High-level FHIR Bulk Data request steps
 
 1.  Get an access token from the FHIR server
 2.  Request: `GET https://fhir.example.org/Group/[id]/$export`
@@ -123,13 +123,13 @@ Implementations use these specs:
 
     -   Note that there is an [open source library](https://github.com/microsoft/Tools-for-Health-Data-Anonymization/blob/master/docs/FHIR-anonymization.md) from Microsoft for de-identifying FHIR Bulk Data
 
--   The necessary data elements are part of USCDI, or otherwise included in EHR's FHIR implementation
+-   The necessary data elements are part of USCDI, or otherwise included in the EHR's FHIR implementation
 
 -   Real-time access is not needed (other FHIR APIs are better for this)
 
 -   One-off data pull or regular updates
 
--   Multi-site research without existing shared CDM
+-   Multi-site research without an existing shared CDM
 :::
 
 ## Non-EHR uses of FHIR Bulk Data

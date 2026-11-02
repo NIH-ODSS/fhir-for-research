@@ -1,0 +1,118 @@
+---
+title: "Introduction to FHIR Resources"
+date: 2026-09-18
+
+area:
+  name: Overview
+topic:
+  name: FHIR for Research
+
+roles:
+  - Investigator
+  - Research Leader
+
+learning_objectives:
+  - question: Understand the purpose of FHIR resources.
+    answer: The basic data exchange format of FHIR.
+  - question: Identify the general parts of a resource.
+    answer: FHIR resources include resource metadata, human-readable descriptions, links to other related resources and extensions, and domain-specific elements.
+
+reading_time: true
+lightbox: true
+---
+
+Resources are the key building blocks of FHIR. A [**FHIR resource**](https://healthit.gov/wp-content/uploads/2021/04/What-Is-FHIR-Fact-Sheet.pdf) is a structure that contains healthcare information in an unambiguous format. This allows different systems to understand information in the same way,[^1] which is necessary for health systems to accurately share data.
+
+[^1]: When systems exchange information with unambiguous and shared meaning, it is called [semantic interoperability](https://en.wikipedia.org/wiki/Semantic_interoperability).
+
+## Overview
+
+Healthcare data needs to represent many different concepts. These can range from clinical data about a patient, to how healthcare services are scheduled, to the financial transactions needed to pay for care. Each of these concepts is broken down into a small, well-defined packet of information called a FHIR Resource, and organized into different categories, such as clinical history or diagnostic results. The individual data elements represented in each may be different, but the structure and organization of every resource are well-defined. Different hospitals, clinics, insurers, laboratories and applications can exchange and understand these resources.
+
+Each resource has a clear purpose and can stand on its own, while still connecting to other resources when needed. This means that it is possible to work with just the set of resources related to your use case, without needing to retrieve the entire set of all patient data. When certain combinations of resources are needed for a common use case, a FHIR Profile can be created to define and verify the necessary resources and required values for that case.
+
+## FHIR Resource Design Principles
+
+Resources were designed to meet the key architectural principles of FHIR.
+
+### Reuse
+
+Resources are meant to be general purpose and fit most common data needs, and avoid defining overly complex or redundant resources. Most resources limit the number of required data elements, and provide extensions when customization is required for specific use cases. They are linked to other resources in a common way so that it is possible to combine many resources into a complex patient history.
+
+### Usability
+
+FHIR resources were developed with usability in mind, so that both technical teams and healthcare organizations could adopt them more easily. The names and structures of a resource are generally straightforward, and they are organized around real-world healthcare concepts that people recognize. Each type of resource is well-documented and follows consistent patterns to represent data.
+
+### Performance
+
+An individual FHIR resource is meant to be small, and contain a minimal but specific set of values. FHIR supports many operations meant to limit the number of resources that need to be retrieved or exchanged at any given time, helping to maintain performance across large datasets.
+
+### Data Fidelity
+
+The definition of each resource describes the specific data types each value is permitted to contain. Some data types may be limited to dates or strings. Others may be specified by external organizations, such as terminology or clinical codes. The structure and definition of a resource mean that it can be validated against its syntax and sets of business rules.
+
+### Implementability
+
+FHIR was designed to be easy to implement, to help ensure broad adoption. FHIR provides a solid core set of resources that can cover many common needs, while also allowing room for adaptation when local or national requirements differ. Resources are meant to be easily understood and implemented using industry standards and common technologies.
+
+## Example Resource
+
+A FHIR Resource generally consists of four main parts:
+
+- Resource metadata such as the type of resource, id and relationship to other resources
+- Optional human-readable descriptions of the data in the resource
+- Links to any extensions added to the base resource
+- The domain-specific structured data elements defined by the resource type (the 'content' of the resource)
+
+In this example a patient had a diagnostic HPV test performed, and the results of that test showed a positive HPV result. This would be represented by a [DiagnosticReport FHIR Resource](https://www.hl7.org/fhir/R5/diagnosticreport.html), and a JSON representation might look like this:
+
+``` json
+{
+  "resourceType": "DiagnosticReport",
+  "id": "123456789",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\">Narrative: DiagnosticReport 123...</div>"
+  },
+  "status": "final",
+  "code": {
+    "coding": [{
+      "system": "http://loinc.org",
+      "code": "21440-3",
+      "display": "Human papilloma virus test"
+    }]
+  },
+  "subject": {
+    "reference": "Patient/123456",
+    "display": "Example Patient"
+  },
+  "effectiveDateTime": "2026-05-07T00:00:00+00:00",
+  "issued": "2026-05-07T00:00:00.000+00:00",
+  "performer": [{
+    "reference": "Practitioner/123-456-789",
+    "type": "Practitioner",
+    "display": "Example Practitioner, MD"
+  }],
+  "conclusionCode": [{
+    "coding": [{
+      "system": "http://snomed.info/sct",
+      "code": "10828004",
+      "display": "Positive"
+    }]
+  }]
+}
+```
+
+This includes elements for:
+
+- `resourceType` indicating it is a DiagnosticReport.
+- `id` internal id of "123456789".
+- `text` can have limited HTML-formatted text in the `div` attribute which has a human-readable narrative or description about the DiagnosticReport. This may be output which is automatically generated when the resource is created.
+- `code` identifies the specific [LOINC Diagnostic Report Code](https://www.hl7.org/fhir/R5/valueset-report-codes.html) for the test.
+- `conclusionCode` is an array of results of the test, which refers to the [SNOMEDCT value for a positive result](https://snomedbrowser.org/?perspective=full&conceptId1=10828004&edition=MAIN/2026-09-01&release=&languages=en).
+
+The `subject` element includes a reference to the [Patient](https://www.hl7.org/fhir/R5/patient.html) resource identifying the patient on whom the test was performed, and the `performer` element identifies the [Practitioner](https://www.hl7.org/fhir/R5/practitioner.html) who performed the test.
+
+View other FHIR resources and look for similar patterns. What elements identify this resource? What other resources is this one related to? How are specific values encoded? (Hint: look for `code`, `system` and `value` attributes.) What items are meant for humans to read? (Hint: look for `text` and `display` attributes.)
+
+Explanations of each element and its attributes are found in the [FHIR structure table](https://hl7.org/fhir/formats.html#table) for every resource type.

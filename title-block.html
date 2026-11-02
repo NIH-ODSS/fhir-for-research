@@ -1,4 +1,97 @@
-<header id="title-block-header">
+<div id="metadata-container" style="display: flex;">
+<!-- Begin reading time block -->
+$if(reading_time)$
+  <div id="reading-time-container" style="display: none">
+    <svg aria-hidden="true" role="img" focusable="false" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span id="reading-time"></span> min. reading time&nbsp;
+  </div>
+$endif$
+<!-- end reading time block -->
+
+<!-- last updated -->
+$if(in_modules)$
+$if(date)$
+<div class="date">Last updated: $date$</div>
+$endif$
+$endif$
+</div> <!-- end metadata div -->
+
+<!-- script for reading time -->
+$if(reading_time)$
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+    // Step 1: Count words in parent document
+    let totalWords = 0;
+    const mainContent = document.querySelector('#quarto-document-content');
+    if (mainContent) {
+      const parentWords = mainContent.innerText.trim().split(/\s+/).length;
+      totalWords += parentWords;
+    }
+
+    // We'll update the badge once we've processed ALL iframes (or there are none)
+    function updateReadingTimeBadge(wordCount) {
+      const wpm = 200;
+      const readingTime = Math.ceil(wordCount / wpm);
+
+      document.getElementById('reading-time').textContent = readingTime;
+      document.getElementById('reading-time-container').style.display = '';
+    }
+
+    // Step 2: Gather iframes
+    const iframes = document.querySelectorAll('iframe');
+
+    // If there are no iframes, just show the reading time for parent content
+    if (iframes.length === 0) {
+      updateReadingTimeBadge(totalWords);
+      return;
+    }
+
+    // We only update after ALL iframes have loaded or errored
+    let pending = iframes.length;
+
+    // Helper to decrement pending count and update once done
+    function iframeDone() {
+      pending--;
+      if (pending === 0) {
+        // All iframes processed
+        updateReadingTimeBadge(totalWords);
+      }
+    }
+
+    // Step 3: Iterate through each iframe
+    iframes.forEach(iframe => {
+      // Listen for 'load' (fires whether same-origin or cross-origin)
+      iframe.addEventListener('load', function() {
+        try {
+          // Attempt to read the iframe's text (works only if same-origin)
+          const iframeDoc = iframe.contentWindow.document;
+          const iframeText = (iframeDoc.body.innerText || "").trim();
+          const iframeWords = iframeText.split(/\s+/).filter(Boolean).length;
+
+          totalWords += iframeWords;
+        } catch (err) {
+          // Cross-origin or any other error
+          console.warn("Could not read iframe content (possibly cross-origin):", err);
+          // No addition to totalWords
+        }
+        // Mark this iframe as processed
+        iframeDone();
+      }, { once: true });
+
+      // Listen for 'error' in case the iframe fails to load
+      iframe.addEventListener('error', function() {
+        console.warn("Iframe failed to load:", iframe.src);
+        // Just move on (no addition to totalWords)
+        iframeDone();
+      }, { once: true });
+    });
+
+  });
+  </script>
+$endif$ <!-- end script for reading time -->
+
+<header>
 <!--
 $if(area)$
 <nav aria-label="breadcrumb">
@@ -16,9 +109,7 @@ $if(subtitle)$
 
 $endif$
 
-$if(date)$
-<p class="date">$date$</p>
-$endif$
+
 $if(abstract)$
 <div class="abstract">
 <div class="abstract-title">$abstract-title$</div>
@@ -26,6 +117,20 @@ $abstract$
 </div>
 $endif$
 </header>
+
+<!-- begin roles block -->
+$if(roles)$
+<div class="role-tags" aria-label="Relevant roles">
+  <span class="role-tags-label">Roles:</span>
+$for(roles)$
+  <span class="role-tag">$roles$</span>
+$endfor$
+  <a href="/roles.qmd" class="role-info-link" aria-label="Learn more about roles">
+    <svg aria-hidden="true" role="img" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+</a>
+</div>
+$endif$
+<!-- end roles block -->
 
 <!-- Begin learning objectives block -->
 $if(learning_objectives)$
@@ -73,25 +178,6 @@ $endfor$
 </div>
 $endif$
 
-$if(roles)$
-<div class="callout-note callout callout-style-simple no-icon callout-captioned" id="relevant-roles">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Relevant roles:
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<ul class="target-roles list-inline">
-$for(roles)$
-    <li class="list-inline-item">$roles$</li>
-$endfor$
-</ul>
-</div>
-</div>
-$endif$
 <!-- End learning objectives block -->
 
 <!-- Hack to add key points block at end of page-->
@@ -115,99 +201,13 @@ document.addEventListener("DOMContentLoaded", function() {
         document.querySelector('#quarto-document-content').appendChild( clone );
     }
     document.querySelector('#key-points .callout-caption-container').textContent = 'Key points';
-    document.querySelector('#key-points .prompt').textContent = 'The learning objective questions are below, along with their answers:'
-    document.querySelector('#key-points .target-roles-container').remove();
+
+    const prompt = document.createElement('p');
+    prompt.textContent = 'The learning objectives are below, along with possible answers:';
+    document.querySelector('#key-points .callout-body').prepend(prompt);
+
   }
 });
 </script>
 $endif$
 <!-- End hack to add key points block at end of page-->
-
-<!-- Reading time logic -->
-$if(reading_time)$
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-  
-    // Step 1: Count words in parent document
-    let totalWords = 0;
-    const mainContent = document.querySelector('#quarto-document-content');
-    if (mainContent) {
-      const parentWords = mainContent.innerText.trim().split(/\s+/).length;
-      totalWords += parentWords;
-    }
-  
-    // We'll update the badge once we've processed ALL iframes (or there are none)
-    function updateReadingTimeBadge(wordCount) {
-      const wpm = 200;
-      const readingTime = Math.ceil(wordCount / wpm);
-  
-      let displayText;
-      if (readingTime === 1) {
-        displayText = 'Estimated reading time: 1 minute';
-      } else {
-        displayText = 'Estimated reading time: ' + readingTime + ' minutes';
-      }
-  
-      // Create the badge
-      const timeBadge = document.createElement('span');
-      timeBadge.classList.add('reading-time-badge');
-      timeBadge.textContent = displayText;
-
-      const titleBlockHeader = document.querySelector('#title-block-header');
-      if (titleBlockHeader) {
-        titleBlockHeader.appendChild(timeBadge);
-      }
-    }
-  
-    // Step 2: Gather iframes
-    const iframes = document.querySelectorAll('iframe');
-    
-    // If there are no iframes, just show the reading time for parent content
-    if (iframes.length === 0) {
-      updateReadingTimeBadge(totalWords);
-      return;
-    }
-  
-    // We only update after ALL iframes have loaded or errored
-    let pending = iframes.length;
-  
-    // Helper to decrement pending count and update once done
-    function iframeDone() {
-      pending--;
-      if (pending === 0) {
-        // All iframes processed
-        updateReadingTimeBadge(totalWords);
-      }
-    }
-  
-    // Step 3: Iterate through each iframe
-    iframes.forEach(iframe => {
-      // Listen for 'load' (fires whether same-origin or cross-origin)
-      iframe.addEventListener('load', function() {
-        try {
-          // Attempt to read the iframe's text (works only if same-origin)
-          const iframeDoc = iframe.contentWindow.document;
-          const iframeText = (iframeDoc.body.innerText || "").trim();
-          const iframeWords = iframeText.split(/\s+/).filter(Boolean).length;
-  
-          totalWords += iframeWords;
-        } catch (err) {
-          // Cross-origin or any other error
-          console.warn("Could not read iframe content (possibly cross-origin):", err);
-          // No addition to totalWords
-        }
-        // Mark this iframe as processed
-        iframeDone();
-      }, { once: true });
-  
-      // Listen for 'error' in case the iframe fails to load
-      iframe.addEventListener('error', function() {
-        console.warn("Iframe failed to load:", iframe.src);
-        // Just move on (no addition to totalWords)
-        iframeDone();
-      }, { once: true });
-    });
-  
-  });
-  </script>
-$endif$

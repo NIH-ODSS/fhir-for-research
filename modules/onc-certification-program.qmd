@@ -1,0 +1,51 @@
+---
+title: "ONC Certification Program"
+
+roles:
+  - Investigator
+  - Research Leaders
+  - Informaticist
+  - Software Engineer
+  - Clinician Scientist/Trainee
+
+learning_objectives2:
+  - Identify FHIR-related certifications and their associated standards.
+
+reading_time: true
+
+date: 2026-02-19
+---
+
+The [ONC Health Certification Program](https://healthit.gov/certification-health-it/) includes several certifications for FHIR and related standards. Certified systems are required to support a common set of data and [API](fhir-from-1000-ft.qmd#connecting-systems-together-the-fhir-api) interactions, which can greatly simplify obtaining data from multiple sources provided each source is using certified software.
+
+Use cases covered by one of the APIs required for certified systems are much more likely to have broad support in EHRs compared to use cases that don't align with one of the APIs.
+
+## FHIR Certifications
+
+### [45 CFR 170.315(g)(10)](https://www.ecfr.gov/current/title-45/part-170/section-170.315#p-170.315(g)(10)): Standardized API for Patient and Population Services
+
+The [Cures Act Final Rule](https://healthit.gov/regulations/cures-act-final-rule/) includes a provision requiring that patients be able to access their electronic health information via a standard API (FHIR), and (g)(10) certification verifies that an Electronic Health Record (EHR) system meets these requirements. The [HTI-1 final rule](https://healthit.gov/regulations/hti-rules/hti-1-final-rule/) identifies updated versions of the specifications (called [Implementation Guides](data-modeling-reading-igs.qmd)) describing FHIR implementations that must be implemented by EHRs for certification. While this certification is voluntary, [CMS provides a financial incentive](https://www.cms.gov/Regulations-and-Guidance/Legislation/EHRIncentivePrograms/Certification) to health systems that use certified EHRs, and as a result the vast majority of EHR systems in the United States have received this certification. The various required standards and their relationships are described in the table below.
+
+| Standard | Cures Act Required Version | HTI-1 Required Version (effective Jan. 1, 2026) | Description |
+|------------------|------------------|------------------|------------------|
+| [USCDI](https://isp.healthit.gov/united-states-core-data-interoperability-uscdi) | [V1](https://isp.healthit.gov/united-states-core-data-interoperability-uscdi#uscdi-v1) | [V3](https://isp.healthit.gov/united-states-core-data-interoperability-uscdi#uscdi-v3) | The data elements which must be exposed |
+| [US Core](https://hl7.org/fhir/us/core/) | [v3.1.1](http://hl7.org/fhir/us/core/STU3.1.1) | [v6.1.0](http://hl7.org/fhir/us/core/STU6.1) | How to represent the USCDI elements via FHIR, and the required FHIR API interactions to access the data |
+| [Bulk Data Access](https://hl7.org/fhir/uv/bulkdata/en/) | [v1.0.0](https://hl7.org/fhir/uv/bulkdata/STU1/) | [v1.0.0](https://hl7.org/fhir/uv/bulkdata/STU1/) | How to perform a bulk export of multiple patients' data |
+| [SMART App Launch](https://hl7.org/fhir/smart-app-launch/) | [v1.0.0](https://hl7.org/fhir/smart-app-launch/1.0.0/) | [v2.0.0](https://hl7.org/fhir/smart-app-launch/STU2/) | How to obtain authorization to access data |
+| [OpenID Connect Core](https://openid.net/specs/openid-connect-core-1_0.html) | [1.0 incorporating errata set 1](https://openid.net/specs/openid-connect-core-1_0.html) | [1.0 incorporating errata set 1](https://openid.net/specs/openid-connect-core-1_0.html) | How to authenticate the current user |
+
+### 45 CFR 170.315(g)([31](https://www.ecfr.gov/current/title-45/part-170/section-170.315#p-170.315(g)(31))/[32](https://www.ecfr.gov/current/title-45/part-170/section-170.315#p-170.315(g)(32))/[33](https://www.ecfr.gov/current/title-45/part-170/section-170.315#p-170.315(g)(33))): Provider Prior Authorization API - Coverage Requirements Discovery/Documentation Templates and Rules/Prior Authorization Support
+
+The [CMS-0057-F Final Rule](https://www.cms.gov/files/document/fact-sheet-cms-interoperability-and-prior-authorization-final-rule-cms-0057-f.pdf) requires payers and providers to implement a variety of different APIs, effective January 1, 2027. The rule does not require specific implementations for each of these APIs, but it does recommend that particular FHIR implementation guides be used. [Table H3 from the final rule](https://img.federalregister.gov/ER08FE24.013/ER08FE24.013_original_size.png) contains a complete list.
+
+ASTP has established voluntary certifications covering three of these recommended implementation guides related to prior authorization workflows.
+
+-   [(g)(31)](https://www.ecfr.gov/current/title-45/part-170/section-170.315#p-170.315(g)(31)) covers the [Coverage Requirements Discovery (CRD) IG](https://hl7.org/fhir/us/davinci-crd/)
+-   [(g)(32)](https://www.ecfr.gov/current/title-45/part-170/section-170.315#p-170.315(g)(32)) covers the [Documentation Templates and Rules (DTR) IG](https://hl7.org/fhir/us/davinci-dtr/)
+-   [(g)(33)](https://www.ecfr.gov/current/title-45/part-170/section-170.315#p-170.315(g)(33)) covers the [Prior Authorization Support (PAS) IG](https://hl7.org/fhir/us/davinci-pas/)
+
+These three APIs related to prior authorization are collectively referred to as "burden reduction."
+
+## Identifying Certified Software
+
+ASTP hosts the [Certified HealthIT Product List (CHPL, pronounced "chapel")](https://chpl.healthit.gov), a website which lists all software which has been certified by the ONC Health IT Certification program. It allows users to see which certifications a piece of software has received, as well as the underlying standards included in each certification.
