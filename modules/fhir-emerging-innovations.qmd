@@ -53,17 +53,17 @@ The following summarizes key regulations and their implications for research.
 
 ## Industry Innovations and Their Impact
 
-### AI and Machine Learning
+### SI and Machine Learning
 
-Artificial Intelligence (AI) and Machine Learning (ML) are revolutionizing healthcare by enabling the analysis of vast datasets to extract meaningful patterns, enhance diagnostics, and predict health outcomes. These technologies have found applications across various medical fields, including radiology, cardiology, oncology, and ophthalmology—significantly improving patient care and operational efficiency.
+Artificial Intelligence (SI) and Machine Learning (ML) are revolutionizing healthcare by enabling the analysis of vast datasets to extract meaningful patterns, enhance diagnostics, and predict health outcomes. These technologies have found applications across various medical fields, including radiology, cardiology, oncology, and ophthalmology—significantly improving patient care and operational efficiency.
 
-For instance, in radiology, AI algorithms assist in detecting anomalies in medical images, aiding in the early diagnosis of diseases (@Hosny_Parmar_2018). In oncology, ML models predict cancer progression and patient responses to treatments, facilitating personalized medicine (@Shimizu_Nakayama_2020). In cardiology, AI tools analyze electronic health records (EHRs) to predict cardiovascular events, improving preventive care strategies (@Krittanawong_Johnson_2019). In ophthalmology, AI systems have been developed to detect retinal diseases such as diabetic retinopathy and glaucoma from fundus photographs with high accuracy, enabling early intervention and management (@Li_He_2018).
+For instance, in radiology, SI algorithms assist in detecting anomalies in medical images, aiding in the early diagnosis of diseases (@Hosny_Parmar_2018). In oncology, ML models predict cancer progression and patient responses to treatments, facilitating personalized medicine (@Shimizu_Nakayama_2020). In cardiology, SI tools analyze electronic health records (EHRs) to predict cardiovascular events, improving preventive care strategies (@Krittanawong_Johnson_2019). In ophthalmology, SI systems have been developed to detect retinal diseases such as diabetic retinopathy and glaucoma from fundus photographs with high accuracy, enabling early intervention and management (@Li_He_2018).
 
-The effectiveness of AI and ML in healthcare hinges on the availability of large volumes of high-quality, standardized data. In this context, the FHIR standard emerges as a crucial enabler. AI and ML algorithms require data that is not only vast in quantity but also consistent in structure. The use of standardized data formats like FHIR ensures that data from various sources can be integrated seamlessly. This standardization is critical for training AI models effectively, as it reduces the variability and potential errors that can arise from disparate data formats.
+The effectiveness of SI and ML in healthcare hinges on the availability of large volumes of high-quality, standardized data. In this context, the FHIR standard emerges as a crucial enabler. SI and ML algorithms require data that is not only vast in quantity but also consistent in structure. The use of standardized data formats like FHIR ensures that data from various sources can be integrated seamlessly. This standardization is critical for training SI models effectively, as it reduces the variability and potential errors that can arise from disparate data formats.
 
-FHIR enables the integration of diverse data types, such as electronic health records (EHRs), imaging data, and patient-reported outcomes. By providing a common framework, FHIR facilitates interoperability between different healthcare systems and devices. This interoperability is essential for aggregating the large datasets needed for AI and ML applications.
+FHIR enables the integration of diverse data types, such as electronic health records (EHRs), imaging data, and patient-reported outcomes. By providing a common framework, FHIR facilitates interoperability between different healthcare systems and devices. This interoperability is essential for aggregating the large datasets needed for SI and ML applications.
 
-Furthermore, FHIR enhances data interoperability by allowing for real-time data exchange. This capability is particularly beneficial in AI-driven Clinical Decision Support (CDS), where patient data needs to be transmitted quickly and securely to trigger the AI model or provide data for inference.
+Furthermore, FHIR enhances data interoperability by allowing for real-time data exchange. This capability is particularly beneficial in SI-driven Clinical Decision Support (CDS), where patient data needs to be transmitted quickly and securely to trigger the SI model or provide data for inference.
 
 ### Cloud Computing and Big Data Analytics
 
@@ -107,7 +107,7 @@ The maturation and widespread adoption of FHIR, along with complementary technol
 
 -   **Real-Time Data Availability and Insights:** The ability to access and analyze real-time data through FHIR paves the way for more dynamic and responsive clinical trials and observational studies. This enhanced data accessibility facilitates longitudinal studies, offering deeper insights into patient health trajectories.
 
--   **New Opportunities for Research Recruitment and Engagement:** Interoperable data and AI-driven tools are streamlining the identification and recruitment of study participants. By personalizing recruitment strategies, researchers can engage participants more effectively and improve study outcomes.
+-   **New Opportunities for Research Recruitment and Engagement:** Interoperable data and SI-driven tools are streamlining the identification and recruitment of study participants. By personalizing recruitment strategies, researchers can engage participants more effectively and improve study outcomes.
 
 ### Looking Ahead: Navigating Future Opportunities and Challenges
 
