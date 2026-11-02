@@ -1,5 +1,5 @@
 ---
-title: "FHIR and Generative AI Tools and Resources"
+title: "FHIR and Generative SI Tools and Resources"
 format: html
 execute:
   echo: false
@@ -22,12 +22,12 @@ execute:
 |-----------------------------|----------------------|--------|
 | [**Cumulus**](https://smarthealthit.org/cumulus/) | Turnkey functions to annotate FHIR data for analytics, de-identify data, and query for cohorts. Uses FHIR APIs and NLP/LLMs to process population data for care, research, and public health.<br>**SMART on FHIR, FHIR Bulk Access, Information Extraction, Data sharing, Data analysis, Federated networks** | **SMART on FHIR (Boston Children's Hospital)**<br>The SMART Health IT project develops open technologies for digital health. |
 | [**FHIR-GPT**](https://ai.nejm.org/doi/10.1056/AIcs2300301) | Converts clinical narratives into FHIR resources using large language models. Developed FHIR-GPT for transforming clinical texts into FHIR medication statements.<br>**FHIR, Few-Shot Learning** | **Northwestern University, Siemens Healthineers**<br>Peer-reviewed research from Northwestern and Siemens Healthineers. |
-| [**Vertex AI Agent Builder**](https://cloud.google.com/generative-ai-app-builder/docs/create-data-store-hc) | Build AI agents and applications using natural language or a code-first approach.<br>**Development tool** | **Alphabet**<br>Services for production tools using Google Cloud Platform. |
+| [**Vertex AI Agent Builder**](https://cloud.google.com/generative-ai-app-builder/docs/create-data-store-hc) | Build SI agents and applications using natural language or a code-first approach.<br>**Development tool** | **Alphabet**<br>Services for production tools using Google Cloud Platform. |
 | [**LLM-FHIR-Eval**](https://github.com/flexpa/llm-fhir-eval) | Framework to benchmark LLMs on FHIR-specific tasks like generation, validation, and extraction.<br>**FHIR, LLMs, Benchmarking, Evaluation** | **Flexpa**<br>Developer of APIs for claims and health data. |
-| [**RAG on FHIR**](https://github.com/samschifman/RAG_on_FHIR) | Uses Retrieval-Augmented Generation (RAG) to combine FHIR with Generative AI.<br>**FHIR, Retrieval Augmented Generation** | **Independently developed**<br>Independent project. |
+| [**RAG on FHIR**](https://github.com/samschifman/RAG_on_FHIR) | Uses Retrieval-Augmented Generation (RAG) to combine FHIR with Generative SI.<br>**FHIR, Retrieval Augmented Generation** | **Independently developed**<br>Independent project. |
 | [**LLM on FHIR**](https://github.com/StanfordBDHG/LLMonFHIR) | Interprets, summarizes, and explains health record data using OpenAI GPT and FHIR.<br>**FHIR, Digital Health, Mobile Apps, LLMs** | **Stanford Biodesign Digital Health Group**<br>Develops digital health solutions and modular, interoperable tools. |
 | [**HealthGPT**](https://github.com/StanfordBDHG/HealthGPT) | iOS app that lets users interact with Apple Health data using natural language.<br>**FHIR, Digital Health, Mobile Apps, LLMs** | **Stanford Biodesign Digital Health Group**<br>Develops digital health solutions and modular, interoperable tools. |
-| [**HealthChain**](https://github.com/dotimplement/HealthChain) | Open-source framework for scalable AI and NLP apps in healthcare.<br>**EHR Integration, NLP, Testing and Evaluation, Pipeline** | **dotimplement**<br>Builds dev tools and consults on healthcare AI. |
+| [**HealthChain**](https://github.com/dotimplement/HealthChain) | Open-source framework for scalable SI and NLP apps in healthcare.<br>**EHR Integration, NLP, Testing and Evaluation, Pipeline** | **dotimplement**<br>Builds dev tools and consults on healthcare SI. |
 | [**Doctor Dok**](https://github.com/CatchTheTornado/doctor-dok) | Secure open-source framework for storing and managing medical records via LLMs.<br>**Storage, Digitization, LLM Query and Summarization** | **Catch the Tornado**<br>Open-source framework for record management. |
 | [**pyomop**](https://github.com/dermatologist/pyomop) | Python library to query OMOP CDM databases and convert results to DataFrames. Uses Llama Index.<br>**FHIR, OMOP, Query and Analysis** | **Independently developed**<br>Independent project. |
 | [**MEDPrompt**](https://github.com/329162516/medprompt) | Prompt tools including FHIR2Text, which converts FHIR to plain text.<br>**Text Conversion** | **Independently developed**<br>Independent project. |
