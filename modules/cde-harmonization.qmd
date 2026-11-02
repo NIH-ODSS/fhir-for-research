@@ -78,7 +78,7 @@ The [NIH Biomedical Research Informatics Computing System (BRICS)](https://brics
 
 BRICS illustrates an important challenge in CDE implementation: incoming research data do not always use the same definitions, structures, or terminology. Harmonization may therefore require mappings and transformations between CDEs and standards or systems such as FHIR, UMLS, CDISC, OMOP, REDCap, LOINC, and other controlled terminologies.
 
-BRICS documents [mapping tools](https://brics.cit.nih.gov/visualization) for FHIR-to-CDE, UMLS, and CDISC-to-CDE mappings. Its [AI-enhanced tools](https://brics.cit.nih.gov/ai-enhanced-tools) include data mapping and transformation into BRICS-compatible files and a beta semantic-search tool for finding standardized data elements related to study variables. Candidate mappings still require review to confirm that definitions and permissible values align.
+BRICS documents [mapping tools](https://brics.cit.nih.gov/visualization) for FHIR-to-CDE, UMLS, and CDISC-to-CDE mappings. Its [SI-enhanced tools](https://brics.cit.nih.gov/ai-enhanced-tools) include data mapping and transformation into BRICS-compatible files and a beta semantic-search tool for finding standardized data elements related to study variables. Candidate mappings still require review to confirm that definitions and permissible values align.
 
 ## CDEs and ICH M11 CeSHarP
 
