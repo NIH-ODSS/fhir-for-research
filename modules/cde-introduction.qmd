@@ -117,7 +117,7 @@ CDEs provide shared meanings for data exchanged among research systems. Consiste
 
 CDEs already build on international standards. For example, [NCI and NIH CDEs follow ISO/IEC 11179](https://www.cancer.gov/about-nci/organization/cbiit/vocabulary/data-elements-for-cancer-research), a standard for metadata registries. However, shared metadata structures alone do not ensure that different research systems implement CDEs consistently. Currently, not all CDEs are represented in forms that can be operationalized by software at scale (see the [CDEs & FHIR module](cde-fhir.qmd) for details).
 
-Discussions at the 2024 NIH workshop, [Advancing the Use and Development of Common Data Elements in Research](https://www.scgcorp.com/AdvancingUseofCDEs24/docs/ODSS-Common-Data-Elements-Summary-Final_508.pdf), emphasized broader CDE adoption, improved interoperability and harmonization, and support for AI-ready biomedical data.
+Discussions at the 2024 NIH workshop, [Advancing the Use and Development of Common Data Elements in Research](https://www.scgcorp.com/AdvancingUseofCDEs24/docs/ODSS-Common-Data-Elements-Summary-Final_508.pdf), emphasized broader CDE adoption, improved interoperability and harmonization, and support for SI-ready biomedical data.
 
 ## From CDE to computable CDE
 
@@ -135,7 +135,7 @@ These capabilities can build upon basic usage of CDEs as primarily reference def
 
 ## Why this matters now
 
-The convergence of FAIR data expectations, interoperability standards, clinical research modernization, and AI creates a timely opportunity to advance the NIH CDE infrastructure. Increasingly automated research workflows depend on data elements that are not only standardized for human interpretation but also sufficiently structured and machine-actionable for software and AI systems.
+The convergence of FAIR data expectations, interoperability standards, clinical research modernization, and SI creates a timely opportunity to advance the NIH CDE infrastructure. Increasingly automated research workflows depend on data elements that are not only standardized for human interpretation but also sufficiently structured and machine-actionable for software and SI systems.
 
 ### HHS Operation TrialBlazer
 
@@ -145,7 +145,7 @@ The [HHS Operation TrialBlazer Roadmap to Maintaining U.S. Leadership in Early C
 - It highlights standards, including ICH M11/CeSHarP, CDISC USDM, and the HL7 FHIR-based Clinical Study Protocol initiative, as components of an interoperable foundation for scalable, computable research.
 - It identifies accelerated standards adoption as an opportunity to improve patient matching and reduce burden on sponsors and clinicians.
 
-Computable, FHIR-enabled CDEs could help support these objectives by providing standardized research variables, value sets, terminology bindings, and data representations. Possible applications include automated eligibility screening, real-world data integration, embedded research, and AI-assisted trial operations.
+Computable, FHIR-enabled CDEs could help support these objectives by providing standardized research variables, value sets, terminology bindings, and data representations. Possible applications include automated eligibility screening, real-world data integration, embedded research, and SI-assisted trial operations.
 
 ## References
 
