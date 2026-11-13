@@ -23,7 +23,7 @@ format:
 
 [Learn how FHIR can help you access electronic health record data, bring new tools into clinical workflows, and make research data easier to reuse.]{.home-lead}
 
-HL7® FHIR® (Fast Healthcare Interoperability Resources, pronounced “fire”) is a standard for representing and exchanging health data. It also provides ways to implement [common data elements](https://datascience.nih.gov/fhir-initiatives/common-data-elements) and standardize their terminology. These capabilities can support [FAIR data practices](https://datascience.nih.gov/data-ecosystem): making data findable, accessible, interoperable, and reusable.
+HL7® FHIR® (Fast Healthcare Interoperability Resources, pronounced “fire”) is a standard for representing and exchanging health data. FHIR, when combined with other metadata standards like  [NIH Common Data Elements](https://datascience.nih.gov/fhir-initiatives/common-data-elements), can standardize terminologies used in data exchange. These capabilities can support [FAIR data practices](https://datascience.nih.gov/data-ecosystem): making data findable, accessible, interoperable, and reusable.
 
 This guide explains the concepts and technologies, with examples and workshops to help you apply them in your own work.
 
